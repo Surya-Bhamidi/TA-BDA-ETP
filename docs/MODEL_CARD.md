@@ -4,7 +4,7 @@ Entity training mixes 4,000 existing-corpus reports with 4,000 role/ownership/ad
 
 **Task:** English synthetic narrative classification and entity extraction. **Intended use:** university demonstration and experimentation.
 
-**Document models:** BoW/logistic regression, word + character TF-IDF/logistic regression, train-only Gensim Word2Vec averaging/logistic regression, and fine-tuned compact BERT. TF-IDF is the dashboard's default document classifier for speed and explanation. Character 3–5-grams help tolerate unknown spellings without rewriting names or introducing a new algorithm.
+**Document models:** normalized binary BoW/logistic regression, word + character TF-IDF/logistic regression, retained train-only Gensim Word2Vec mean pooling/logistic regression, and fine-tuned compact BERT. TF-IDF is the dashboard's default document classifier for speed and explanation. Character 3–5-grams help tolerate unknown spellings without rewriting names or introducing a new algorithm. Bounded candidates are tuned on validation; the IDF-weighted mean/max Word2Vec candidate failed the repeat-test comparison and its baseline is retained through a disclosed test-informed deployment rollback. See ACCURACY_IMPROVEMENTS.md. BERT training uses warmup/decay and train-only participant/place masking; inference never needs gold entities.
 
 **Entity models:** CRF and fine-tuned BERT token classifier. Validation strict span F1 selects the automatic model; see `artifacts/models/v3_1/ner_selection.json`. Eight entity types are supported. CRF uses lexical context, shape and cue distances; no name/country whitelist is used at inference.
 
@@ -14,8 +14,24 @@ Entity training mixes 4,000 existing-corpus reports with 4,000 role/ownership/ad
 
 **Evidence:** artifacts/evaluation.json, ner_evaluation.json, evaluation_plan.json, frozen_models.json, final_evaluation_receipt.json, robustness_development.json and docs/RESULTS.md. Prior version benchmarks are historical because corpus and protocol changed.
 
-**Known limitations:** shared synthetic patterns, possible role confusion, imperfect negation, uncalibrated entity scores, BERT document truncation at 160 subwords, summaries that omit context, and no real-source evaluation. TF-IDF reads the full accepted input. Broader names/places do not imply unrestricted multilingual understanding. VADER polarity and cue levels are not validated danger measures. Review flags combine the original confidence threshold with raw score/margin and vocabulary coverage; they cannot detect every error.
+**Known limitations:** shared synthetic patterns, validation-selection optimism, possible role confusion, bounded negation/reference handling, reliability estimates limited to synthetic validation, summaries that omit context, and no real-source evaluation. The archived BERT benchmark truncates at 192 subwords; live BERT uses validation-selected windowed inference. Search now ranks all source windows rather than only the first 128 subwords. TF-IDF reads the full accepted input. Broader names/places do not imply unrestricted multilingual understanding. VADER polarity and cue levels are not validated danger measures. Review flags cannot detect every error.
 
-**Privacy:** inference is local after resource downloads. Opt-in feedback stores text hashes and corrected categories, not submitted narratives. Redaction can miss identifiers. Optional shared-password access is not production identity management.
+**Privacy:** inference is local after resource downloads. Category feedback and default entity feedback store hashes and corrections without submitted text or entity names. An explicit unchecked-by-default annotation-queue option can save the narrative locally for human review. Drafts are not automatically trained or treated as adjudicated gold. Redaction can miss identifiers. Optional shared-password access is not production identity management.
+
+**Current context validation:** syntax and clause-boundary checks repair clear participant, ownership, location, evidence and material-role errors. WITNESS is an additional contextual role, stored separately from the eight trained labels. WEAPON includes accelerants used to start a fire; stolen fuels and forensic material samples receive different roles. Corrections have no model probability and preserve source offsets. Raw model weights and benchmark predictions are retained. The broader layer has separate measured results, including regressions, in `artifacts/narrative_context_validation.json`; see [NARRATIVE_VALIDATION.md](NARRATIVE_VALIDATION.md) and [MATERIAL_HIGHLIGHTING.md](MATERIAL_HIGHLIGHTING.md). The earlier media-only correction and rejected training candidates are historical experiments documented in EVIDENCE_CONTEXT_FIX.md.
 
 **Updates:** use a new independent evaluation protocol for changes motivated by the viewed final-test results. Never overwrite benchmark labels to hide mistakes.
+
+**Schema 4 additions:** the legacy eight-label tagger is retained as the core. A validation-selected CRF specialist adds ORGANIZATION and WITNESS, preserving non-overlapping core mentions. Witness syntax remains a fallback. The specialist's validation Span-F1 is 0.7729; its repeat synthetic diagnostic Span-F1 is 0.5410, with 0.9904 precision and 0.3722 recall. This conservative specialist misses many valid mentions. On the separate ten-label diagnostic task, the same current core/context pipeline scores 0.5921 without the specialist and 0.6230 with it. These tasks differ from the legacy 0.9223 raw CRF benchmark and must not be presented as the same evaluation. See UPGRADE_STATUS.md and the preserved experiment artifacts.
+
+**Confidence:** new role scores have validation-only reliability estimates. Witness cross-fitted Brier loss changes from 0.0603 raw to 0.0529 calibrated on synthetic validation. Organization validation predictions contain no observed errors, so their calibration uses a smoothed empirical constant and has no cross-fitted estimate. Neither calibrator covers missed entities or real-source shift. Core and rule-based scores remain clearly distinguished.
+
+The retained CRF and BERT core taggers also have per-label exact-span reliability
+fits on synthetic schema-4 validation, in core_entity_calibration.json. Raw
+scores and labels are preserved. These fits are applied on demand only when
+their recorded model hash matches; context repairs remain unscored. Cross-fitted
+Brier estimates are recorded where there are enough correct and incorrect spans.
+One-class labels use a smoothed constant. Validation selection and domain shift
+still limit interpretation; calibration is not guaranteed to improve every label.
+
+**Rejected candidates:** the broad ten-label CRF/BERT experiment and the dedicated BERT role candidates are preserved and reported. The new full-document BERT classification candidate reached 0.9246 validation macro-F1 versus 0.9270 for the retained model. It was not activated; full-document inference with the retained weights tied validation and retains 81.67% on the viewed diagnostic test. No accuracy increase is claimed for that classifier.

@@ -27,6 +27,42 @@ def main():
                 page.get_by_role("button", name="Analyze narrative", exact=True).click()
                 page.get_by_test_id("stMetricValue").filter(has_text="Assault").first.wait_for(timeout=90000)
                 page.locator("mark").filter(has_text="sneha").wait_for(timeout=90000)
+                page.get_by_text("One-line case summary", exact=True).wait_for(timeout=90000)
+                evidence_text = ("Rajiv hit Sneha with a stick near Pune on 29-06-2026. "
+                                 "A witness called the police. Camera footage was collected.")
+                page.get_by_label("Case narrative", exact=True).fill(evidence_text)
+                page.get_by_role("button", name="Analyze narrative", exact=True).click()
+                mention = page.locator("mark").filter(has_text="Camera footage")
+                mention.wait_for(timeout=90000)
+                assert mention.locator("small").inner_text() == "EVIDENCE"
+                petrol_text = "Abebe Bekele poured petrol and set Olga Ivanova's shop on fire near Dubai. kindly take my complaint"
+                page.get_by_label("Case narrative", exact=True).fill(petrol_text)
+                page.get_by_role("button", name="Analyze narrative", exact=True).click()
+                petrol = page.locator("mark").filter(has_text="petrol")
+                petrol.wait_for(timeout=90000)
+                assert petrol.locator("small").inner_text() == "WEAPON"
+                page.get_by_text("WEAPON includes accelerants used to start a fire, such as petrol or kerosene.", exact=True).wait_for(timeout=90000)
+                supplier_text = "Suresh used petrol from Indian Oil in Vanasthalipuram and used it to burn Ramesh's flat in Hasthinapuram"
+                page.get_by_label("Case narrative", exact=True).fill(supplier_text)
+                page.get_by_role("button", name="Analyze narrative", exact=True).click()
+                for value, label in {"Suresh": "SUSPECT", "petrol": "WEAPON", "Vanasthalipuram": "LOCATION", "Ramesh": "VICTIM", "flat": "PROPERTY", "Hasthinapuram": "LOCATION", "Indian Oil": "ORGANIZATION"}.items():
+                    mention = page.locator("mark").filter(has_text=value)
+                    mention.wait_for(timeout=90000)
+                    assert mention.locator("small").inner_text() == label
+                user_cases = [
+                    ("José García hit Wei Zhang with iron rod near Nairobi, Suresh had seen it", "Assault",
+                     {"José García": "SUSPECT", "Wei Zhang": "VICTIM", "iron rod": "WEAPON", "Nairobi": "LOCATION", "Suresh": "WITNESS"}),
+                    ("sir ystrday two fellows showed knife and took my moblie near bus stand, rahul has seen it", "Robbery",
+                     {"two fellows": "SUSPECT", "knife": "WEAPON", "moblie": "PROPERTY", "bus stand": "LOCATION", "rahul": "WITNESS"}),
+                ]
+                for text, category, expected in user_cases:
+                    page.get_by_label("Case narrative", exact=True).fill(text)
+                    page.get_by_role("button", name="Analyze narrative", exact=True).click()
+                    page.get_by_test_id("stMetricValue").filter(has_text=category).first.wait_for(timeout=90000)
+                    for value, label in expected.items():
+                        mention = page.locator("mark").filter(has_text=value)
+                        mention.wait_for(timeout=90000)
+                        assert mention.locator("small").inner_text() == label
             page.wait_for_timeout(1500)
             assert page.locator('[data-testid="stException"]').count() == 0
             page.screenshot(path=str(screenshots / shot), full_page=True)
@@ -41,7 +77,9 @@ def main():
             page.pdf(path=str(ROOT / "docs" / "PROJECT_REPORT.pdf"), format="A4", print_background=True, margin={"top": "16mm", "bottom": "16mm", "left": "16mm", "right": "16mm"})
         browser.close()
     result = {"status": "passed", "pages": visited, "javascript_errors": errors, "screenshots": str(screenshots),
-              "informal_input": "rajiv hit sneha with a stick near pune", "informal_category": "Assault"}
+              "informal_input": "rajiv hit sneha with a stick near pune", "informal_category": "Assault", "camera_footage_label": "EVIDENCE",
+              "user_witness_examples": "Both exact user examples verified in rendered entity highlights", "petrol_label": "WEAPON",
+              "fuel_supplier_example": "Seven expected entities verified, including trained ORGANIZATION"}
     (ROOT / "artifacts" / "browser_check.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
     print(json.dumps(result))
 

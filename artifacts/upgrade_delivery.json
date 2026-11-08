@@ -1,0 +1,59 @@
+{
+  "verified_at": "2026-11-08T10:35:24.465144+00:00",
+  "corpus_rows": 60000,
+  "semantic_windows": 61300,
+  "index_source_coverage": "passed: all source characters outside whitespace covered; report order and source text preserved",
+  "role_model": {
+    "directory": "models/v4_roles_broad",
+    "selected": "CRF",
+    "labels": [
+      "ORGANIZATION",
+      "WITNESS"
+    ],
+    "validation_span_f1": 0.7728740581270184,
+    "selection_artifact": "role_specialist_broad_evaluation.json",
+    "strategy": "Retain legacy eight-label core and context safeguards; add non-overlapping learned roles. No diagnostic test score is used for selection."
+  },
+  "classifier_mode": {
+    "directory": "models/v3_1/bert_classifier",
+    "full_text": true,
+    "validation_choice": "legacy_windowed",
+    "selection_artifact": "windowed_classification_experiment.json",
+    "legacy_benchmark": "Unchanged archived truncating inference; live full-document mode is reported separately"
+  },
+  "verification": {
+    "automated_tests_passed": 207,
+    "legacy_benchmark": "passed",
+    "new_model_experiments": "passed",
+    "stored_span_integrity": "passed",
+    "browser": "passed"
+  },
+  "core_reliability": {
+    "fit_split": "Synthetic schema-4 validation only",
+    "model_hashes": {
+      "CRF": "f8125c50c4da67bcd7ae7809edc08d3995040e1914a05200a14a14bb507f46d0",
+      "BERT": "f6203bad2ffb3256058e0793524fb9e85408d407fcb501bbc52d8816c5ca10cf"
+    },
+    "scope": "Fitted on synthetic validation; rules remain unscored and omissions are not calibrated"
+  },
+  "hybrid_diagnostic": {
+    "without_trained_roles": 0.592060696382604,
+    "with_trained_roles": 0.6230290181529085
+  },
+  "implemented": [
+    "Versioned ten-label annotation contract and preserved data snapshots",
+    "Validation-selected trained organization/witness additions",
+    "Validation-only core/role reliability and per-entity review",
+    "Negation, denial, attribution and bounded reference/action notes",
+    "Full-document semantic search and windowed BERT inference",
+    "Entity correction with text-hash default and explicit annotation opt-in",
+    "Source-separated human annotation, agreement and adjudication workflow",
+    "Unreviewed human quality forms and metric evaluator"
+  ],
+  "still_requires_external_input": [
+    "Permissioned real narratives",
+    "Independent human annotation/adjudication",
+    "Human relevance, summary and topic judgments"
+  ],
+  "limitations": "Synthetic diagnostic improvements do not establish real-world accuracy. Role recall remains limited. General coreference and full logical inference are not claimed. Rejected candidates are preserved. Legacy benchmark files are unchanged."
+}

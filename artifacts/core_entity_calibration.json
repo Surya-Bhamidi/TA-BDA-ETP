@@ -1,0 +1,143 @@
+{
+  "fitted_at": "2026-11-08T10:27:55.377889+00:00",
+  "models": {
+    "CRF": {
+      "SUSPECT": {
+        "coefficient": 0.6392814243813877,
+        "intercept": -0.22513863924094513,
+        "validation_spans": 496,
+        "empirical_precision": 0.6854838709677419,
+        "raw_brier": 0.20414065303699333,
+        "crossfit_brier": 0.19054866954231556
+      },
+      "VICTIM": {
+        "coefficient": 0.45880929200696835,
+        "intercept": 0.9857651632844372,
+        "validation_spans": 384,
+        "empirical_precision": 0.890625,
+        "raw_brier": 0.10339278697851097,
+        "crossfit_brier": 0.0927423971747519
+      },
+      "LOCATION": {
+        "coefficient": 0.6628674293507238,
+        "intercept": -0.17733168764543503,
+        "validation_spans": 164,
+        "empirical_precision": 0.7317073170731707,
+        "raw_brier": 0.17651867816206057,
+        "crossfit_brier": 0.17017429776805282
+      },
+      "WEAPON": {
+        "coefficient": 0.0,
+        "intercept": 5.988961416889885,
+        "validation_spans": 199,
+        "empirical_precision": 1.0,
+        "raw_brier": 0.001183610399569995,
+        "crossfit_brier": null
+      },
+      "PROPERTY": {
+        "coefficient": 0.0,
+        "intercept": 6.652863029353351,
+        "validation_spans": 387,
+        "empirical_precision": 1.0,
+        "raw_brier": 0.02466746617825786,
+        "crossfit_brier": null
+      },
+      "DATE": {
+        "coefficient": 0.0,
+        "intercept": 5.993961427306552,
+        "validation_spans": 200,
+        "empirical_precision": 1.0,
+        "raw_brier": 8.419985178815129e-10,
+        "crossfit_brier": null
+      },
+      "TIME": {
+        "coefficient": 0.0,
+        "intercept": 5.993961427306552,
+        "validation_spans": 200,
+        "empirical_precision": 1.0,
+        "raw_brier": 6.068739557199433e-08,
+        "crossfit_brier": null
+      },
+      "EVIDENCE": {
+        "coefficient": 0.0,
+        "intercept": 5.796057750765366,
+        "validation_spans": 164,
+        "empirical_precision": 1.0,
+        "raw_brier": 0.11132244055297093,
+        "crossfit_brier": null
+      }
+    },
+    "BERT": {
+      "SUSPECT": {
+        "coefficient": 0.2226777609121668,
+        "intercept": -2.016742739947005,
+        "validation_spans": 1533,
+        "empirical_precision": 0.22700587084148727,
+        "raw_brier": 0.6214218891334671,
+        "crossfit_brier": 0.17071289121661684
+      },
+      "VICTIM": {
+        "coefficient": 0.48056645886530275,
+        "intercept": -2.2753036271082694,
+        "validation_spans": 1070,
+        "empirical_precision": 0.33925233644859815,
+        "raw_brier": 0.464392410292445,
+        "crossfit_brier": 0.18441201040465555
+      },
+      "LOCATION": {
+        "coefficient": 0.8392807634953017,
+        "intercept": -2.436287477556031,
+        "validation_spans": 183,
+        "empirical_precision": 0.644808743169399,
+        "raw_brier": 0.2713189531185397,
+        "crossfit_brier": 0.145662388411779
+      },
+      "WEAPON": {
+        "coefficient": 1.595581291479824,
+        "intercept": -2.303452297996278,
+        "validation_spans": 211,
+        "empirical_precision": 0.95260663507109,
+        "raw_brier": 0.01836053466045061,
+        "crossfit_brier": 0.00874731493372232
+      },
+      "PROPERTY": {
+        "coefficient": 1.6999930085636332,
+        "intercept": -2.5526758125946514,
+        "validation_spans": 560,
+        "empirical_precision": 0.8857142857142857,
+        "raw_brier": 0.05617694251994961,
+        "crossfit_brier": 0.03425733371000858
+      },
+      "DATE": {
+        "coefficient": 0.0,
+        "intercept": 5.993961427306552,
+        "validation_spans": 200,
+        "empirical_precision": 1.0,
+        "raw_brier": 0.0029426667954223938,
+        "crossfit_brier": null
+      },
+      "TIME": {
+        "coefficient": 1.170867715735107,
+        "intercept": -2.2129303098240625,
+        "validation_spans": 200,
+        "empirical_precision": 0.97,
+        "raw_brier": 0.026137427656184514,
+        "crossfit_brier": 0.022157502517304528
+      },
+      "EVIDENCE": {
+        "coefficient": 0.8733244223987944,
+        "intercept": -1.9090439090760911,
+        "validation_spans": 262,
+        "empirical_precision": 0.9007633587786259,
+        "raw_brier": 0.0852024334824339,
+        "crossfit_brier": 0.0710216309389139
+      }
+    }
+  },
+  "fit_split": "Synthetic schema-4 validation only",
+  "legacy_core_sha256": {
+    "CRF": "f8125c50c4da67bcd7ae7809edc08d3995040e1914a05200a14a14bb507f46d0",
+    "BERT": "f6203bad2ffb3256058e0793524fb9e85408d407fcb501bbc52d8816c5ca10cf"
+  },
+  "scope": "Raw span correctness on synthetic validation; fitting does not change model weights or labels. Missed entities and real-world calibration are not measured; one-class labels use a smoothed empirical constant."
+}

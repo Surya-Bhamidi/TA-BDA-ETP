@@ -6,5 +6,7 @@
   "max_subword_tokens": 128,
   "storage": "float16, normalized vectors",
   "ner_model": "CRF",
-  "entity_model_version": "3.1.0"
+  "entity_model_version": "3.1.0",
+  "entity_context_validation": "syntax, witness-boundary, evidence and material-role context checks; WITNESS stored separately",
+  "report_text_sha256": "b6436dbfc9119eb79cca87c1f6e817214d98a2cbe4891cb20d03125a8c2bfeb8"
 }

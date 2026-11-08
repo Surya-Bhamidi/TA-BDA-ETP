@@ -1,0 +1,92 @@
+{
+  "plan": {
+    "labels": [
+      "ORGANIZATION",
+      "WITNESS"
+    ],
+    "train_rows": 7119,
+    "validation_rows": 800,
+    "selection": "Validation-only specialist selection; preserve core model; no user examples in training",
+    "scope": "Synthetic role-specialist follow-up after viewing v4 diagnostic test scores. Repeat diagnostic evaluation, not independent real data."
+  },
+  "selected": "CRF",
+  "validation": {
+    "CRF": 0.7728740581270184,
+    "BERT": 0.5634441087613293
+  },
+  "models": {
+    "CRF": {
+      "strict_entity_f1": 0.5410374261326331,
+      "report": {
+        "ORGANIZATION": {
+          "precision": 1.0,
+          "recall": 0.3576017130620985,
+          "f1-score": 0.5268138801261829,
+          "support": 467
+        },
+        "WITNESS": {
+          "precision": 0.9839357429718876,
+          "recall": 0.3828125,
+          "f1-score": 0.5511811023622047,
+          "support": 640
+        },
+        "micro avg": {
+          "precision": 0.9903846153846154,
+          "recall": 0.3721770551038844,
+          "f1-score": 0.5410374261326331,
+          "support": 1107
+        },
+        "macro avg": {
+          "precision": 0.9919678714859438,
+          "recall": 0.37020710653104927,
+          "f1-score": 0.5389974912441938,
+          "support": 1107
+        },
+        "weighted avg": {
+          "precision": 0.9907126246630604,
+          "recall": 0.3721770551038844,
+          "f1-score": 0.5409015244180112,
+          "support": 1107
+        }
+      }
+    },
+    "BERT": {
+      "strict_entity_f1": 0.30489389346037243,
+      "report": {
+        "ORGANIZATION": {
+          "precision": 0.4726775956284153,
+          "recall": 0.37044967880085655,
+          "f1-score": 0.4153661464585834,
+          "support": 467
+        },
+        "WITNESS": {
+          "precision": 0.21411483253588517,
+          "recall": 0.2796875,
+          "f1-score": 0.24254742547425476,
+          "support": 640
+        },
+        "micro avg": {
+          "precision": 0.2928452579034942,
+          "recall": 0.3179765130984643,
+          "f1-score": 0.30489389346037243,
+          "support": 1107
+        },
+        "macro avg": {
+          "precision": 0.34339621408215026,
+          "recall": 0.32506858940042827,
+          "f1-score": 0.3289567859664191,
+          "support": 1107
+        },
+        "weighted avg": {
+          "precision": 0.32319234867338437,
+          "recall": 0.3179765130984643,
+          "f1-score": 0.3154528841008866,
+          "support": 1107
+        }
+      }
+    }
+  },
+  "frozen_at": "2026-11-08T09:47:57.853232+00:00",
+  "evaluated_at": "2026-11-08T09:47:59.697701+00:00",
+  "candidate_directory": "artifacts\\models\\v4_roles_broad"
+}

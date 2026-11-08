@@ -15,7 +15,7 @@ Version 3.1 accepts informal English, short fragments and spelling mistakes usin
 5. **spaCy explains grammar.** It identifies nouns, verbs, base forms and connections between words.
 6. **Topics find recurring language.** LDA groups co-occurring words. A topic is not necessarily a crime category.
 7. **VADER measures polarity.** Negative wording is not the same as real danger.
-8. **TextRank summarizes.** It copies selected source sentences. It can omit context.
+8. **TextRank summarizes.** It selects one source sentence for a one-line case summary. Search results and CSV exports include it. It can omit context, so read the original case too.
 9. **Search retrieves evidence.** Keyword matches words; semantic search matches learned representations; hybrid combines ranks.
 
 ## How do we know whether it works?

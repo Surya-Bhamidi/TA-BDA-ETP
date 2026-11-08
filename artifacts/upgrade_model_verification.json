@@ -1,0 +1,25 @@
+{
+  "status": "passed",
+  "verified_at": "2026-11-08T10:33:34.111365+00:00",
+  "experiments": [
+    {
+      "report": "schema_v4_evaluation.json",
+      "model_files_verified": 11,
+      "rows": 800,
+      "predictions_sha256": "26b106ee19d05ba9d0de82c639a010849447b8bc291cde2bde2bb8227bc0e3ff"
+    },
+    {
+      "report": "role_specialist_evaluation.json",
+      "model_files_verified": 12,
+      "rows": 800,
+      "predictions_sha256": "dad31067370ae4cf7a27e7b5a1764aef62420e103303692907985a9da877a6f3"
+    },
+    {
+      "report": "role_specialist_broad_evaluation.json",
+      "model_files_verified": 12,
+      "rows": 800,
+      "predictions_sha256": "0b62716a78f4f07faf4253ad4099339219b29368bb37013d190f62a2b590d537"
+    }
+  ],
+  "scope": "Verifies completed model files, annotations and score recomputation; does not establish real-world accuracy"
+}

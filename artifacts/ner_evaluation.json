@@ -1,5 +1,5 @@
 {
-  "strict_entity_f1": 0.9177563661390226,
+  "strict_entity_f1": 0.9222779989613987,
   "report": {
     "DATE": {
       "precision": 1.0,
@@ -14,21 +14,21 @@
       "support": 169
     },
     "LOCATION": {
-      "precision": 0.9575371549893843,
-      "recall": 0.8351851851851851,
-      "f1-score": 0.8921859545004946,
+      "precision": 0.9597457627118644,
+      "recall": 0.8388888888888889,
+      "f1-score": 0.8952569169960475,
       "support": 540
     },
     "PROPERTY": {
-      "precision": 0.9699453551912568,
-      "recall": 0.9125964010282777,
-      "f1-score": 0.9403973509933776,
+      "precision": 0.9778393351800554,
+      "recall": 0.9074550128534704,
+      "f1-score": 0.9413333333333334,
       "support": 389
     },
     "SUSPECT": {
-      "precision": 0.8742393509127789,
-      "recall": 0.8467583497053045,
-      "f1-score": 0.8602794411177644,
+      "precision": 0.9241071428571429,
+      "recall": 0.8133595284872298,
+      "f1-score": 0.865203761755486,
       "support": 509
     },
     "TIME": {
@@ -38,9 +38,9 @@
       "support": 336
     },
     "VICTIM": {
-      "precision": 0.8861940298507462,
-      "recall": 0.7956448911222781,
-      "f1-score": 0.8384819064430714,
+      "precision": 0.889090909090909,
+      "recall": 0.8190954773869347,
+      "f1-score": 0.8526591107236269,
       "support": 597
     },
     "WEAPON": {
@@ -50,21 +50,21 @@
       "support": 72
     },
     "micro avg": {
-      "precision": 0.9454094292803971,
-      "recall": 0.8916750250752257,
-      "f1-score": 0.9177563661390226,
+      "precision": 0.9562096195262024,
+      "recall": 0.8906720160481444,
+      "f1-score": 0.9222779989613987,
       "support": 2991
     },
     "macro avg": {
-      "precision": 0.9609894863680208,
-      "recall": 0.9220369922690196,
-      "f1-score": 0.9405439557577127,
+      "precision": 0.9688478937299965,
+      "recall": 0.9206137523409543,
+      "f1-score": 0.9434325144769358,
       "support": 2991
     },
     "weighted avg": {
-      "precision": 0.9443077473417473,
-      "recall": 0.8916750250752257,
-      "f1-score": 0.9165989375254598,
+      "precision": 0.9547977337649638,
+      "recall": 0.8906720160481444,
+      "f1-score": 0.9209428649871559,
       "support": 2991
     }
   },
@@ -84,7 +84,7 @@
   "test_rows": 600,
   "models": {
     "CRF": {
-      "strict_entity_f1": 0.9177563661390226,
+      "strict_entity_f1": 0.9222779989613987,
       "report": {
         "DATE": {
           "precision": 1.0,
@@ -99,21 +99,21 @@
           "support": 169
         },
         "LOCATION": {
-          "precision": 0.9575371549893843,
-          "recall": 0.8351851851851851,
-          "f1-score": 0.8921859545004946,
+          "precision": 0.9597457627118644,
+          "recall": 0.8388888888888889,
+          "f1-score": 0.8952569169960475,
           "support": 540
         },
         "PROPERTY": {
-          "precision": 0.9699453551912568,
-          "recall": 0.9125964010282777,
-          "f1-score": 0.9403973509933776,
+          "precision": 0.9778393351800554,
+          "recall": 0.9074550128534704,
+          "f1-score": 0.9413333333333334,
           "support": 389
         },
         "SUSPECT": {
-          "precision": 0.8742393509127789,
-          "recall": 0.8467583497053045,
-          "f1-score": 0.8602794411177644,
+          "precision": 0.9241071428571429,
+          "recall": 0.8133595284872298,
+          "f1-score": 0.865203761755486,
           "support": 509
         },
         "TIME": {
@@ -123,9 +123,9 @@
           "support": 336
         },
         "VICTIM": {
-          "precision": 0.8861940298507462,
-          "recall": 0.7956448911222781,
-          "f1-score": 0.8384819064430714,
+          "precision": 0.889090909090909,
+          "recall": 0.8190954773869347,
+          "f1-score": 0.8526591107236269,
           "support": 597
         },
         "WEAPON": {
@@ -135,56 +135,56 @@
           "support": 72
         },
         "micro avg": {
-          "precision": 0.9454094292803971,
-          "recall": 0.8916750250752257,
-          "f1-score": 0.9177563661390226,
+          "precision": 0.9562096195262024,
+          "recall": 0.8906720160481444,
+          "f1-score": 0.9222779989613987,
           "support": 2991
         },
         "macro avg": {
-          "precision": 0.9609894863680208,
-          "recall": 0.9220369922690196,
-          "f1-score": 0.9405439557577127,
+          "precision": 0.9688478937299965,
+          "recall": 0.9206137523409543,
+          "f1-score": 0.9434325144769358,
           "support": 2991
         },
         "weighted avg": {
-          "precision": 0.9443077473417473,
-          "recall": 0.8916750250752257,
-          "f1-score": 0.9165989375254598,
+          "precision": 0.9547977337649638,
+          "recall": 0.8906720160481444,
+          "f1-score": 0.9209428649871559,
           "support": 2991
         }
       }
     },
     "BERT": {
-      "strict_entity_f1": 0.7094594594594594,
+      "strict_entity_f1": 0.7911874291268427,
       "report": {
         "DATE": {
-          "precision": 0.9844155844155844,
+          "precision": 0.9818652849740933,
           "recall": 1.0,
-          "f1-score": 0.9921465968586387,
+          "f1-score": 0.9908496732026144,
           "support": 379
         },
         "EVIDENCE": {
-          "precision": 0.9825581395348837,
+          "precision": 0.9941176470588236,
           "recall": 1.0,
-          "f1-score": 0.9912023460410557,
+          "f1-score": 0.9970501474926253,
           "support": 169
         },
         "LOCATION": {
-          "precision": 0.6372549019607843,
-          "recall": 0.48148148148148145,
-          "f1-score": 0.5485232067510548,
+          "precision": 0.7536585365853659,
+          "recall": 0.5722222222222222,
+          "f1-score": 0.6505263157894736,
           "support": 540
         },
         "PROPERTY": {
-          "precision": 0.8260869565217391,
-          "recall": 0.8303341902313625,
-          "f1-score": 0.8282051282051281,
+          "precision": 0.9138755980861244,
+          "recall": 0.9820051413881749,
+          "f1-score": 0.9467162329615861,
           "support": 389
         },
         "SUSPECT": {
-          "precision": 0.542314335060449,
-          "recall": 0.6168958742632613,
-          "f1-score": 0.5772058823529412,
+          "precision": 0.6393700787401575,
+          "recall": 0.7976424361493124,
+          "f1-score": 0.7097902097902099,
           "support": 509
         },
         "TIME": {
@@ -194,68 +194,68 @@
           "support": 336
         },
         "VICTIM": {
-          "precision": 0.4108967082860386,
-          "recall": 0.6063651591289783,
-          "f1-score": 0.489851150202977,
+          "precision": 0.5324324324324324,
+          "recall": 0.6599664991624791,
+          "f1-score": 0.5893792071802543,
           "support": 597
         },
         "WEAPON": {
-          "precision": 0.9538461538461539,
-          "recall": 0.8611111111111112,
-          "f1-score": 0.9051094890510949,
+          "precision": 0.8481012658227848,
+          "recall": 0.9305555555555556,
+          "f1-score": 0.8874172185430463,
           "support": 72
         },
         "micro avg": {
-          "precision": 0.6837209302325581,
-          "recall": 0.7372116349047142,
-          "f1-score": 0.7094594594594594,
+          "precision": 0.7674418604651163,
+          "recall": 0.8164493480441324,
+          "f1-score": 0.7911874291268427,
           "support": 2991
         },
         "macro avg": {
-          "precision": 0.7892646207090181,
-          "recall": 0.7995234770270243,
-          "f1-score": 0.7900598866975672,
+          "precision": 0.8300206287182867,
+          "recall": 0.867798981809718,
+          "f1-score": 0.8449955373846821,
           "support": 2991
         },
         "weighted avg": {
-          "precision": 0.7097350739557895,
-          "recall": 0.7372116349047142,
-          "f1-score": 0.7172734724278701,
+          "precision": 0.7807278210168817,
+          "recall": 0.8164493480441324,
+          "f1-score": 0.793271156217611,
           "support": 2991
         }
       }
     }
   },
   "validation": {
-    "CRF": 0.9408766564729867,
-    "BERT": 0.7590476190476191
+    "CRF": 0.9439467622216534,
+    "BERT": 0.8537357021173035
   },
   "bert_history": [
     {
       "epoch": 1,
-      "loss": 0.3563237016834821,
-      "validation_entity_f1": 0.7662662662662664
+      "loss": 0.3646659981695157,
+      "validation_entity_f1": 0.7958313595452392
     },
     {
       "epoch": 2,
-      "loss": 0.0386223602974712,
-      "validation_entity_f1": 0.8369198859217007
+      "loss": 0.039891986706871774,
+      "validation_entity_f1": 0.8471214320270924
     },
     {
       "epoch": 3,
-      "loss": 0.017872899807136095,
-      "validation_entity_f1": 0.8511627906976744
+      "loss": 0.019677730897276462,
+      "validation_entity_f1": 0.8508878618341036
     },
     {
       "epoch": 4,
-      "loss": 0.013117645812569804,
-      "validation_entity_f1": 0.8575883575883576
+      "loss": 0.013256641810382658,
+      "validation_entity_f1": 0.8537357021173035
     },
     {
       "epoch": 5,
-      "loss": 0.010217923201894201,
-      "validation_entity_f1": 0.8591476091476091
+      "loss": 0.010857677994932554,
+      "validation_entity_f1": 0.847424684159378
     }
   ],
-  "split": "Retained V3 test subset is previously viewed; new synthetic context cases share grammar. Screenshot cases are development regressions, not a final benchmark."
+  "split": "Previously viewed synthetic test subset plus generated role/context cases sharing grammar; diagnostic evaluation, not untouched real-source validation."
 }

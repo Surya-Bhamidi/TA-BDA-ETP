@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .config import ROOT, CATEGORIES, ENTITY_LABELS, write_json
+from .annotation_schema import LABELS
 
 
 def validate_record(row):
@@ -26,7 +27,7 @@ def validate_record(row):
         start, end = entity.get("start"), entity.get("end")
         if type(start) is not int or type(end) is not int or not (previous_end <= start < end <= len(row["narrative"])):
             raise ValueError("Entity spans must be valid non-overlapping character offsets")
-        if entity.get("label") not in ENTITY_LABELS or row["narrative"][start:end] != entity.get("text"):
+        if entity.get("label") not in LABELS or row["narrative"][start:end] != entity.get("text"):
             raise ValueError("Entity label or span text is invalid")
         previous_end = end
     return {key: row[key] for key in ("report_id", "narrative", "reported_at", "district", "crime_type", "entities") if key in row}

@@ -545,11 +545,87 @@
   },
   "selection": "Validation only; final predictions after model hashes are frozen",
   "limitations": "Synthetic composite templates share grammar and vocabulary; this is not external real-world validation.",
-  "entity_revision": {
-    "version": "3.1",
-    "train_rows": 8000,
-    "validation_rows": 400,
-    "recipe": "50% existing corpus, 50% generated role/ownership/administrative contexts; CRF additionally refined for destination phrasing; unchanged eight labels and model families",
-    "evaluation_note": "Retained V3 test subset is previously viewed; new synthetic context cases share grammar. Screenshot cases are development regressions, not a final benchmark."
-  }
+  "integrity": {
+    "status": "passed",
+    "checks": [
+      "report_id",
+      "template_group",
+      "normalized_text"
+    ],
+    "splits": {
+      "train": {
+        "rows": 39528,
+        "scenario_groups": 336,
+        "ids_and_original_text_sha256": "37b8ab28d1620d89428c31a8272a2f6e48d3ca415efab462ca3928a68a30e93b"
+      },
+      "validation": {
+        "rows": 6824,
+        "scenario_groups": 64,
+        "ids_and_original_text_sha256": "c212f4c478df425ed39044a64e0692402a764a69c7fb480fff3d512f6ae0f0a6"
+      },
+      "development": {
+        "rows": 6824,
+        "scenario_groups": 64,
+        "ids_and_original_text_sha256": "0ede42c0e6aee5c763c18899a466e34206e2a37cdf2febcaa407f3aaebb83b93"
+      },
+      "test": {
+        "rows": 6824,
+        "scenario_groups": 64,
+        "ids_and_original_text_sha256": "64c8fc4d9eb493500fdfcdba5486c7004aff2795daf374ad932d4b786f10f397"
+      }
+    },
+    "scope": "Exact record/group separation; shared synthetic grammar and vocabulary remain."
+  },
+  "evaluation_scope": "Repeat evaluation on previously viewed synthetic cases. BoW, TF-IDF, BERT and CRF candidates were selected on validation. Word2Vec deployment retained its baseline after observing a diagnostic test regression. This release choice used test results; it is not an untouched final benchmark. No further training or tuning was performed.",
+  "entity_integrity": {
+    "status": "passed",
+    "checks": [
+      "report_id",
+      "template_group",
+      "normalized_text"
+    ],
+    "splits": {
+      "train": {
+        "rows": 8000,
+        "scenario_groups": 498,
+        "ids_and_original_text_sha256": "0abfa9e39848793f16ca4e68850719536648b36d2f886c94ba2aa23be90fc96b"
+      },
+      "validation": {
+        "rows": 400,
+        "scenario_groups": 118,
+        "ids_and_original_text_sha256": "3f752a744709cfd1e038269ca50995db941162c1c08cc78ba5bd5b22e487c61b"
+      },
+      "test": {
+        "rows": 600,
+        "scenario_groups": 96,
+        "ids_and_original_text_sha256": "ad8c01db8f1549dc74673ec1578780f86277a5fb254af8e4d3659386b0cd8491"
+      }
+    },
+    "scope": "Exact record/group separation; shared synthetic grammar and vocabulary remain."
+  },
+  "entity_evaluation_scope": "Previously viewed synthetic test subset plus generated role/context cases sharing grammar; diagnostic evaluation, not untouched real-source validation.",
+  "accuracy_revision": {
+    "selection": "Bounded feature/regularization and BERT schedule comparisons on validation only",
+    "training_sizes_unchanged": true,
+    "baseline": ".runtime\\accuracy-backups\\20261107-153000",
+    "selected_document_recipes": {
+      "Bag of Words": {
+        "name": "binary=True, L2=True, C=10.0",
+        "macro_f1": 0.924742072528909,
+        "accuracy": 0.92625
+      },
+      "TF-IDF": {
+        "name": "character weight=1.5, C=0.25",
+        "macro_f1": 0.9912482088090204,
+        "accuracy": 0.99125
+      },
+      "Word2Vec": {
+        "name": "size=100, window=3, sg=1, pooling=idf_max, C=3.0",
+        "macro_f1": 0.9243861552984056,
+        "accuracy": 0.92375
+      }
+    },
+    "word2vec_release_gate": "The validation-selected candidate fell from 82.17% to 75.75% accuracy on the viewed diagnostic test set. Retain the previous Word2Vec model; preserve the failed experiment; perform no further tuning."
+  },
+  "freeze_policy": "Known diagnostic test regression caused a disclosed Word2Vec deployment rollback. No further fitting or hyperparameter search. Other selected weights are unchanged."
 }

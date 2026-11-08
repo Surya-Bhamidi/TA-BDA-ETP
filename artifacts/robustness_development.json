@@ -711,7 +711,7 @@
   "v3.1": {
     "category_model": "TF-IDF",
     "entity_model": "CRF",
-    "classification_accuracy": 0.96875,
+    "classification_accuracy": 1.0,
     "cases": [
       {
         "text": "sir my moblie stoln from pocket in bus ystrday",
@@ -782,8 +782,8 @@
       {
         "text": "house break in happened last nite things taken from cupboard",
         "expected": "Burglary",
-        "prediction": "Theft",
-        "correct": false
+        "prediction": "Burglary",
+        "correct": true
       },
       {
         "text": "he beating me with rod i got hurt on head",

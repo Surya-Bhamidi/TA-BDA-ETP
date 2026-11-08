@@ -1,0 +1,66 @@
+{
+  "legacy_validation_macro_f1": 0.92702486498081,
+  "legacy_windowed_validation_macro_f1": 0.92702486498081,
+  "candidate_validation_macro_f1": 0.924646974514143,
+  "validation_choice": "legacy_windowed",
+  "candidate_directory": "C:\\Users\\bhara\\OneDrive\\Desktop\\TA AND BDA - Copy\\Final Project\\artifacts\\models\\v4_classifier",
+  "details": {
+    "history": [
+      {
+        "epoch": 1,
+        "loss": 2.00019966729482,
+        "validation_macro_f1": 0.718686555151528
+      },
+      {
+        "epoch": 2,
+        "loss": 1.1539486605326335,
+        "validation_macro_f1": 0.8483831500272363
+      },
+      {
+        "epoch": 3,
+        "loss": 0.4568598108291626,
+        "validation_macro_f1": 0.9164147903788731
+      },
+      {
+        "epoch": 4,
+        "loss": 0.2485422440767288,
+        "validation_macro_f1": 0.9243401726246496
+      },
+      {
+        "epoch": 5,
+        "loss": 0.20341923824946084,
+        "validation_macro_f1": 0.9198330229299465
+      },
+      {
+        "epoch": 6,
+        "loss": 0.19159609925746918,
+        "validation_macro_f1": 0.924646974514143
+      },
+      {
+        "epoch": 7,
+        "loss": 0.18661814558506012,
+        "validation_macro_f1": 0.9186846581504278
+      },
+      {
+        "epoch": 8,
+        "loss": 0.1849903351465861,
+        "validation_macro_f1": 0.9198932385737778
+      }
+    ],
+    "best_validation_macro_f1": 0.924646974514143,
+    "train_seconds": 486.49,
+    "architecture": "Pretrained BERT: 2 layers, 128 hidden units, 2 attention heads; all layers fine-tuned",
+    "max_tokens": 256,
+    "recipe": {
+      "windowed_full_document": true,
+      "learning_rate": 5e-05,
+      "warmup_ratio": 0.1,
+      "linear_decay": true,
+      "dropout": 0.2,
+      "label_smoothing": 0.03,
+      "epochs": 8
+    }
+  },
+  "candidate_weights_sha256": "c5bf42aee63a2b04f6e35aa002a00a58f65f5c4bbf5af7859645292ce72b9097",
+  "scope": "Validation-selected experiment on existing synthetic data; legacy test remains unchanged and is not used for selection"
+}

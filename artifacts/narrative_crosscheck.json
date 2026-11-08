@@ -1,0 +1,1210 @@
+{
+  "scope": "Explicit hand-written development audit; not an independent final benchmark",
+  "summary": {
+    "cases": 17,
+    "categories_scored": 14,
+    "category_correct": 14,
+    "entities_scored": 17,
+    "entity_exact_cases": 17,
+    "all_requirements_passed": 17
+  },
+  "cases": [
+    {
+      "id": "comma_witness",
+      "category": "Assault",
+      "text": "Amir Khan hit Lina Chen with a rod near Nairobi, Dev saw it.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Amir Khan",
+          "start": 0,
+          "end": 9
+        },
+        {
+          "label": "VICTIM",
+          "text": "Lina Chen",
+          "start": 14,
+          "end": 23
+        },
+        {
+          "label": "WEAPON",
+          "text": "rod",
+          "start": 31,
+          "end": 34
+        },
+        {
+          "label": "LOCATION",
+          "text": "Nairobi",
+          "start": 40,
+          "end": 47
+        },
+        {
+          "label": "WITNESS",
+          "text": "Dev",
+          "start": 49,
+          "end": 52
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 9,
+          "label": "SUSPECT",
+          "text": "Amir Khan",
+          "confidence": 0.9986356415096496,
+          "assertion": "mentioned",
+          "normalized": "amir khan"
+        },
+        {
+          "start": 14,
+          "end": 23,
+          "label": "VICTIM",
+          "text": "Lina Chen",
+          "confidence": 0.9995564889410979,
+          "assertion": "mentioned",
+          "normalized": "lina chen"
+        },
+        {
+          "text": "rod",
+          "start": 31,
+          "end": 34,
+          "label": "WEAPON",
+          "confidence": null,
+          "extraction_method": "syntactic role context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "rod"
+        },
+        {
+          "start": 40,
+          "end": 47,
+          "label": "LOCATION",
+          "text": "Nairobi",
+          "confidence": 0.9989931878085795,
+          "assertion": "mentioned",
+          "normalized": "nairobi"
+        },
+        {
+          "text": "Dev",
+          "start": 49,
+          "end": 52,
+          "label": "WITNESS",
+          "confidence": null,
+          "extraction_method": "witness clause context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "dev"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "semicolon_witness",
+      "category": "Assault",
+      "text": "Ravi hit Asha near Pune; Neha had seen it.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Ravi",
+          "start": 0,
+          "end": 4
+        },
+        {
+          "label": "VICTIM",
+          "text": "Asha",
+          "start": 9,
+          "end": 13
+        },
+        {
+          "label": "LOCATION",
+          "text": "Pune",
+          "start": 19,
+          "end": 23
+        },
+        {
+          "label": "WITNESS",
+          "text": "Neha",
+          "start": 25,
+          "end": 29
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 4,
+          "label": "SUSPECT",
+          "text": "Ravi",
+          "confidence": 0.9960398863423949,
+          "assertion": "mentioned",
+          "normalized": "ravi"
+        },
+        {
+          "start": 9,
+          "end": 13,
+          "label": "VICTIM",
+          "text": "Asha",
+          "confidence": 0.9115922930401005,
+          "assertion": "mentioned",
+          "normalized": "asha"
+        },
+        {
+          "text": "Pune",
+          "start": 19,
+          "end": 23,
+          "label": "LOCATION",
+          "confidence": null,
+          "extraction_method": "witness clause boundary repair",
+          "previous_labels": [
+            "LOCATION"
+          ],
+          "assertion": "mentioned",
+          "normalized": "pune"
+        },
+        {
+          "text": "Neha",
+          "start": 25,
+          "end": 29,
+          "label": "WITNESS",
+          "confidence": null,
+          "extraction_method": "witness clause context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "neha"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "witness_newline",
+      "category": "Assault",
+      "text": "Ravi hit Asha near Pune.\nNeha witnessed it.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Ravi",
+          "start": 0,
+          "end": 4
+        },
+        {
+          "label": "VICTIM",
+          "text": "Asha",
+          "start": 9,
+          "end": 13
+        },
+        {
+          "label": "LOCATION",
+          "text": "Pune",
+          "start": 19,
+          "end": 23
+        },
+        {
+          "label": "WITNESS",
+          "text": "Neha",
+          "start": 25,
+          "end": 29
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 4,
+          "label": "SUSPECT",
+          "text": "Ravi",
+          "confidence": 0.9960166417797149,
+          "assertion": "mentioned",
+          "normalized": "ravi"
+        },
+        {
+          "start": 9,
+          "end": 13,
+          "label": "VICTIM",
+          "text": "Asha",
+          "confidence": 0.877936771659065,
+          "assertion": "mentioned",
+          "normalized": "asha"
+        },
+        {
+          "start": 19,
+          "end": 23,
+          "label": "LOCATION",
+          "text": "Pune",
+          "confidence": 0.7668126061573803,
+          "assertion": "mentioned",
+          "normalized": "pune"
+        },
+        {
+          "text": "Neha",
+          "start": 25,
+          "end": 29,
+          "label": "WITNESS",
+          "confidence": null,
+          "extraction_method": "witness clause context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "neha"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "witness_multiword",
+      "category": "Assault",
+      "text": "Ravi hit Asha near Pune, Neha Sharma has seen it.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Ravi",
+          "start": 0,
+          "end": 4
+        },
+        {
+          "label": "VICTIM",
+          "text": "Asha",
+          "start": 9,
+          "end": 13
+        },
+        {
+          "label": "LOCATION",
+          "text": "Pune",
+          "start": 19,
+          "end": 23
+        },
+        {
+          "label": "WITNESS",
+          "text": "Neha Sharma",
+          "start": 25,
+          "end": 36
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 4,
+          "label": "SUSPECT",
+          "text": "Ravi",
+          "confidence": 0.9960113064042493,
+          "assertion": "mentioned",
+          "normalized": "ravi"
+        },
+        {
+          "start": 9,
+          "end": 13,
+          "label": "VICTIM",
+          "text": "Asha",
+          "confidence": 0.7302957179110019,
+          "assertion": "mentioned",
+          "normalized": "asha"
+        },
+        {
+          "start": 19,
+          "end": 23,
+          "label": "LOCATION",
+          "text": "Pune",
+          "confidence": 0.8303603585577963,
+          "assertion": "mentioned",
+          "normalized": "pune"
+        },
+        {
+          "text": "Neha Sharma",
+          "start": 25,
+          "end": 36,
+          "label": "WITNESS",
+          "confidence": null,
+          "extraction_method": "witness clause context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "neha sharma"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "witness_first",
+      "category": "Assault",
+      "text": "Neha saw Ravi hit Asha near Pune.",
+      "entities": [
+        {
+          "label": "WITNESS",
+          "text": "Neha",
+          "start": 0,
+          "end": 4
+        },
+        {
+          "label": "SUSPECT",
+          "text": "Ravi",
+          "start": 9,
+          "end": 13
+        },
+        {
+          "label": "VICTIM",
+          "text": "Asha",
+          "start": 18,
+          "end": 22
+        },
+        {
+          "label": "LOCATION",
+          "text": "Pune",
+          "start": 28,
+          "end": 32
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 9,
+          "end": 13,
+          "label": "SUSPECT",
+          "text": "Ravi",
+          "confidence": 0.6456597725913393,
+          "assertion": "mentioned",
+          "normalized": "ravi"
+        },
+        {
+          "start": 18,
+          "end": 22,
+          "label": "VICTIM",
+          "text": "Asha",
+          "confidence": 0.6831022341883399,
+          "assertion": "mentioned",
+          "normalized": "asha"
+        },
+        {
+          "start": 28,
+          "end": 32,
+          "label": "LOCATION",
+          "text": "Pune",
+          "confidence": 0.7371761041739385,
+          "assertion": "mentioned",
+          "normalized": "pune"
+        },
+        {
+          "text": "Neha",
+          "start": 0,
+          "end": 4,
+          "label": "WITNESS",
+          "confidence": null,
+          "extraction_method": "witness clause context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "neha"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "witness_title",
+      "category": "Assault",
+      "text": "Ravi hit Asha near Pune. Witness Neha reported the incident.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Ravi",
+          "start": 0,
+          "end": 4
+        },
+        {
+          "label": "VICTIM",
+          "text": "Asha",
+          "start": 9,
+          "end": 13
+        },
+        {
+          "label": "LOCATION",
+          "text": "Pune",
+          "start": 19,
+          "end": 23
+        },
+        {
+          "label": "WITNESS",
+          "text": "Neha",
+          "start": 33,
+          "end": 37
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 4,
+          "label": "SUSPECT",
+          "text": "Ravi",
+          "confidence": 0.9960153277256079,
+          "assertion": "mentioned",
+          "normalized": "ravi"
+        },
+        {
+          "start": 9,
+          "end": 13,
+          "label": "VICTIM",
+          "text": "Asha",
+          "confidence": 0.8623442641850563,
+          "assertion": "mentioned",
+          "normalized": "asha"
+        },
+        {
+          "start": 19,
+          "end": 23,
+          "label": "LOCATION",
+          "text": "Pune",
+          "confidence": 0.7201436719052953,
+          "assertion": "mentioned",
+          "normalized": "pune"
+        },
+        {
+          "text": "Neha",
+          "start": 33,
+          "end": 37,
+          "label": "WITNESS",
+          "confidence": null,
+          "extraction_method": "witness clause context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "neha"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "knife_mobile",
+      "category": "Robbery",
+      "text": "Two men showed a knife and took my mobile near the bus stand, Rahul saw it.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Two men",
+          "start": 0,
+          "end": 7
+        },
+        {
+          "label": "WEAPON",
+          "text": "knife",
+          "start": 17,
+          "end": 22
+        },
+        {
+          "label": "PROPERTY",
+          "text": "mobile",
+          "start": 35,
+          "end": 41
+        },
+        {
+          "label": "LOCATION",
+          "text": "bus stand",
+          "start": 51,
+          "end": 60
+        },
+        {
+          "label": "WITNESS",
+          "text": "Rahul",
+          "start": 62,
+          "end": 67
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Robbery",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 7,
+          "label": "SUSPECT",
+          "text": "Two men",
+          "confidence": 0.9090175169036983,
+          "assertion": "mentioned",
+          "normalized": "two men"
+        },
+        {
+          "start": 17,
+          "end": 22,
+          "label": "WEAPON",
+          "text": "knife",
+          "confidence": 0.9996477576051109,
+          "assertion": "mentioned",
+          "normalized": "knife"
+        },
+        {
+          "start": 35,
+          "end": 41,
+          "label": "PROPERTY",
+          "text": "mobile",
+          "confidence": 0.9987228032601968,
+          "assertion": "mentioned",
+          "normalized": "mobile"
+        },
+        {
+          "text": "bus stand",
+          "start": 51,
+          "end": 60,
+          "label": "LOCATION",
+          "confidence": null,
+          "extraction_method": "spatial complement context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "bus stand"
+        },
+        {
+          "text": "Rahul",
+          "start": 62,
+          "end": 67,
+          "label": "WITNESS",
+          "confidence": null,
+          "extraction_method": "witness clause context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "rahul"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "camera_stolen",
+      "category": "Theft",
+      "text": "Amir stole Lina's camera near Delhi.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Amir",
+          "start": 0,
+          "end": 4
+        },
+        {
+          "label": "VICTIM",
+          "text": "Lina",
+          "start": 11,
+          "end": 15
+        },
+        {
+          "label": "PROPERTY",
+          "text": "camera",
+          "start": 18,
+          "end": 24
+        },
+        {
+          "label": "LOCATION",
+          "text": "Delhi",
+          "start": 30,
+          "end": 35
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Theft",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 4,
+          "label": "SUSPECT",
+          "text": "Amir",
+          "confidence": 0.9847662144927969,
+          "assertion": "mentioned",
+          "normalized": "amir"
+        },
+        {
+          "start": 11,
+          "end": 15,
+          "label": "VICTIM",
+          "text": "Lina",
+          "confidence": 0.9998574031028615,
+          "assertion": "mentioned",
+          "normalized": "lina"
+        },
+        {
+          "start": 18,
+          "end": 24,
+          "label": "PROPERTY",
+          "text": "camera",
+          "confidence": 0.9878638820245189,
+          "assertion": "mentioned",
+          "normalized": "camera"
+        },
+        {
+          "start": 30,
+          "end": 35,
+          "label": "LOCATION",
+          "text": "Delhi",
+          "confidence": 0.9994359795119729,
+          "assertion": "mentioned",
+          "normalized": "delhi"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "camera_evidence",
+      "category": null,
+      "text": "Camera recordings were obtained by police.",
+      "entities": [
+        {
+          "label": "EVIDENCE",
+          "text": "Camera recordings",
+          "start": 0,
+          "end": 17
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": true,
+      "actual": [
+        {
+          "start": 0,
+          "end": 17,
+          "text": "Camera recordings",
+          "label": "EVIDENCE",
+          "confidence": null,
+          "extraction_method": "media evidence context check",
+          "previous_labels": [
+            "VICTIM"
+          ],
+          "assertion": "mentioned",
+          "normalized": "camera recordings"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "dashcam_evidence",
+      "category": null,
+      "text": "Dashcam footage was examined by investigators.",
+      "entities": [
+        {
+          "label": "EVIDENCE",
+          "text": "Dashcam footage",
+          "start": 0,
+          "end": 15
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Theft",
+      "review_required": true,
+      "actual": [
+        {
+          "start": 0,
+          "end": 15,
+          "text": "Dashcam footage",
+          "label": "EVIDENCE",
+          "confidence": null,
+          "extraction_method": "media evidence context check",
+          "previous_labels": [
+            "VICTIM"
+          ],
+          "assertion": "mentioned",
+          "normalized": "dashcam footage"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "screenshot_evidence",
+      "category": null,
+      "text": "Screenshots were preserved.",
+      "entities": [
+        {
+          "label": "EVIDENCE",
+          "text": "Screenshots",
+          "start": 0,
+          "end": 11
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Vandalism",
+      "review_required": true,
+      "actual": [
+        {
+          "start": 0,
+          "end": 11,
+          "text": "Screenshots",
+          "label": "EVIDENCE",
+          "confidence": null,
+          "extraction_method": "media evidence context check",
+          "previous_labels": [
+            "SUSPECT"
+          ],
+          "assertion": "mentioned",
+          "normalized": "screenshots"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "passive_unseen_names",
+      "category": "Assault",
+      "text": "Lina Chen was hit by Amir Khan with a rod near Nairobi.",
+      "entities": [
+        {
+          "label": "VICTIM",
+          "text": "Lina Chen",
+          "start": 0,
+          "end": 9
+        },
+        {
+          "label": "SUSPECT",
+          "text": "Amir Khan",
+          "start": 21,
+          "end": 30
+        },
+        {
+          "label": "WEAPON",
+          "text": "rod",
+          "start": 38,
+          "end": 41
+        },
+        {
+          "label": "LOCATION",
+          "text": "Nairobi",
+          "start": 47,
+          "end": 54
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 9,
+          "label": "VICTIM",
+          "text": "Lina Chen",
+          "confidence": 0.9947315778794703,
+          "assertion": "mentioned",
+          "normalized": "lina chen"
+        },
+        {
+          "start": 21,
+          "end": 30,
+          "label": "SUSPECT",
+          "text": "Amir Khan",
+          "confidence": 0.9965823634806902,
+          "assertion": "mentioned",
+          "normalized": "amir khan"
+        },
+        {
+          "text": "rod",
+          "start": 38,
+          "end": 41,
+          "label": "WEAPON",
+          "confidence": null,
+          "extraction_method": "syntactic role context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "rod"
+        },
+        {
+          "start": 47,
+          "end": 54,
+          "label": "LOCATION",
+          "text": "Nairobi",
+          "confidence": 0.999529747822918,
+          "assertion": "mentioned",
+          "normalized": "nairobi"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "lowercase_passive",
+      "category": "Assault",
+      "text": "asha was hit by ravi with a stick near pune.",
+      "entities": [
+        {
+          "label": "VICTIM",
+          "text": "asha",
+          "start": 0,
+          "end": 4
+        },
+        {
+          "label": "SUSPECT",
+          "text": "ravi",
+          "start": 16,
+          "end": 20
+        },
+        {
+          "label": "WEAPON",
+          "text": "stick",
+          "start": 28,
+          "end": 33
+        },
+        {
+          "label": "LOCATION",
+          "text": "pune",
+          "start": 39,
+          "end": 43
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 4,
+          "label": "VICTIM",
+          "text": "asha",
+          "confidence": 0.9365031577677164,
+          "assertion": "mentioned",
+          "normalized": "asha"
+        },
+        {
+          "start": 16,
+          "end": 20,
+          "label": "SUSPECT",
+          "text": "ravi",
+          "confidence": 0.963303096215494,
+          "assertion": "mentioned",
+          "normalized": "ravi"
+        },
+        {
+          "start": 28,
+          "end": 33,
+          "label": "WEAPON",
+          "text": "stick",
+          "confidence": 0.9978647676103846,
+          "assertion": "mentioned",
+          "normalized": "stick"
+        },
+        {
+          "text": "pune",
+          "start": 39,
+          "end": 43,
+          "label": "LOCATION",
+          "confidence": null,
+          "extraction_method": "spatial complement context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "pune"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "ownership_new_names",
+      "category": "Theft",
+      "text": "Amir Khan stole the wallet of Lina Chen.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Amir Khan",
+          "start": 0,
+          "end": 9
+        },
+        {
+          "label": "PROPERTY",
+          "text": "wallet",
+          "start": 20,
+          "end": 26
+        },
+        {
+          "label": "VICTIM",
+          "text": "Lina Chen",
+          "start": 30,
+          "end": 39
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Theft",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 9,
+          "label": "SUSPECT",
+          "text": "Amir Khan",
+          "confidence": 0.9991435979189395,
+          "assertion": "mentioned",
+          "normalized": "amir khan"
+        },
+        {
+          "start": 20,
+          "end": 26,
+          "label": "PROPERTY",
+          "text": "wallet",
+          "confidence": 0.9992802463642909,
+          "assertion": "mentioned",
+          "normalized": "wallet"
+        },
+        {
+          "start": 30,
+          "end": 39,
+          "label": "VICTIM",
+          "text": "Lina Chen",
+          "confidence": 0.8619978074893978,
+          "assertion": "mentioned",
+          "normalized": "lina chen"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "passive_ownership",
+      "category": "Theft",
+      "text": "Lina's wallet was stolen by Amir.",
+      "entities": [
+        {
+          "label": "VICTIM",
+          "text": "Lina",
+          "start": 0,
+          "end": 4
+        },
+        {
+          "label": "PROPERTY",
+          "text": "wallet",
+          "start": 7,
+          "end": 13
+        },
+        {
+          "label": "SUSPECT",
+          "text": "Amir",
+          "start": 28,
+          "end": 32
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Theft",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 4,
+          "label": "VICTIM",
+          "text": "Lina",
+          "confidence": 0.9994108109981371,
+          "assertion": "mentioned",
+          "normalized": "lina"
+        },
+        {
+          "start": 7,
+          "end": 13,
+          "label": "PROPERTY",
+          "text": "wallet",
+          "confidence": 0.9996190512181888,
+          "assertion": "mentioned",
+          "normalized": "wallet"
+        },
+        {
+          "start": 28,
+          "end": 32,
+          "label": "SUSPECT",
+          "text": "Amir",
+          "confidence": 0.6599619523389328,
+          "assertion": "mentioned",
+          "normalized": "amir"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "damage_property",
+      "category": "Vandalism",
+      "text": "Ravi smashed Asha's bicycle near Pune.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Ravi",
+          "start": 0,
+          "end": 4
+        },
+        {
+          "label": "VICTIM",
+          "text": "Asha",
+          "start": 13,
+          "end": 17
+        },
+        {
+          "label": "PROPERTY",
+          "text": "bicycle",
+          "start": 20,
+          "end": 27
+        },
+        {
+          "label": "LOCATION",
+          "text": "Pune",
+          "start": 33,
+          "end": 37
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Vandalism",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 4,
+          "label": "SUSPECT",
+          "text": "Ravi",
+          "confidence": 0.933973907028401,
+          "assertion": "mentioned",
+          "normalized": "ravi"
+        },
+        {
+          "start": 13,
+          "end": 17,
+          "label": "VICTIM",
+          "text": "Asha",
+          "confidence": 0.9892778854234718,
+          "assertion": "mentioned",
+          "normalized": "asha"
+        },
+        {
+          "start": 20,
+          "end": 27,
+          "label": "PROPERTY",
+          "text": "bicycle",
+          "confidence": 0.807658239780515,
+          "assertion": "mentioned",
+          "normalized": "bicycle"
+        },
+        {
+          "start": 33,
+          "end": 37,
+          "label": "LOCATION",
+          "text": "Pune",
+          "confidence": 0.6355974722265213,
+          "assertion": "mentioned",
+          "normalized": "pune"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "titled_observer",
+      "category": "Assault",
+      "text": "Witness Neha saw Ravi hit Asha near Pune.",
+      "entities": [
+        {
+          "label": "WITNESS",
+          "text": "Neha",
+          "start": 8,
+          "end": 12
+        },
+        {
+          "label": "SUSPECT",
+          "text": "Ravi",
+          "start": 17,
+          "end": 21
+        },
+        {
+          "label": "VICTIM",
+          "text": "Asha",
+          "start": 26,
+          "end": 30
+        },
+        {
+          "label": "LOCATION",
+          "text": "Pune",
+          "start": 36,
+          "end": 40
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 17,
+          "end": 21,
+          "label": "SUSPECT",
+          "text": "Ravi",
+          "confidence": 0.9283069769625649,
+          "assertion": "mentioned",
+          "normalized": "ravi"
+        },
+        {
+          "start": 26,
+          "end": 30,
+          "label": "VICTIM",
+          "text": "Asha",
+          "confidence": 0.6870613607441884,
+          "assertion": "mentioned",
+          "normalized": "asha"
+        },
+        {
+          "start": 36,
+          "end": 40,
+          "label": "LOCATION",
+          "text": "Pune",
+          "confidence": 0.7371754781008765,
+          "assertion": "mentioned",
+          "normalized": "pune"
+        },
+        {
+          "text": "Neha",
+          "start": 8,
+          "end": 12,
+          "label": "WITNESS",
+          "confidence": null,
+          "extraction_method": "witness clause context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "neha"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    }
+  ]
+}

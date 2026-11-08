@@ -1,0 +1,15 @@
+{
+  "reports": 60000,
+  "chunks": 61300,
+  "window_subwords": 128,
+  "overlap_subwords": 32,
+  "ranking": "Maximum chunk cosine per report, then existing hybrid rank fusion",
+  "source_ids_sha256": "754ac27fa2ed8a93518edd6052c9a9ce8e4e78acedfbcdd27d0e647203dfa259",
+  "files": {
+    "semantic_chunk_embeddings.npy": "c9388a8d40e4ca8b2071d903ac75da1ef203b784550e6e94f5c0f9f9aa02bb20",
+    "semantic_chunk_rows.npy": "abe8e44d3a657ce6380134c7528b18e43a3d8ea29088003c75c6415879bb8e74",
+    "semantic_chunk_offsets.npy": "686189d19ad6f902b42de029b32ae9353e53d68340825fa777194bd8a911a8b7"
+  },
+  "scope": "Full-document coverage; quality requires human relevance judgments",
+  "source_narratives_sha256": "b6436dbfc9119eb79cca87c1f6e817214d98a2cbe4891cb20d03125a8c2bfeb8"
+}

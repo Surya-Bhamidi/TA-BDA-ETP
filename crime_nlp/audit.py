@@ -5,6 +5,13 @@ from pathlib import Path
 from .config import ROOT, RAW, PROCESSED, ARTIFACTS, MODELS, write_json
 
 
+def corpus_fingerprint(ids, texts):
+    digest = hashlib.sha256()
+    for identifier, text in zip(ids, texts):
+        digest.update((str(identifier) + "\0" + text + "\0").encode("utf-8"))
+    return digest.hexdigest()
+
+
 def digest_path(path):
     path = Path(path)
     if not path.exists():

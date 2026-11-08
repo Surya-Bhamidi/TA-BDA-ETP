@@ -1,6 +1,11 @@
 {
-  "evaluated_at": "2026-09-29T04:08:56.021976+00:00",
-  "frozen_at": "2026-09-29T04:08:54.111355+00:00",
+  "evaluated_at": "2026-11-07T10:24:44.355614+00:00",
+  "frozen_at": "2026-11-07T10:24:44.083942+00:00",
   "selected_ner": "CRF",
-  "note": "Retained V3 test subset is previously viewed; new synthetic context cases share grammar. Screenshot cases are development regressions, not a final benchmark."
+  "prediction_files": {
+    "evaluation_predictions.parquet": "2e82c4647e66f6d21b5029a717f9410bfa8a06de027a606481670870e69e3cea",
+    "entity_evaluation_predictions.jsonl": "c76a6f90869b564f58105f98eed8c7420df9df6e96c7c226088fb212e1c3b516"
+  },
+  "note": "Repeat evaluation on previously viewed synthetic cases. BoW, TF-IDF, BERT and CRF candidates were selected on validation. Word2Vec deployment retained its baseline after observing a diagnostic test regression. This release choice used test results; it is not an untouched final benchmark. No further training or tuning was performed.",
+  "prediction_reuse": "Other models and their existing diagnostic predictions are unchanged; restored Word2Vec predictions were recomputed and matched the retained baseline."
 }

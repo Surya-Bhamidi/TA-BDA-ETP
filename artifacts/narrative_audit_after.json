@@ -1,0 +1,2470 @@
+{
+  "scope": "Explicit hand-written development audit; not an independent final benchmark",
+  "summary": {
+    "cases": 38,
+    "categories_scored": 31,
+    "category_correct": 31,
+    "entities_scored": 33,
+    "entity_exact_cases": 33,
+    "all_requirements_passed": 38
+  },
+  "cases": [
+    {
+      "id": "user_international_witness",
+      "category": "Assault",
+      "text": "José García hit Wei Zhang with iron rod near Nairobi, Suresh had seen it",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "José García",
+          "start": 0,
+          "end": 11
+        },
+        {
+          "label": "VICTIM",
+          "text": "Wei Zhang",
+          "start": 16,
+          "end": 25
+        },
+        {
+          "label": "WEAPON",
+          "text": "iron rod",
+          "start": 31,
+          "end": 39
+        },
+        {
+          "label": "LOCATION",
+          "text": "Nairobi",
+          "start": 45,
+          "end": 52
+        },
+        {
+          "label": "WITNESS",
+          "text": "Suresh",
+          "start": 54,
+          "end": 60
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 11,
+          "label": "SUSPECT",
+          "text": "José García",
+          "confidence": 0.9997105580023546,
+          "assertion": "mentioned",
+          "normalized": "josé garcía"
+        },
+        {
+          "start": 16,
+          "end": 25,
+          "label": "VICTIM",
+          "text": "Wei Zhang",
+          "confidence": 0.999799596017559,
+          "assertion": "mentioned",
+          "normalized": "wei zhang"
+        },
+        {
+          "start": 31,
+          "end": 39,
+          "label": "WEAPON",
+          "text": "iron rod",
+          "confidence": 0.9936100954476003,
+          "assertion": "mentioned",
+          "normalized": "iron rod"
+        },
+        {
+          "text": "Nairobi",
+          "start": 45,
+          "end": 52,
+          "label": "LOCATION",
+          "confidence": null,
+          "extraction_method": "witness clause boundary repair",
+          "previous_labels": [
+            "LOCATION"
+          ],
+          "assertion": "mentioned",
+          "normalized": "nairobi"
+        },
+        {
+          "text": "Suresh",
+          "start": 54,
+          "end": 60,
+          "label": "WITNESS",
+          "confidence": null,
+          "extraction_method": "witness clause context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "suresh"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "user_informal_witness",
+      "category": "Robbery",
+      "text": "sir ystrday two fellows showed knife and took my moblie near bus stand, rahul has seen it",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "two fellows",
+          "start": 12,
+          "end": 23
+        },
+        {
+          "label": "WEAPON",
+          "text": "knife",
+          "start": 31,
+          "end": 36
+        },
+        {
+          "label": "PROPERTY",
+          "text": "moblie",
+          "start": 49,
+          "end": 55
+        },
+        {
+          "label": "LOCATION",
+          "text": "bus stand",
+          "start": 61,
+          "end": 70
+        },
+        {
+          "label": "WITNESS",
+          "text": "rahul",
+          "start": 72,
+          "end": 77
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Robbery",
+      "review_required": false,
+      "actual": [
+        {
+          "text": "two fellows",
+          "start": 12,
+          "end": 23,
+          "label": "SUSPECT",
+          "confidence": null,
+          "extraction_method": "syntactic role context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "two fellows"
+        },
+        {
+          "start": 31,
+          "end": 36,
+          "label": "WEAPON",
+          "text": "knife",
+          "confidence": 0.9982435073670031,
+          "assertion": "mentioned",
+          "normalized": "knife"
+        },
+        {
+          "start": 49,
+          "end": 55,
+          "label": "PROPERTY",
+          "text": "moblie",
+          "confidence": 0.9988855351989105,
+          "assertion": "mentioned",
+          "normalized": "moblie"
+        },
+        {
+          "text": "bus stand",
+          "start": 61,
+          "end": 70,
+          "label": "LOCATION",
+          "confidence": null,
+          "extraction_method": "witness clause boundary repair",
+          "previous_labels": [
+            "LOCATION"
+          ],
+          "assertion": "mentioned",
+          "normalized": "bus stand"
+        },
+        {
+          "text": "rahul",
+          "start": 72,
+          "end": 77,
+          "label": "WITNESS",
+          "confidence": null,
+          "extraction_method": "witness clause context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "rahul"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "witness_full_stop",
+      "category": "Assault",
+      "text": "Arjun hit Meera with a stick near Delhi. Rahul saw the incident.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Arjun",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "label": "VICTIM",
+          "text": "Meera",
+          "start": 10,
+          "end": 15
+        },
+        {
+          "label": "WEAPON",
+          "text": "stick",
+          "start": 23,
+          "end": 28
+        },
+        {
+          "label": "LOCATION",
+          "text": "Delhi",
+          "start": 34,
+          "end": 39
+        },
+        {
+          "label": "WITNESS",
+          "text": "Rahul",
+          "start": 41,
+          "end": 46
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 5,
+          "label": "SUSPECT",
+          "text": "Arjun",
+          "confidence": 0.9936588664168353,
+          "assertion": "mentioned",
+          "normalized": "arjun"
+        },
+        {
+          "start": 10,
+          "end": 15,
+          "label": "VICTIM",
+          "text": "Meera",
+          "confidence": 0.9984791234807509,
+          "assertion": "mentioned",
+          "normalized": "meera"
+        },
+        {
+          "start": 23,
+          "end": 28,
+          "label": "WEAPON",
+          "text": "stick",
+          "confidence": 0.9962082084576201,
+          "assertion": "mentioned",
+          "normalized": "stick"
+        },
+        {
+          "start": 34,
+          "end": 39,
+          "label": "LOCATION",
+          "text": "Delhi",
+          "confidence": 0.9992467033761679,
+          "assertion": "mentioned",
+          "normalized": "delhi"
+        },
+        {
+          "text": "Rahul",
+          "start": 41,
+          "end": 46,
+          "label": "WITNESS",
+          "confidence": null,
+          "extraction_method": "witness clause context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "rahul"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "witness_lowercase",
+      "category": "Assault",
+      "text": "arjun punched meera near Pune, suresh witnessed the attack.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "arjun",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "label": "VICTIM",
+          "text": "meera",
+          "start": 14,
+          "end": 19
+        },
+        {
+          "label": "LOCATION",
+          "text": "Pune",
+          "start": 25,
+          "end": 29
+        },
+        {
+          "label": "WITNESS",
+          "text": "suresh",
+          "start": 31,
+          "end": 37
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 5,
+          "label": "SUSPECT",
+          "text": "arjun",
+          "confidence": 0.5042605331111552,
+          "assertion": "mentioned",
+          "normalized": "arjun"
+        },
+        {
+          "text": "meera",
+          "start": 14,
+          "end": 19,
+          "label": "VICTIM",
+          "confidence": null,
+          "extraction_method": "syntactic role context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "meera"
+        },
+        {
+          "start": 25,
+          "end": 29,
+          "label": "LOCATION",
+          "text": "Pune",
+          "confidence": 0.8653767337868311,
+          "assertion": "mentioned",
+          "normalized": "pune"
+        },
+        {
+          "text": "suresh",
+          "start": 31,
+          "end": 37,
+          "label": "WITNESS",
+          "confidence": null,
+          "extraction_method": "witness clause context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "suresh"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "witness_uppercase",
+      "category": "Robbery",
+      "text": "TWO MEN threatened me with a KNIFE and took my PHONE near BUS STAND, RAHUL HAS SEEN IT",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "TWO MEN",
+          "start": 0,
+          "end": 7
+        },
+        {
+          "label": "WEAPON",
+          "text": "KNIFE",
+          "start": 29,
+          "end": 34
+        },
+        {
+          "label": "PROPERTY",
+          "text": "PHONE",
+          "start": 47,
+          "end": 52
+        },
+        {
+          "label": "LOCATION",
+          "text": "BUS STAND",
+          "start": 58,
+          "end": 67
+        },
+        {
+          "label": "WITNESS",
+          "text": "RAHUL",
+          "start": 69,
+          "end": 74
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Robbery",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 7,
+          "label": "SUSPECT",
+          "text": "TWO MEN",
+          "confidence": 0.9664909685731446,
+          "assertion": "mentioned",
+          "normalized": "two men"
+        },
+        {
+          "start": 29,
+          "end": 34,
+          "label": "WEAPON",
+          "text": "KNIFE",
+          "confidence": 0.9996145219115649,
+          "assertion": "mentioned",
+          "normalized": "knife"
+        },
+        {
+          "start": 47,
+          "end": 52,
+          "label": "PROPERTY",
+          "text": "PHONE",
+          "confidence": 0.9983574333881302,
+          "assertion": "mentioned",
+          "normalized": "phone"
+        },
+        {
+          "text": "BUS STAND",
+          "start": 58,
+          "end": 67,
+          "label": "LOCATION",
+          "confidence": null,
+          "extraction_method": "witness clause boundary repair",
+          "previous_labels": [
+            "LOCATION"
+          ],
+          "assertion": "mentioned",
+          "normalized": "bus stand"
+        },
+        {
+          "text": "RAHUL",
+          "start": 69,
+          "end": 74,
+          "label": "WITNESS",
+          "confidence": null,
+          "extraction_method": "witness clause context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "rahul"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "witness_explicit",
+      "category": "Assault",
+      "text": "Kiran attacked Leena near Surat. Witness Nikhil told the police what happened.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Kiran",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "label": "VICTIM",
+          "text": "Leena",
+          "start": 15,
+          "end": 20
+        },
+        {
+          "label": "LOCATION",
+          "text": "Surat",
+          "start": 26,
+          "end": 31
+        },
+        {
+          "label": "WITNESS",
+          "text": "Nikhil",
+          "start": 41,
+          "end": 47
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 5,
+          "label": "SUSPECT",
+          "text": "Kiran",
+          "confidence": 0.988627322323876,
+          "assertion": "mentioned",
+          "normalized": "kiran"
+        },
+        {
+          "start": 15,
+          "end": 20,
+          "label": "VICTIM",
+          "text": "Leena",
+          "confidence": 0.9605961484648604,
+          "assertion": "mentioned",
+          "normalized": "leena"
+        },
+        {
+          "text": "Surat",
+          "start": 26,
+          "end": 31,
+          "label": "LOCATION",
+          "confidence": null,
+          "extraction_method": "spatial complement context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "surat"
+        },
+        {
+          "text": "Nikhil",
+          "start": 41,
+          "end": 47,
+          "label": "WITNESS",
+          "confidence": null,
+          "extraction_method": "witness clause context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "nikhil"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "passive_roles",
+      "category": "Assault",
+      "text": "Meera was hit by Arjun with a stick near Mumbai.",
+      "entities": [
+        {
+          "label": "VICTIM",
+          "text": "Meera",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "label": "SUSPECT",
+          "text": "Arjun",
+          "start": 17,
+          "end": 22
+        },
+        {
+          "label": "WEAPON",
+          "text": "stick",
+          "start": 30,
+          "end": 35
+        },
+        {
+          "label": "LOCATION",
+          "text": "Mumbai",
+          "start": 41,
+          "end": 47
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 5,
+          "label": "VICTIM",
+          "text": "Meera",
+          "confidence": 0.966015798826459,
+          "assertion": "mentioned",
+          "normalized": "meera"
+        },
+        {
+          "start": 17,
+          "end": 22,
+          "label": "SUSPECT",
+          "text": "Arjun",
+          "confidence": 0.9820819096590728,
+          "assertion": "mentioned",
+          "normalized": "arjun"
+        },
+        {
+          "start": 30,
+          "end": 35,
+          "label": "WEAPON",
+          "text": "stick",
+          "confidence": 0.9981086524198021,
+          "assertion": "mentioned",
+          "normalized": "stick"
+        },
+        {
+          "start": 41,
+          "end": 47,
+          "label": "LOCATION",
+          "text": "Mumbai",
+          "confidence": 0.999768916428168,
+          "assertion": "mentioned",
+          "normalized": "mumbai"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "passive_unknown_names",
+      "category": "Assault",
+      "text": "Tenzin Dorje was beaten by Chiamaka Okafor near Nairobi.",
+      "entities": [
+        {
+          "label": "VICTIM",
+          "text": "Tenzin Dorje",
+          "start": 0,
+          "end": 12
+        },
+        {
+          "label": "SUSPECT",
+          "text": "Chiamaka Okafor",
+          "start": 27,
+          "end": 42
+        },
+        {
+          "label": "LOCATION",
+          "text": "Nairobi",
+          "start": 48,
+          "end": 55
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 12,
+          "label": "VICTIM",
+          "text": "Tenzin Dorje",
+          "confidence": 0.9884195360642742,
+          "assertion": "mentioned",
+          "normalized": "tenzin dorje"
+        },
+        {
+          "start": 27,
+          "end": 42,
+          "label": "SUSPECT",
+          "text": "Chiamaka Okafor",
+          "confidence": 0.9991813112785283,
+          "assertion": "mentioned",
+          "normalized": "chiamaka okafor"
+        },
+        {
+          "start": 48,
+          "end": 55,
+          "label": "LOCATION",
+          "text": "Nairobi",
+          "confidence": 0.9993133087336862,
+          "assertion": "mentioned",
+          "normalized": "nairobi"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "active_names",
+      "category": "Assault",
+      "text": "Fatima Al-Zahra hit Jean-Paul O’Connor with a stick near Montréal.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Fatima Al-Zahra",
+          "start": 0,
+          "end": 15
+        },
+        {
+          "label": "VICTIM",
+          "text": "Jean-Paul O’Connor",
+          "start": 20,
+          "end": 38
+        },
+        {
+          "label": "WEAPON",
+          "text": "stick",
+          "start": 46,
+          "end": 51
+        },
+        {
+          "label": "LOCATION",
+          "text": "Montréal",
+          "start": 57,
+          "end": 65
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 15,
+          "label": "SUSPECT",
+          "text": "Fatima Al-Zahra",
+          "confidence": 0.9996345387084296,
+          "assertion": "mentioned",
+          "normalized": "fatima al-zahra"
+        },
+        {
+          "start": 20,
+          "end": 38,
+          "label": "VICTIM",
+          "text": "Jean-Paul O’Connor",
+          "confidence": 0.9972060557210419,
+          "assertion": "mentioned",
+          "normalized": "jean-paul o’connor"
+        },
+        {
+          "start": 46,
+          "end": 51,
+          "label": "WEAPON",
+          "text": "stick",
+          "confidence": 0.9911959840688863,
+          "assertion": "mentioned",
+          "normalized": "stick"
+        },
+        {
+          "start": 57,
+          "end": 65,
+          "label": "LOCATION",
+          "text": "Montréal",
+          "confidence": 0.9536261690444594,
+          "assertion": "mentioned",
+          "normalized": "montréal"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "ownership_of",
+      "category": "Theft",
+      "text": "Mayank stole the camera of Surya on 29-06-2026",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Mayank",
+          "start": 0,
+          "end": 6
+        },
+        {
+          "label": "PROPERTY",
+          "text": "camera",
+          "start": 17,
+          "end": 23
+        },
+        {
+          "label": "VICTIM",
+          "text": "Surya",
+          "start": 27,
+          "end": 32
+        },
+        {
+          "label": "DATE",
+          "text": "29-06-2026",
+          "start": 36,
+          "end": 46
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Theft",
+      "review_required": true,
+      "actual": [
+        {
+          "start": 0,
+          "end": 6,
+          "label": "SUSPECT",
+          "text": "Mayank",
+          "confidence": 0.9950774380133441,
+          "assertion": "mentioned",
+          "normalized": "mayank"
+        },
+        {
+          "start": 17,
+          "end": 23,
+          "label": "PROPERTY",
+          "text": "camera",
+          "confidence": 0.9986324877977615,
+          "assertion": "mentioned",
+          "normalized": "camera"
+        },
+        {
+          "start": 27,
+          "end": 32,
+          "label": "VICTIM",
+          "text": "Surya",
+          "confidence": 0.9914628050462749,
+          "assertion": "mentioned",
+          "normalized": "surya"
+        },
+        {
+          "start": 36,
+          "end": 46,
+          "label": "DATE",
+          "text": "29-06-2026",
+          "confidence": 0.9999566218845647,
+          "assertion": "mentioned",
+          "normalized": "29-06-2026"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "ownership_possessive",
+      "category": "Theft",
+      "text": "Aarav stole Diya's laptop near Pune.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Aarav",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "label": "VICTIM",
+          "text": "Diya",
+          "start": 12,
+          "end": 16
+        },
+        {
+          "label": "PROPERTY",
+          "text": "laptop",
+          "start": 19,
+          "end": 25
+        },
+        {
+          "label": "LOCATION",
+          "text": "Pune",
+          "start": 31,
+          "end": 35
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Theft",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 5,
+          "label": "SUSPECT",
+          "text": "Aarav",
+          "confidence": 0.9992171532060947,
+          "assertion": "mentioned",
+          "normalized": "aarav"
+        },
+        {
+          "start": 12,
+          "end": 16,
+          "label": "VICTIM",
+          "text": "Diya",
+          "confidence": 0.9999279497840153,
+          "assertion": "mentioned",
+          "normalized": "diya"
+        },
+        {
+          "start": 19,
+          "end": 25,
+          "label": "PROPERTY",
+          "text": "laptop",
+          "confidence": 0.987337643626238,
+          "assertion": "mentioned",
+          "normalized": "laptop"
+        },
+        {
+          "start": 31,
+          "end": 35,
+          "label": "LOCATION",
+          "text": "Pune",
+          "confidence": 0.7867686158862212,
+          "assertion": "mentioned",
+          "normalized": "pune"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "ownership_passive",
+      "category": "Theft",
+      "text": "Diya's laptop was stolen by Aarav.",
+      "entities": [
+        {
+          "label": "VICTIM",
+          "text": "Diya",
+          "start": 0,
+          "end": 4
+        },
+        {
+          "label": "PROPERTY",
+          "text": "laptop",
+          "start": 7,
+          "end": 13
+        },
+        {
+          "label": "SUSPECT",
+          "text": "Aarav",
+          "start": 28,
+          "end": 33
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Theft",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 4,
+          "label": "VICTIM",
+          "text": "Diya",
+          "confidence": 0.999760320737708,
+          "assertion": "mentioned",
+          "normalized": "diya"
+        },
+        {
+          "start": 7,
+          "end": 13,
+          "label": "PROPERTY",
+          "text": "laptop",
+          "confidence": 0.9988464385945567,
+          "assertion": "mentioned",
+          "normalized": "laptop"
+        },
+        {
+          "start": 28,
+          "end": 33,
+          "label": "SUSPECT",
+          "text": "Aarav",
+          "confidence": 0.9981654971344396,
+          "assertion": "mentioned",
+          "normalized": "aarav"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "reported_theft",
+      "category": "Theft",
+      "text": "Asha reported that her wallet was stolen near Delhi.",
+      "entities": [
+        {
+          "label": "VICTIM",
+          "text": "Asha",
+          "start": 0,
+          "end": 4
+        },
+        {
+          "label": "PROPERTY",
+          "text": "wallet",
+          "start": 23,
+          "end": 29
+        },
+        {
+          "label": "LOCATION",
+          "text": "Delhi",
+          "start": 46,
+          "end": 51
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Theft",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 4,
+          "label": "VICTIM",
+          "text": "Asha",
+          "confidence": 0.9669039510595512,
+          "assertion": "mentioned",
+          "normalized": "asha"
+        },
+        {
+          "start": 23,
+          "end": 29,
+          "label": "PROPERTY",
+          "text": "wallet",
+          "confidence": 0.967147929396407,
+          "assertion": "mentioned",
+          "normalized": "wallet"
+        },
+        {
+          "start": 46,
+          "end": 51,
+          "label": "LOCATION",
+          "text": "Delhi",
+          "confidence": 0.9993835027980946,
+          "assertion": "mentioned",
+          "normalized": "delhi"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "robbery_force",
+      "category": "Robbery",
+      "text": "Ravi threatened Asha with a knife and took her phone near Jaipur.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Ravi",
+          "start": 0,
+          "end": 4
+        },
+        {
+          "label": "VICTIM",
+          "text": "Asha",
+          "start": 16,
+          "end": 20
+        },
+        {
+          "label": "WEAPON",
+          "text": "knife",
+          "start": 28,
+          "end": 33
+        },
+        {
+          "label": "PROPERTY",
+          "text": "phone",
+          "start": 47,
+          "end": 52
+        },
+        {
+          "label": "LOCATION",
+          "text": "Jaipur",
+          "start": 58,
+          "end": 64
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Robbery",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 4,
+          "label": "SUSPECT",
+          "text": "Ravi",
+          "confidence": 0.9987352930967826,
+          "assertion": "mentioned",
+          "normalized": "ravi"
+        },
+        {
+          "start": 16,
+          "end": 20,
+          "label": "VICTIM",
+          "text": "Asha",
+          "confidence": 0.9989758744065103,
+          "assertion": "mentioned",
+          "normalized": "asha"
+        },
+        {
+          "start": 28,
+          "end": 33,
+          "label": "WEAPON",
+          "text": "knife",
+          "confidence": 0.9996547407532842,
+          "assertion": "mentioned",
+          "normalized": "knife"
+        },
+        {
+          "start": 47,
+          "end": 52,
+          "label": "PROPERTY",
+          "text": "phone",
+          "confidence": 0.8859582370296659,
+          "assertion": "mentioned",
+          "normalized": "phone"
+        },
+        {
+          "start": 58,
+          "end": 64,
+          "label": "LOCATION",
+          "text": "Jaipur",
+          "confidence": 0.7598718167516582,
+          "assertion": "mentioned",
+          "normalized": "jaipur"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "burglary",
+      "category": "Burglary",
+      "text": "An unidentified man broke into Leena's locked house in Jaipur and stole a laptop.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "unidentified man",
+          "start": 3,
+          "end": 19
+        },
+        {
+          "label": "VICTIM",
+          "text": "Leena",
+          "start": 31,
+          "end": 36
+        },
+        {
+          "label": "LOCATION",
+          "text": "Jaipur",
+          "start": 55,
+          "end": 61
+        },
+        {
+          "label": "PROPERTY",
+          "text": "laptop",
+          "start": 74,
+          "end": 80
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Burglary",
+      "review_required": false,
+      "actual": [
+        {
+          "text": "unidentified man",
+          "start": 3,
+          "end": 19,
+          "label": "SUSPECT",
+          "confidence": null,
+          "extraction_method": "syntactic role context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "unidentified man"
+        },
+        {
+          "start": 31,
+          "end": 36,
+          "label": "VICTIM",
+          "text": "Leena",
+          "confidence": 0.9987034259858625,
+          "assertion": "mentioned",
+          "normalized": "leena"
+        },
+        {
+          "start": 55,
+          "end": 61,
+          "label": "LOCATION",
+          "text": "Jaipur",
+          "confidence": 0.6455086703019798,
+          "assertion": "mentioned",
+          "normalized": "jaipur"
+        },
+        {
+          "start": 74,
+          "end": 80,
+          "label": "PROPERTY",
+          "text": "laptop",
+          "confidence": 0.6696480581440896,
+          "assertion": "mentioned",
+          "normalized": "laptop"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "arson",
+      "category": "Arson",
+      "text": "Mohan deliberately set fire to Saira's car in Bhopal.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Mohan",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "label": "VICTIM",
+          "text": "Saira",
+          "start": 31,
+          "end": 36
+        },
+        {
+          "label": "PROPERTY",
+          "text": "car",
+          "start": 39,
+          "end": 42
+        },
+        {
+          "label": "LOCATION",
+          "text": "Bhopal",
+          "start": 46,
+          "end": 52
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Arson",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 5,
+          "label": "SUSPECT",
+          "text": "Mohan",
+          "confidence": 0.9981418232356716,
+          "assertion": "mentioned",
+          "normalized": "mohan"
+        },
+        {
+          "start": 31,
+          "end": 36,
+          "label": "VICTIM",
+          "text": "Saira",
+          "confidence": 0.999502093307366,
+          "assertion": "mentioned",
+          "normalized": "saira"
+        },
+        {
+          "text": "car",
+          "start": 39,
+          "end": 42,
+          "label": "PROPERTY",
+          "confidence": null,
+          "extraction_method": "syntactic role context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "car"
+        },
+        {
+          "start": 46,
+          "end": 52,
+          "label": "LOCATION",
+          "text": "Bhopal",
+          "confidence": 0.5479142963316962,
+          "assertion": "mentioned",
+          "normalized": "bhopal"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "vandalism",
+      "category": "Vandalism",
+      "text": "Karan smashed Aditi's parked bicycle near Surat without taking anything.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Karan",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "label": "VICTIM",
+          "text": "Aditi",
+          "start": 14,
+          "end": 19
+        },
+        {
+          "label": "PROPERTY",
+          "text": "bicycle",
+          "start": 29,
+          "end": 36
+        },
+        {
+          "label": "LOCATION",
+          "text": "Surat",
+          "start": 42,
+          "end": 47
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Vandalism",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 5,
+          "label": "SUSPECT",
+          "text": "Karan",
+          "confidence": 0.699309556936129,
+          "assertion": "mentioned",
+          "normalized": "karan"
+        },
+        {
+          "start": 14,
+          "end": 19,
+          "label": "VICTIM",
+          "text": "Aditi",
+          "confidence": 0.9908210379084633,
+          "assertion": "mentioned",
+          "normalized": "aditi"
+        },
+        {
+          "start": 29,
+          "end": 36,
+          "label": "PROPERTY",
+          "text": "bicycle",
+          "confidence": 0.8356616258770181,
+          "assertion": "mentioned",
+          "normalized": "bicycle"
+        },
+        {
+          "text": "Surat",
+          "start": 42,
+          "end": 47,
+          "label": "LOCATION",
+          "confidence": null,
+          "extraction_method": "spatial complement context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "surat"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "fraud",
+      "category": "Fraud",
+      "text": "A seller tricked Omar into paying an advance for a phone that was never delivered.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "seller",
+          "start": 2,
+          "end": 8
+        },
+        {
+          "label": "VICTIM",
+          "text": "Omar",
+          "start": 17,
+          "end": 21
+        },
+        {
+          "label": "PROPERTY",
+          "text": "phone",
+          "start": 51,
+          "end": 56
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Fraud",
+      "review_required": false,
+      "actual": [
+        {
+          "text": "seller",
+          "start": 2,
+          "end": 8,
+          "label": "SUSPECT",
+          "confidence": null,
+          "extraction_method": "syntactic role context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "seller"
+        },
+        {
+          "start": 17,
+          "end": 21,
+          "label": "VICTIM",
+          "text": "Omar",
+          "confidence": 0.9871006706571545,
+          "assertion": "mentioned",
+          "normalized": "omar"
+        },
+        {
+          "start": 51,
+          "end": 56,
+          "label": "PROPERTY",
+          "text": "phone",
+          "confidence": 0.564839790709402,
+          "assertion": "mentioned",
+          "normalized": "phone"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "cybercrime",
+      "category": "Cybercrime",
+      "text": "An unknown hacker changed Priya's email password and locked her out of the account.",
+      "entities": [],
+      "score_entities": false,
+      "prediction": "Cybercrime",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 26,
+          "end": 31,
+          "label": "VICTIM",
+          "text": "Priya",
+          "confidence": 0.9687183253327737,
+          "assertion": "mentioned",
+          "normalized": "priya"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "informal_theft",
+      "category": "Theft",
+      "text": "sir my moblie stoln from pocket in bus ystrday",
+      "entities": [],
+      "score_entities": false,
+      "prediction": "Theft",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 7,
+          "end": 13,
+          "label": "PROPERTY",
+          "text": "moblie",
+          "confidence": 0.9974473924044784,
+          "assertion": "mentioned",
+          "normalized": "moblie"
+        },
+        {
+          "start": 35,
+          "end": 46,
+          "label": "LOCATION",
+          "text": "bus ystrday",
+          "confidence": 0.5955160614167234,
+          "assertion": "mentioned",
+          "normalized": "bus ystrday"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "informal_cyber",
+      "category": "Cybercrime",
+      "text": "my acount hackd pasword changed unable login",
+      "entities": [],
+      "score_entities": false,
+      "prediction": "Cybercrime",
+      "review_required": false,
+      "actual": [],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "informal_arson",
+      "category": "Arson",
+      "text": "someone purposely set our scooter on fire",
+      "entities": [],
+      "score_entities": false,
+      "prediction": "Arson",
+      "review_required": false,
+      "actual": [],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "informal_burglary",
+      "category": "Burglary",
+      "text": "went out came home door lock brokn laptop missing inside",
+      "entities": [],
+      "score_entities": false,
+      "prediction": "Burglary",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 35,
+          "end": 41,
+          "label": "PROPERTY",
+          "text": "laptop",
+          "confidence": 0.8632536701256734,
+          "assertion": "mentioned",
+          "normalized": "laptop"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "evidence_camera",
+      "category": null,
+      "text": "Camera footage was collected.",
+      "entities": [
+        {
+          "label": "EVIDENCE",
+          "text": "Camera footage",
+          "start": 0,
+          "end": 14
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Theft",
+      "review_required": true,
+      "actual": [
+        {
+          "start": 0,
+          "end": 14,
+          "text": "Camera footage",
+          "label": "EVIDENCE",
+          "confidence": null,
+          "extraction_method": "media evidence context check",
+          "previous_labels": [
+            "VICTIM"
+          ],
+          "assertion": "mentioned",
+          "normalized": "camera footage"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "evidence_cctv",
+      "category": null,
+      "text": "CCTV footage was reviewed by police.",
+      "entities": [
+        {
+          "label": "EVIDENCE",
+          "text": "CCTV footage",
+          "start": 0,
+          "end": 12
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Theft",
+      "review_required": true,
+      "actual": [
+        {
+          "start": 0,
+          "end": 12,
+          "text": "CCTV footage",
+          "label": "EVIDENCE",
+          "confidence": null,
+          "extraction_method": "media evidence context check",
+          "previous_labels": [
+            "VICTIM"
+          ],
+          "assertion": "mentioned",
+          "normalized": "cctv footage"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "evidence_photographs",
+      "category": null,
+      "text": "Photographs were collected by police.",
+      "entities": [
+        {
+          "label": "EVIDENCE",
+          "text": "Photographs",
+          "start": 0,
+          "end": 11
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Vandalism",
+      "review_required": true,
+      "actual": [
+        {
+          "start": 0,
+          "end": 11,
+          "text": "Photographs",
+          "label": "EVIDENCE",
+          "confidence": null,
+          "extraction_method": "media evidence context check",
+          "previous_labels": [
+            "VICTIM"
+          ],
+          "assertion": "mentioned",
+          "normalized": "photographs"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "evidence_screenshots",
+      "category": null,
+      "text": "Screenshots were submitted to investigators.",
+      "entities": [
+        {
+          "label": "EVIDENCE",
+          "text": "Screenshots",
+          "start": 0,
+          "end": 11
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Fraud",
+      "review_required": true,
+      "actual": [
+        {
+          "start": 0,
+          "end": 11,
+          "text": "Screenshots",
+          "label": "EVIDENCE",
+          "confidence": null,
+          "extraction_method": "media evidence context check",
+          "previous_labels": [
+            "SUSPECT"
+          ],
+          "assertion": "mentioned",
+          "normalized": "screenshots"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "evidence_statement",
+      "category": null,
+      "text": "The witness statement was attached to the case file.",
+      "entities": [
+        {
+          "label": "EVIDENCE",
+          "text": "witness statement",
+          "start": 4,
+          "end": 21
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": true,
+      "actual": [
+        {
+          "start": 4,
+          "end": 21,
+          "text": "witness statement",
+          "label": "EVIDENCE",
+          "confidence": null,
+          "extraction_method": "media evidence context check",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "witness statement"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "evidence_audio",
+      "category": null,
+      "text": "Audio recording was preserved.",
+      "entities": [
+        {
+          "label": "EVIDENCE",
+          "text": "Audio recording",
+          "start": 0,
+          "end": 15
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Arson",
+      "review_required": true,
+      "actual": [
+        {
+          "start": 0,
+          "end": 15,
+          "text": "Audio recording",
+          "label": "EVIDENCE",
+          "confidence": null,
+          "extraction_method": "media evidence context check",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "audio recording"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "evidence_negative",
+      "category": null,
+      "text": "No camera footage was available.",
+      "entities": [
+        {
+          "label": "EVIDENCE",
+          "text": "camera footage",
+          "start": 3,
+          "end": 17
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Theft",
+      "review_required": true,
+      "actual": [
+        {
+          "start": 3,
+          "end": 17,
+          "text": "camera footage",
+          "label": "EVIDENCE",
+          "confidence": null,
+          "extraction_method": "media evidence context check",
+          "previous_labels": [
+            "SUSPECT"
+          ],
+          "assertion": "negated",
+          "normalized": "camera footage"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "date_time",
+      "category": "Assault",
+      "text": "Arjun hit Meera near Pune on 27.09.2026 at 22:15.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Arjun",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "label": "VICTIM",
+          "text": "Meera",
+          "start": 10,
+          "end": 15
+        },
+        {
+          "label": "LOCATION",
+          "text": "Pune",
+          "start": 21,
+          "end": 25
+        },
+        {
+          "label": "DATE",
+          "text": "27.09.2026",
+          "start": 29,
+          "end": 39
+        },
+        {
+          "label": "TIME",
+          "text": "22:15",
+          "start": 43,
+          "end": 48
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 5,
+          "label": "SUSPECT",
+          "text": "Arjun",
+          "confidence": 0.957171711957143,
+          "assertion": "mentioned",
+          "normalized": "arjun"
+        },
+        {
+          "start": 10,
+          "end": 15,
+          "label": "VICTIM",
+          "text": "Meera",
+          "confidence": 0.9113413383229623,
+          "assertion": "mentioned",
+          "normalized": "meera"
+        },
+        {
+          "start": 21,
+          "end": 25,
+          "label": "LOCATION",
+          "text": "Pune",
+          "confidence": 0.6886166703304979,
+          "assertion": "mentioned",
+          "normalized": "pune"
+        },
+        {
+          "start": 29,
+          "end": 39,
+          "label": "DATE",
+          "text": "27.09.2026",
+          "confidence": 0.9999653853915236,
+          "assertion": "mentioned",
+          "normalized": "27.09.2026"
+        },
+        {
+          "start": 43,
+          "end": 48,
+          "label": "TIME",
+          "text": "22:15",
+          "confidence": 0.9997075848784944,
+          "assertion": "mentioned",
+          "normalized": "22:15"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "date_slash",
+      "category": "Theft",
+      "text": "Kiran stole the wallet of Neha on 02/03/2026.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Kiran",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "label": "PROPERTY",
+          "text": "wallet",
+          "start": 16,
+          "end": 22
+        },
+        {
+          "label": "VICTIM",
+          "text": "Neha",
+          "start": 26,
+          "end": 30
+        },
+        {
+          "label": "DATE",
+          "text": "02/03/2026",
+          "start": 34,
+          "end": 44
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Theft",
+      "review_required": true,
+      "actual": [
+        {
+          "start": 0,
+          "end": 5,
+          "label": "SUSPECT",
+          "text": "Kiran",
+          "confidence": 0.9987852550296409,
+          "assertion": "mentioned",
+          "normalized": "kiran"
+        },
+        {
+          "start": 16,
+          "end": 22,
+          "label": "PROPERTY",
+          "text": "wallet",
+          "confidence": 0.9994440294283027,
+          "assertion": "mentioned",
+          "normalized": "wallet"
+        },
+        {
+          "start": 26,
+          "end": 30,
+          "label": "VICTIM",
+          "text": "Neha",
+          "confidence": 0.994595549893585,
+          "assertion": "mentioned",
+          "normalized": "neha"
+        },
+        {
+          "start": 34,
+          "end": 44,
+          "label": "DATE",
+          "text": "02/03/2026",
+          "confidence": 0.99974210971683,
+          "assertion": "mentioned",
+          "normalized": "02/03/2026"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "property_camera",
+      "category": "Theft",
+      "text": "Mayank stole the camera of Surya.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Mayank",
+          "start": 0,
+          "end": 6
+        },
+        {
+          "label": "PROPERTY",
+          "text": "camera",
+          "start": 17,
+          "end": 23
+        },
+        {
+          "label": "VICTIM",
+          "text": "Surya",
+          "start": 27,
+          "end": 32
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Theft",
+      "review_required": true,
+      "actual": [
+        {
+          "start": 0,
+          "end": 6,
+          "label": "SUSPECT",
+          "text": "Mayank",
+          "confidence": 0.9950774379955926,
+          "assertion": "mentioned",
+          "normalized": "mayank"
+        },
+        {
+          "start": 17,
+          "end": 23,
+          "label": "PROPERTY",
+          "text": "camera",
+          "confidence": 0.9974026585501445,
+          "assertion": "mentioned",
+          "normalized": "camera"
+        },
+        {
+          "start": 27,
+          "end": 32,
+          "label": "VICTIM",
+          "text": "Surya",
+          "confidence": 0.8347974474950621,
+          "assertion": "mentioned",
+          "normalized": "surya"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "property_video_camera",
+      "category": "Theft",
+      "text": "Kiran stole Meera's video camera.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Kiran",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "label": "VICTIM",
+          "text": "Meera",
+          "start": 12,
+          "end": 17
+        },
+        {
+          "label": "PROPERTY",
+          "text": "video camera",
+          "start": 20,
+          "end": 32
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Theft",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 5,
+          "label": "SUSPECT",
+          "text": "Kiran",
+          "confidence": 0.9980325256958862,
+          "assertion": "mentioned",
+          "normalized": "kiran"
+        },
+        {
+          "start": 12,
+          "end": 17,
+          "label": "VICTIM",
+          "text": "Meera",
+          "confidence": 0.9994318884037535,
+          "assertion": "mentioned",
+          "normalized": "meera"
+        },
+        {
+          "text": "video camera",
+          "start": 20,
+          "end": 32,
+          "label": "PROPERTY",
+          "confidence": null,
+          "extraction_method": "syntactic role context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "video camera"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "evidence_after_assault",
+      "category": "Assault",
+      "text": "Rajiv hit Sneha with a stick near Pune on 29-06-2026. A witness called the police. Camera footage was collected.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Rajiv",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "label": "VICTIM",
+          "text": "Sneha",
+          "start": 10,
+          "end": 15
+        },
+        {
+          "label": "WEAPON",
+          "text": "stick",
+          "start": 23,
+          "end": 28
+        },
+        {
+          "label": "LOCATION",
+          "text": "Pune",
+          "start": 34,
+          "end": 38
+        },
+        {
+          "label": "DATE",
+          "text": "29-06-2026",
+          "start": 42,
+          "end": 52
+        },
+        {
+          "label": "EVIDENCE",
+          "text": "Camera footage",
+          "start": 83,
+          "end": 97
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 5,
+          "label": "SUSPECT",
+          "text": "Rajiv",
+          "confidence": 0.9960826430867373,
+          "assertion": "mentioned",
+          "normalized": "rajiv"
+        },
+        {
+          "start": 10,
+          "end": 15,
+          "label": "VICTIM",
+          "text": "Sneha",
+          "confidence": 0.9978446948876528,
+          "assertion": "mentioned",
+          "normalized": "sneha"
+        },
+        {
+          "start": 23,
+          "end": 28,
+          "label": "WEAPON",
+          "text": "stick",
+          "confidence": 0.9950981081670596,
+          "assertion": "mentioned",
+          "normalized": "stick"
+        },
+        {
+          "start": 34,
+          "end": 38,
+          "label": "LOCATION",
+          "text": "Pune",
+          "confidence": 0.8617403450470966,
+          "assertion": "mentioned",
+          "normalized": "pune"
+        },
+        {
+          "start": 42,
+          "end": 52,
+          "label": "DATE",
+          "text": "29-06-2026",
+          "confidence": 0.9999351363776725,
+          "assertion": "mentioned",
+          "normalized": "29-06-2026"
+        },
+        {
+          "start": 83,
+          "end": 97,
+          "text": "Camera footage",
+          "label": "EVIDENCE",
+          "confidence": null,
+          "extraction_method": "media evidence context check",
+          "previous_labels": [
+            "VICTIM"
+          ],
+          "assertion": "mentioned",
+          "normalized": "camera footage"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "witness_name_substitution",
+      "category": "Assault",
+      "text": "Lena Ortiz hit Noah Reed with a metal bar near London, Amara had seen it.",
+      "entities": [
+        {
+          "label": "SUSPECT",
+          "text": "Lena Ortiz",
+          "start": 0,
+          "end": 10
+        },
+        {
+          "label": "VICTIM",
+          "text": "Noah Reed",
+          "start": 15,
+          "end": 24
+        },
+        {
+          "label": "WEAPON",
+          "text": "metal bar",
+          "start": 32,
+          "end": 41
+        },
+        {
+          "label": "LOCATION",
+          "text": "London",
+          "start": 47,
+          "end": 53
+        },
+        {
+          "label": "WITNESS",
+          "text": "Amara",
+          "start": 55,
+          "end": 60
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 0,
+          "end": 10,
+          "label": "SUSPECT",
+          "text": "Lena Ortiz",
+          "confidence": 0.996302546853636,
+          "assertion": "mentioned",
+          "normalized": "lena ortiz"
+        },
+        {
+          "text": "Noah Reed",
+          "start": 15,
+          "end": 24,
+          "label": "VICTIM",
+          "confidence": null,
+          "extraction_method": "syntactic role context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "noah reed"
+        },
+        {
+          "start": 32,
+          "end": 41,
+          "label": "WEAPON",
+          "text": "metal bar",
+          "confidence": 0.9992865795560926,
+          "assertion": "mentioned",
+          "normalized": "metal bar"
+        },
+        {
+          "text": "London",
+          "start": 47,
+          "end": 53,
+          "label": "LOCATION",
+          "confidence": null,
+          "extraction_method": "witness clause boundary repair",
+          "previous_labels": [
+            "LOCATION"
+          ],
+          "assertion": "mentioned",
+          "normalized": "london"
+        },
+        {
+          "text": "Amara",
+          "start": 55,
+          "end": 60,
+          "label": "WITNESS",
+          "confidence": null,
+          "extraction_method": "witness clause context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "amara"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "witness_before_event",
+      "category": "Assault",
+      "text": "Witness Suresh said that José García hit Wei Zhang with an iron rod near Nairobi.",
+      "entities": [
+        {
+          "label": "WITNESS",
+          "text": "Suresh",
+          "start": 8,
+          "end": 14
+        },
+        {
+          "label": "SUSPECT",
+          "text": "José García",
+          "start": 25,
+          "end": 36
+        },
+        {
+          "label": "VICTIM",
+          "text": "Wei Zhang",
+          "start": 41,
+          "end": 50
+        },
+        {
+          "label": "WEAPON",
+          "text": "iron rod",
+          "start": 59,
+          "end": 67
+        },
+        {
+          "label": "LOCATION",
+          "text": "Nairobi",
+          "start": 73,
+          "end": 80
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 25,
+          "end": 36,
+          "label": "SUSPECT",
+          "text": "José García",
+          "confidence": 0.9998788461903145,
+          "assertion": "mentioned",
+          "normalized": "josé garcía"
+        },
+        {
+          "start": 41,
+          "end": 50,
+          "label": "VICTIM",
+          "text": "Wei Zhang",
+          "confidence": 0.9995630855314481,
+          "assertion": "mentioned",
+          "normalized": "wei zhang"
+        },
+        {
+          "start": 59,
+          "end": 67,
+          "label": "WEAPON",
+          "text": "iron rod",
+          "confidence": 0.9143620864849682,
+          "assertion": "mentioned",
+          "normalized": "iron rod"
+        },
+        {
+          "start": 73,
+          "end": 80,
+          "label": "LOCATION",
+          "text": "Nairobi",
+          "confidence": 0.999128210183843,
+          "assertion": "mentioned",
+          "normalized": "nairobi"
+        },
+        {
+          "text": "Suresh",
+          "start": 8,
+          "end": 14,
+          "label": "WITNESS",
+          "confidence": null,
+          "extraction_method": "witness clause context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "suresh"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    },
+    {
+      "id": "witness_subject",
+      "category": "Assault",
+      "text": "Rahul saw Ravi hit Asha with a stick near Pune.",
+      "entities": [
+        {
+          "label": "WITNESS",
+          "text": "Rahul",
+          "start": 0,
+          "end": 5
+        },
+        {
+          "label": "SUSPECT",
+          "text": "Ravi",
+          "start": 10,
+          "end": 14
+        },
+        {
+          "label": "VICTIM",
+          "text": "Asha",
+          "start": 19,
+          "end": 23
+        },
+        {
+          "label": "WEAPON",
+          "text": "stick",
+          "start": 31,
+          "end": 36
+        },
+        {
+          "label": "LOCATION",
+          "text": "Pune",
+          "start": 42,
+          "end": 46
+        }
+      ],
+      "score_entities": true,
+      "prediction": "Assault",
+      "review_required": false,
+      "actual": [
+        {
+          "start": 10,
+          "end": 14,
+          "label": "SUSPECT",
+          "text": "Ravi",
+          "confidence": 0.8160057583841637,
+          "assertion": "mentioned",
+          "normalized": "ravi"
+        },
+        {
+          "start": 19,
+          "end": 23,
+          "label": "VICTIM",
+          "text": "Asha",
+          "confidence": 0.9936344044260235,
+          "assertion": "mentioned",
+          "normalized": "asha"
+        },
+        {
+          "start": 31,
+          "end": 36,
+          "label": "WEAPON",
+          "text": "stick",
+          "confidence": 0.9937325375144931,
+          "assertion": "mentioned",
+          "normalized": "stick"
+        },
+        {
+          "start": 42,
+          "end": 46,
+          "label": "LOCATION",
+          "text": "Pune",
+          "confidence": 0.8537111465550343,
+          "assertion": "mentioned",
+          "normalized": "pune"
+        },
+        {
+          "text": "Rahul",
+          "start": 0,
+          "end": 5,
+          "label": "WITNESS",
+          "confidence": null,
+          "extraction_method": "witness clause context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "rahul"
+        }
+      ],
+      "missing": [],
+      "extra": [],
+      "category_ok": true,
+      "entities_ok": true
+    }
+  ]
+}

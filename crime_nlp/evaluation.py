@@ -1,8 +1,38 @@
 """Readable, reproducible statistics for document and entity models."""
 import numpy as np
+import hashlib
+import re
 from scipy.optimize import minimize_scalar
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, f1_score, log_loss
 from .config import CATEGORIES, SEED
+
+
+def split_integrity(parts):
+    """Reject cross-split ID, scenario and normalized-text leakage before fitting.
+
+    These checks establish separation of generated records, not independence of
+    the generator's grammar or of previously viewed evaluation examples.
+    """
+    seen = {"report_id": set(), "template_group": set(), "normalized_text": set()}
+    result = {}
+    for name, frame in parts.items():
+        if frame.empty or frame.report_id.duplicated().any():
+            raise ValueError(f"Split {name} is empty or contains duplicate report IDs")
+        normalized = [re.sub(r"[\W_]+", " ", text.lower()).strip() for text in frame.narrative]
+        values = {"report_id": set(frame.report_id), "template_group": set(frame.template_group),
+                  "normalized_text": set(normalized)}
+        for field, current in values.items():
+            if current & seen[field]:
+                raise ValueError(f"Cross-split {field} leakage in {name}")
+            seen[field].update(current)
+        records = sorted(zip(frame.report_id, frame.narrative))
+        digest = hashlib.sha256()
+        for report_id, narrative in records:
+            digest.update((report_id + "\0" + narrative + "\0").encode("utf-8"))
+        result[name] = {"rows": len(frame), "scenario_groups": len(values["template_group"]),
+                        "ids_and_original_text_sha256": digest.hexdigest()}
+    return {"status": "passed", "checks": list(seen), "splits": result,
+            "scope": "Exact record/group separation; shared synthetic grammar and vocabulary remain."}
 
 
 def classification_metrics(y, predicted):

@@ -2,6 +2,12 @@
 <h2>A complete beginner's project report — Version 3.1</h2>
 <p>The 3.1 entity revision adds generated ownership, active/passive violence and FIR-style administrative contexts to CRF/BERT training, fixes shared punctuation boundaries and preserves exact displayed characters. See ENTITY_CONTEXT_V3_1.md. The NER evaluation now mixes a previously viewed V3 subset with generated context examples; its scope differs from the unchanged document-model benchmark.</p>
 <p>Version 3 adds informal English and spelling variation within the original algorithms. Read ROBUSTNESS_V3.md for the precise changes, development challenges and limits. The measured appendix contains the current results; the explicitly labeled V2 discussion is historical.</p>
+<p>The schema-4 generalization upgrade retains that core and adds separately
+trained organization/witness recognition, full-document retrieval and BERT
+windows, qualified action/reference notes, entity corrections, and a human
+annotation/quality-review workflow. See UPGRADE_STATUS.md. Its synthetic
+diagnostics are separate from the legacy benchmarks; real-data validation and
+human quality judgments remain pending.</p>
 <h3>How to read this report</h3>
 <p>Start at Chapter 1 even if you have never used machine learning. Chapters 1–4 explain the problem and the data. Chapters 5–9 explain every NLP component with examples. Chapters 10–13 explain evaluation, the dashboard and how to run the code. Chapters 14–17 cover the syllabus, limitations, improvements and glossary. The measured-results appendix is generated from the actual saved experiment outputs, rather than manually typed scores.</p>
 <p>This is an English-language university research prototype. Its 60,000 clean reports describe fictional events. It demonstrates engineering and NLP methods; it does not establish that its predictions are accurate on real police files.</p>
@@ -187,24 +193,25 @@
 <p>Machine-learning models consume numerical representations. This project compares three representation families on the same document split.</p>
 <h3>6.1 Bag of Words</h3>
 <p>Suppose the vocabulary is [phone, stolen, fire]. “Stolen phone” becomes [1, 1, 0]; “fire fire” becomes [0, 0, 2]. This representation counts words and largely ignores order. Bigrams add adjacent pairs such as “stolen phone,” giving limited local order information.</p>
-<p>The implementation uses CountVectorizer and logistic regression. Logistic regression learns a weight for each feature and class, then converts scores into class probabilities.</p>
+<p>The implementation uses CountVectorizer and logistic regression. Logistic regression learns a weight for each feature and class, then converts scores into class probabilities. Validation tuning selects binary word/phrase presence, L2 normalization and C=10 for the current Bag of Words model; the original baseline used raw counts.</p>
 <h3>6.2 TF-IDF</h3>
 <p>Term Frequency–Inverse Document Frequency gives more weight to words that distinguish a document from the rest of the training corpus. A word appearing in nearly every report usually provides less information.</p>
 <p>A common smoothed inverse frequency is:</p>
 <p><code>IDF(word) = log((1 + number_of_documents) / (1 + documents_containing_word)) + 1</code></p>
 <p>In a corpus of 100 documents, a word appearing in 99 has IDF about 1.01; a word appearing in 4 has IDF about 4.01. Actual feature values also depend on the vectorizer's term-frequency and normalization settings. These numbers are a teaching illustration, not saved experiment features.</p>
 <p>The vocabulary and IDF are fitted on training text only. Fitting them on the test set would leak information about the evaluation distribution.</p>
-<p>Version 3 combines word unigrams/bigrams with character 3–5-grams in the same TF-IDF representation and logistic regression model. A typo can lose its whole-word match while retaining useful character fragments. Character features receive weight 0.75 relative to the word branch. This does not autocorrect the source and does not introduce a new classification algorithm. Keyword search continues to use the word branch so a misspelled string cannot become an unexplained exact-keyword match.</p>
+<p>Version 3 combines word unigrams/bigrams with character 3–5-grams in the same TF-IDF representation and logistic regression model. A typo can lose its whole-word match while retaining useful character fragments. Character features received weight 0.75 in the baseline; validation tuning selects weight 1.5 and logistic-regression C=0.25 for the current model. This does not autocorrect the source and does not introduce a new classification algorithm. Keyword search continues to use the word branch so a misspelled string cannot become an unexplained exact-keyword match.</p>
 <h3>6.3 Neural Word2Vec embeddings</h3>
-<p>Word2Vec is a small neural model trained to learn contextual relationships between words. This project uses Gensim skip-gram with 100-dimensional vectors, trained on its training partition. A document vector is the average of its known word vectors, followed by logistic regression.</p>
-<p>Averaging is efficient but loses word order. “Alex accused Morgan” and “Morgan accused Alex” can have similar averages even though their roles differ. Unknown words contribute no vector; an entirely unknown document gets a zero vector.</p>
+<p>Word2Vec is a small neural model trained to learn contextual relationships between words. This project uses Gensim skip-gram with 100-dimensional vectors, trained on its training partition. The deployed baseline averages known word vectors. A validation-selected candidate concatenates an IDF-weighted mean with max pooling, producing 200-dimensional document features. Training-only IDF emphasizes less common words; L2 normalization and logistic regression follow. The candidate improved validation but fell to 75.75% accuracy on the viewed diagnostic test, compared with 82.17% for the baseline. Its experiment is preserved and deployment retains the baseline. This release rollback uses diagnostic test results; it is not an untouched final evaluation, and no further tuning followed that result.</p>
+<p>Pooling is efficient but loses word order. “Alex accused Morgan” and “Morgan accused Alex” can have similar pooled vectors even though their roles differ. Unknown words contribute no vector; an entirely unknown document gets a zero vector.</p>
 <h3>6.4 Contextual BERT representations</h3>
 <p>BERT uses transformer attention so a word's representation depends on surrounding words. The project fine-tunes a compact pretrained BERT for document classification. Training updates model parameters; a randomly initialized category head alone is not a useful pretrained crime classifier.</p>
 <p>The checkpoint is selected using validation macro-F1. A larger neural model is not automatically better than a simple word-count model, especially on repetitive synthetic data with a small training sample.</p>
-<p>The BERT document classifier has an input token limit; long narratives are truncated by its tokenizer. BERT entity extraction uses overlapping word windows instead. These are two separately fine-tuned tasks.</p>
+<p>The archived tuned BERT document classifier uses a 192-subword truncating limit, compared with 160 in the baseline. The live schema-4 mode now covers the full document with overlapping windows and averages their predictions. A separately trained windowed candidate did not beat validation and was retained only as an experiment; the active mode uses the original weights. BERT entity extraction already uses overlapping word windows. The original benchmark files remain unchanged. See UPGRADE_STATUS.md and ACCURACY_IMPROVEMENTS.md for the separate recipes and evaluation scopes.</p>
 <h2>7. Sequence labeling: finding entity roles</h2>
 <p>Document classification assigns one category to a complete narrative. Sequence labeling assigns a label to each token.</p>
 <p>Eight entity types are supported: SUSPECT, VICTIM, LOCATION, WEAPON, PROPERTY, DATE, TIME and EVIDENCE.</p>
+<p>A disclosed media-evidence context check corrects clear footage/recording mentions in collection/review contexts after model prediction. For example, “Camera footage was collected” is EVIDENCE. These corrections retain exact source offsets, record their extraction method and have no model probability. Bare stolen cameras remain property. The existing learned model weights and raw benchmark metrics are retained; see EVIDENCE_CONTEXT_FIX.md for regression and non-regression verification.</p>
 <h3>BIO notation</h3>
 <table>
 <thead>
@@ -238,6 +245,15 @@
 </table>
 <p>B means beginning, I means inside the same entity, and O means outside an entity. Both span boundaries and entity type must be correct for strict entity scoring.</p>
 <h3>CRF</h3>
+<p>The core context layer separates named witness clauses from locations and
+checks clear syntactic participant/ownership roles. Its repairs have no model
+probability and do not alter the retained core weights. The schema-4 specialist
+now also supplies learned ORGANIZATION/WITNESS mentions with separate scores;
+witnesses remain stored separately for compatibility. The older context layer
+has its own measured scores, including a small CRF
+validation regression, in <code>artifacts/narrative_context_validation.json</code>. See
+NARRATIVE_VALIDATION.md for the two reported cases, development audit and
+cross-checks; the earlier media-only receipt does not measure this broader layer.</p>
 <p>A Conditional Random Field learns relationships between nearby labels and features such as capitalization, neighboring words, position and sentence context. It can learn that a name after a reporting phrase often describes a victim, while a name after an identification phrase may be a suspect. These are learned patterns, not guaranteed rules.</p>
 <p>Version 3 uses a four-token lexical window on each side plus word shape and distances to action, role and preposition cues within eight tokens. Training includes lowercase and invented names, active/passive constructions and varied name lengths. Cue observations do not directly assign roles: the same linear-chain CRF learns their weights. No inference-time name or country list is used.</p>
 <h3>BERT token classifier</h3>
@@ -255,12 +271,12 @@
 <p>NLTK VADER produces a compound polarity score between -1 and +1. Negative language is not equivalent to high danger. A neutral report can describe a serious event, and frightened wording can appear in a low-severity event.</p>
 <p>A separate transparent heuristic counts selected unnegated threat-language cues. It is shown as a demonstration cue level, not a probability of future violence or an operational risk assessment. There is no labeled danger dataset in this project.</p>
 <h3>TextRank summarization</h3>
-<p>TextRank treats sentences as nodes in a graph, connects similar sentences, and ranks them using PageRank. The implementation also includes a small lead-sentence preference. Selected sentences are copied from the source and placed in source order.</p>
+<p>TextRank treats sentences as nodes in a graph, connects similar sentences, and ranks them using PageRank. The implementation also includes a small lead-sentence preference. The application selects one source sentence for each case and normalizes its whitespace to one line. The original narrative is unchanged, and structured notes retain the original sentence citation. These summaries are stored in the enriched dataset, shown in case search, included in CSV exports, and computed on demand for new narratives. A long source sentence can still produce a long summary.</p>
 <p>This is <strong>extractive</strong> summarization. It does not generate a new account. It can still omit an important denial or overemphasize repeated material. Structured notes list extracted mentions and source sentence references; users should check them against the narrative.</p>
 <p>No ROUGE score is claimed because human reference summaries have not been collected.</p>
 <h2>9. Search, evidence retrieval and explanation</h2>
 <p>Keyword search uses TF-IDF cosine similarity. It works well when query and report share terms. Semantic search uses the pretrained all-MiniLM-L6-v2 encoder, attention-mask mean pooling and normalized 384-dimensional embeddings.</p>
-<p>Each case embedding uses at most 128 subword tokens for bounded CPU cost. Later details in a long case can be missed. The index stores float16 vectors on disk and loads them through a memory map. Query scoring reads chunks instead of copying the entire embedding matrix.</p>
+<p>The legacy case embedding used only the first 128 subword tokens. Live retrieval now indexes every source window with 128-subword limits and 32-subword overlap: 61,300 windows cover the 60,000 reports. Ranking takes the best window match per report. Source offsets, report order and text fingerprints are checked. The float16 index uses memory maps and block scoring. Evidence retrieval also scans later windows of long sentences; relevance quality still needs human judgments.</p>
 <p>Hybrid search combines keyword and semantic <strong>ranks</strong>, using reciprocal-rank fusion. It does not pretend that the two raw similarity scales are identical. Entity filters use predicted mentions stored in SQLite; missed entities can therefore cause missed filtered results.</p>
 <p>For a question within a case, the app retrieves up to two matching source sentences, displays the report ID and sentence numbers, and returns “Insufficient evidence” below its threshold. This is evidence retrieval, not a general conversational assistant or verified question-answering model. A retrieved sentence may be relevant without answering the question.</p>
 <p>TF-IDF prediction explanations show positively contributing words, phrases and character fragments, with their feature type. They describe correlations in a linear classifier, not causal reasons why a crime occurred.</p>
@@ -300,6 +316,7 @@
 <p>The complete corpus has larger split partitions. These samples keep the CPU experiment practical. NER uses its own documented subsets: 8,000 training reports, 400 validation reports and 600 final-test reports.</p>
 <p>Incident variants, participant phrasings and first-name pools are assigned before fitting. Composite groups do not overlap between splits. Three-fold grouped cross-validation of TF-IDF uses incident variants within training, keeping related layouts together.</p>
 <p>A SHA-256 receipt records model files before final predictions. The final-test receipt records completion. Once results have been viewed, the test is no longer unseen to the researchers; future tuning should use a new independent evaluation protocol.</p>
+<p>The current rebuild checks cross-split report IDs, scenario groups and normalized text before fitting, and records split fingerprints and source hashes. It saves row-level document and entity predictions. Run <code>python scripts/verify_evaluation.py</code> to check frozen model/prediction hashes, source labels and entity spans, and recompute Accuracy, macro/weighted F1 and strict Span-F1 without retraining. This remains a repeat synthetic evaluation on previously viewed test data; the additional audit checks do not make it an untouched benchmark. See IMPLEMENTATION_STATUS.md for the requirement mapping and local deployment commands.</p>
 <p>The corpus still shares generator vocabulary and grammar across splits. This protocol reduces some leakage but cannot establish real-world generalization.</p>
 <h3>Metrics with small examples</h3>
 <p>If 80 out of 100 report categories are correct, accuracy is 80%.</p>
@@ -616,15 +633,15 @@
 <tbody>
 <tr>
 <td>Bag of Words</td>
-<td style="text-align:right">0.8067</td>
-<td style="text-align:right">0.8068</td>
-<td style="text-align:right">0.8068</td>
+<td style="text-align:right">0.8350</td>
+<td style="text-align:right">0.8361</td>
+<td style="text-align:right">0.8361</td>
 </tr>
 <tr>
 <td>TF-IDF</td>
-<td style="text-align:right">0.8825</td>
-<td style="text-align:right">0.8815</td>
-<td style="text-align:right">0.8815</td>
+<td style="text-align:right">0.9242</td>
+<td style="text-align:right">0.9225</td>
+<td style="text-align:right">0.9225</td>
 </tr>
 <tr>
 <td>Word2Vec</td>
@@ -634,15 +651,16 @@
 </tr>
 <tr>
 <td>BERT</td>
-<td style="text-align:right">0.7958</td>
-<td style="text-align:right">0.7926</td>
-<td style="text-align:right">0.7926</td>
+<td style="text-align:right">0.8167</td>
+<td style="text-align:right">0.8139</td>
+<td style="text-align:right">0.8139</td>
 </tr>
 </tbody>
 </table>
+<p>Repeat evaluation on previously viewed synthetic cases. BoW, TF-IDF, BERT and CRF candidates were selected on validation. Word2Vec deployment retained its baseline after observing a diagnostic test regression. This release choice used test results; it is not an untouched final benchmark. No further training or tuning was performed.</p>
 <h2>Entity extraction</h2>
-<p>Validation-selected CRF strict entity F1: <strong>0.9123</strong> on 600 evaluation narratives.</p>
-<p>Retained V3 test subset is previously viewed; new synthetic context cases share grammar. Screenshot cases are development regressions, not a final benchmark.</p>
+<p>Validation-selected CRF strict entity F1: <strong>0.9223</strong> on 600 evaluation narratives.</p>
+<p>Previously viewed synthetic test subset plus generated role/context cases sharing grammar; diagnostic evaluation, not untouched real-source validation.</p>
 <table>
 <thead>
 <tr>
@@ -655,33 +673,33 @@
 <tbody>
 <tr>
 <td>SUSPECT</td>
-<td style="text-align:right">0.8501</td>
+<td style="text-align:right">0.9241</td>
 <td style="text-align:right">0.8134</td>
-<td style="text-align:right">0.8313</td>
+<td style="text-align:right">0.8652</td>
 </tr>
 <tr>
 <td>VICTIM</td>
-<td style="text-align:right">0.8792</td>
-<td style="text-align:right">0.7806</td>
-<td style="text-align:right">0.8270</td>
+<td style="text-align:right">0.8891</td>
+<td style="text-align:right">0.8191</td>
+<td style="text-align:right">0.8527</td>
 </tr>
 <tr>
 <td>LOCATION</td>
-<td style="text-align:right">0.9600</td>
-<td style="text-align:right">0.8444</td>
-<td style="text-align:right">0.8985</td>
+<td style="text-align:right">0.9597</td>
+<td style="text-align:right">0.8389</td>
+<td style="text-align:right">0.8953</td>
 </tr>
 <tr>
 <td>WEAPON</td>
 <td style="text-align:right">1.0000</td>
-<td style="text-align:right">1.0000</td>
-<td style="text-align:right">1.0000</td>
+<td style="text-align:right">0.9861</td>
+<td style="text-align:right">0.9930</td>
 </tr>
 <tr>
 <td>PROPERTY</td>
-<td style="text-align:right">0.9701</td>
-<td style="text-align:right">0.9177</td>
-<td style="text-align:right">0.9432</td>
+<td style="text-align:right">0.9778</td>
+<td style="text-align:right">0.9075</td>
+<td style="text-align:right">0.9413</td>
 </tr>
 <tr>
 <td>DATE</td>
@@ -703,12 +721,11 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Material limitation:</strong> held-out recall is below 80% for VICTIM. The overall entity F1 is dominated by more frequent types; consult each row above. Review predicted roles against the original text.</p>
 <h2>Distributed baseline and topics</h2>
 <p>MLlib accuracy: <strong>0.7970</strong>; weighted F1: <strong>0.7895</strong>. It uses 39,528 training and 6,824 test rows, so sample sizes differ from the four-model comparison.</p>
 <p>LDA held-out perplexity: <strong>476.67</strong>; top-term diversity: <strong>0.900</strong>.</p>
 <h2>Verification</h2>
-<p>Pytest: <strong>51 passed in 18.07s</strong>.</p>
+<p>Pytest: <strong>207 passed in 25.52s</strong>.</p>
 <p>Scala report count verified: <strong>60,000</strong>.</p>
 <p>The Windows Scala run completed its computations and exited successfully, with a non-fatal Spark temporary-JAR cleanup warning at shutdown.</p>
 <p>Browser smoke check: <strong>passed</strong>. Pages visited: Overview, Case explorer, Narrative lab, Model evaluation, Topics, Pipeline &amp; syllabus, Learning guide.</p>
@@ -723,11 +740,11 @@
 <tbody>
 <tr>
 <td>Bag of Words</td>
-<td>0.7817 to 0.8275</td>
+<td>0.8142 to 0.8558</td>
 </tr>
 <tr>
 <td>TF-IDF</td>
-<td>0.8633 to 0.9000</td>
+<td>0.9083 to 0.9392</td>
 </tr>
 <tr>
 <td>Word2Vec</td>
@@ -735,12 +752,12 @@
 </tr>
 <tr>
 <td>BERT</td>
-<td>0.7750 to 0.8200</td>
+<td>0.7958 to 0.8392</td>
 </tr>
 </tbody>
 </table>
 <p>Intervals use 400 report-level bootstrap resamples and do not cover new-source uncertainty.</p>
-<p>Training-only grouped TF-IDF CV mean macro-F1: <strong>0.6708</strong>.</p>
+<p>Training-only grouped TF-IDF CV mean macro-F1: <strong>0.6831</strong>.</p>
 <table>
 <thead>
 <tr>
@@ -754,17 +771,17 @@
 <tbody>
 <tr>
 <td>before</td>
-<td style="text-align:right">0.2202</td>
-<td style="text-align:right">0.5465</td>
-<td style="text-align:right">0.6033</td>
-<td style="text-align:right">0.9834</td>
+<td style="text-align:right">0.2826</td>
+<td style="text-align:right">0.5516</td>
+<td style="text-align:right">0.5617</td>
+<td style="text-align:right">0.9970</td>
 </tr>
 <tr>
 <td>after</td>
-<td style="text-align:right">0.0672</td>
-<td style="text-align:right">0.3254</td>
-<td style="text-align:right">0.9483</td>
-<td style="text-align:right">0.9042</td>
+<td style="text-align:right">0.0332</td>
+<td style="text-align:right">0.2195</td>
+<td style="text-align:right">0.9683</td>
+<td style="text-align:right">0.9363</td>
 </tr>
 </tbody>
 </table>
@@ -775,19 +792,19 @@
 <tr>
 <th>Model</th>
 <th style="text-align:right">Validation strict F1</th>
-<th style="text-align:right">Final-test strict F1</th>
+<th style="text-align:right">Diagnostic evaluation strict F1</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>CRF</td>
-<td style="text-align:right">0.9391</td>
-<td style="text-align:right">0.9123</td>
+<td style="text-align:right">0.9439</td>
+<td style="text-align:right">0.9223</td>
 </tr>
 <tr>
 <td>BERT</td>
-<td style="text-align:right">0.8351</td>
-<td style="text-align:right">0.7615</td>
+<td style="text-align:right">0.8537</td>
+<td style="text-align:right">0.7912</td>
 </tr>
 </tbody>
 </table>
@@ -814,13 +831,146 @@
 </tr>
 <tr>
 <td>v3.1</td>
-<td style="text-align:right">31</td>
-<td style="text-align:right">6</td>
+<td style="text-align:right">32</td>
+<td style="text-align:right">8</td>
 </tr>
 </tbody>
 </table>
 <p>These hand-written examples informed development. They are not an untouched final benchmark or evidence of flawless real-world performance. Every case is retained in artifacts/robustness_development.json.</p>
+<h2>Independent score recomputation</h2>
+<p>Verification: <strong>passed</strong>. Recomputed classification metrics on 1200 saved predictions and entity span F1 on 600 narratives. Frozen model/prediction hashes, reference spans and test IDs were checked. No models were fitted during verification.</p>
+<h2>Case summaries</h2>
+<p>All 60,000 enriched cases include a one-line TextRank summary in Parquet, SQLite and case-search exports. One-sentence extractive TextRank, whitespace normalized to one line; source text retained. Summary quality has not been evaluated against human reference summaries.</p>
+<h2>Initial media evidence correction (historical)</h2>
+<p>This receipt covers the earlier narrow media-only rule. The current broader context layer is measured separately below.</p>
+<p>Narrow disclosed context-rule correction, not CRF retraining. Existing viewed synthetic cases are diagnostic; reported-example tests are development regressions. Raw model weights and benchmark predictions are retained.</p>
+<p>The reported Camera footage false-person label is corrected to EVIDENCE by a disclosed context check. Rule corrections have no model probability.</p>
+<p>CRF validation Span-F1: 0.9439 before and 0.9439 after. CRF diagnostic Span-F1: 0.9223 before and 0.9223 after. Original model weights and reference labels are unchanged.</p>
+<h2>Legacy eight-label context diagnostics</h2>
+<p>Diagnostic on previously viewed synthetic evaluation; WITNESS is separate from the eight trained labels. Raw models and predictions unchanged.</p>
+<p>These core/context measurements precede the separately scored ten-label role upgrade below. Witness clauses are separated from locations; context repairs have no model probability. Legacy learned weights remain unchanged.</p>
+<table>
+<thead>
+<tr>
+<th>Diagnostic dataset</th>
+<th style="text-align:right">Raw Span-F1</th>
+<th style="text-align:right">Context pipeline Span-F1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CRF validation</td>
+<td style="text-align:right">0.9439</td>
+<td style="text-align:right">0.9393</td>
+</tr>
+<tr>
+<td>CRF</td>
+<td style="text-align:right">0.9223</td>
+<td style="text-align:right">0.9221</td>
+</tr>
+<tr>
+<td>BERT</td>
+<td style="text-align:right">0.7912</td>
+<td style="text-align:right">0.8063</td>
+</tr>
+</tbody>
+</table>
+<p>These are previously viewed synthetic cases. Validation and diagnostic-test changes can differ; the context layer is not an across-the-board benchmark improvement. Some added mentions and article boundaries differ from generator annotations.</p>
+<p>Hand-annotated development audit: 38/38 cases meet their specified requirements. Separate variations: 17/17. These examples informed repairs and are not a real-world accuracy estimate. See docs/NARRATIVE_VALIDATION.md.</p>
+<p>Stored entity structural validation: <strong>passed</strong> across 60,000 reports; 0 source-offset/overlap failures. This checks data integrity, not semantic correctness.</p>
+<h2>Petrol and material roles</h2>
+<p>Automatic entity pipeline: 37/37 material-role development checks passed. Petrol used to set a shop on fire is highlighted as WEAPON (accelerant); theft and forensic collection contexts are distinguished. Corrections have no model probability. These are development checks, not an independent accuracy estimate. See docs/MATERIAL_HIGHLIGHTING.md for scope and diagnostic tradeoffs.</p>
+<p>BERT with context layer: 37/37 material-role checks passed.</p>
+<h2>Validation-selected accuracy revision</h2>
+<p>Repeat evaluation on previously viewed synthetic cases. BoW, TF-IDF, BERT and CRF candidates were selected on validation. Word2Vec deployment retained its baseline after observing a diagnostic test regression. This release choice used test results; it is not an untouched final benchmark. No further training or tuning was performed.</p>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th style="text-align:right">Previous accuracy</th>
+<th style="text-align:right">Current accuracy</th>
+<th style="text-align:right">Change (percentage points)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bag of Words</td>
+<td style="text-align:right">0.8067</td>
+<td style="text-align:right">0.8350</td>
+<td style="text-align:right">+2.83</td>
+</tr>
+<tr>
+<td>TF-IDF</td>
+<td style="text-align:right">0.8825</td>
+<td style="text-align:right">0.9242</td>
+<td style="text-align:right">+4.17</td>
+</tr>
+<tr>
+<td>Word2Vec</td>
+<td style="text-align:right">0.8217</td>
+<td style="text-align:right">0.8217</td>
+<td style="text-align:right">+0.00</td>
+</tr>
+<tr>
+<td>BERT</td>
+<td style="text-align:right">0.7958</td>
+<td style="text-align:right">0.8167</td>
+<td style="text-align:right">+2.08</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Entity model</th>
+<th style="text-align:right">Previous strict Span-F1</th>
+<th style="text-align:right">Current strict Span-F1</th>
+<th style="text-align:right">Change (percentage points)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CRF</td>
+<td style="text-align:right">0.9178</td>
+<td style="text-align:right">0.9223</td>
+<td style="text-align:right">+0.45</td>
+</tr>
+<tr>
+<td>BERT</td>
+<td style="text-align:right">0.7912</td>
+<td style="text-align:right">0.7912</td>
+<td style="text-align:right">+0.00</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Rejected Word2Vec experiment:</strong> validation-selected candidate accuracy was 75.75%, versus 82.17% for the baseline. The baseline is retained for deployment. This release rollback used the viewed test results; no new fitting or tuning followed. Candidate evidence is preserved under artifacts/experiments/accuracy_20261107.</p>
+<p>Training sizes and evaluation cases are unchanged. Model tuning used validation; any test-informed release rollback is disclosed above. The viewed synthetic evaluation does not establish real-world accuracy. See docs/ACCURACY_IMPROVEMENTS.md for recipes and reproduction.</p>
+<h2>Schema-4 generalization upgrade</h2>
+<p>Diagnostic comparison on previously viewed synthetic ten-label annotations; same current core/context rules in both arms</p>
+<table>
+<thead>
+<tr>
+<th>Same ten-label diagnostic</th>
+<th style="text-align:right">Strict Span-F1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>without trained roles</td>
+<td style="text-align:right">0.5921</td>
+</tr>
+<tr>
+<td>with trained roles</td>
+<td style="text-align:right">0.6230</td>
+</tr>
+</tbody>
+</table>
+<p>The selected CRF role specialist adds ORGANIZATION/WITNESS while preserving the legacy core. These task-specific results are not comparable with the legacy eight-label table.</p>
+<p>Role-specialist validation F1: 0.7729; diagnostic F1: 0.5410. Its high precision and limited recall are documented in UPGRADE_STATUS.md.</p>
+<p>Windowed BERT candidate validation macro-F1: 0.9246, versus retained 0.9270. The candidate was rejected. Full-document inference with the retained weights scores 0.8167 on the viewed diagnostic test; no classification accuracy gain is claimed.</p>
+<p>Source-window retrieval: 61,300 windows cover 60,000 reports. Source text, offsets and ordering were verified. The dashboard includes entity correction, opt-in annotation drafts, qualified action/reference notes and per-entity review.</p>
+<p>The annotation contract supports ten labels. Agreement, adjudication and source-separated preparation tools are provided. Thirty-six human quality-review forms remain unreviewed; real-source accuracy and human summary/search/topic quality are not measured. See UPGRADE_STATUS.md, ANNOTATION_GUIDELINES_V4.md and REAL_DATA_WORKFLOW.md.</p>
 <h2>Interpretation</h2>
-<p>The corpus is synthetic. Scenario groups are separated, but vocabulary and generator conventions are shared. V3 model hashes were frozen before final predictions. No human-reference accuracy is claimed for syntax, sentiment, threat heuristics, search or summarization. Standalone Spark master and worker processes; see cluster_execution.json for verified workers and host scope. Docker and multi-host deployment were not exercised. Version benchmarks use different corpora and protocols.</p>
+<p>The corpus is synthetic. Scenario groups are separated, but vocabulary and generator conventions are shared. Model and prediction hashes record the release state; repeat evaluation, prediction reuse and any test-informed release rollback are disclosed in the evaluation receipts and above. No human-reference accuracy is claimed for syntax, sentiment, threat heuristics, search or summarization. Standalone Spark master and worker processes; see cluster_execution.json for verified workers and host scope. Docker and multi-host deployment were not exercised. Version benchmarks use different corpora and protocols.</p>
 <p>Resources: <code>artifacts/evaluation.json</code>, <code>ner_evaluation.json</code>, <code>spark_metrics.json</code>, <code>topics.json</code>, split ID CSVs, and <code>logs/</code>.</p>
 </body></html>

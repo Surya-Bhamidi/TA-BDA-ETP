@@ -1,0 +1,260 @@
+{
+  "plan": {
+    "schema": "4.0",
+    "labels": [
+      "SUSPECT",
+      "VICTIM",
+      "LOCATION",
+      "WEAPON",
+      "PROPERTY",
+      "DATE",
+      "TIME",
+      "EVIDENCE",
+      "ORGANIZATION",
+      "WITNESS"
+    ],
+    "train_rows": 12000,
+    "validation_rows": 800,
+    "development_rows": 800,
+    "planned_test_rows": 800,
+    "integrity": {
+      "status": "passed",
+      "checks": [
+        "report_id",
+        "template_group",
+        "normalized_text"
+      ],
+      "splits": {
+        "train": {
+          "rows": 12000,
+          "scenario_groups": 510,
+          "ids_and_original_text_sha256": "06a558512b42842d6096e7bad6038a3e15bdf4eefac9b74e8956a17847e9f409"
+        },
+        "validation": {
+          "rows": 800,
+          "scenario_groups": 8,
+          "ids_and_original_text_sha256": "9bfa9d1e4f77f3d0aa2b66f4a7a2c3c544df944fc19f0c22d807766c24a5fea2"
+        },
+        "development": {
+          "rows": 800,
+          "scenario_groups": 8,
+          "ids_and_original_text_sha256": "021bc5649cf4af02a2d594ec2a4167bf8af3810b0903dfb645ceec759db043e6"
+        }
+      },
+      "scope": "Exact record/group separation; shared synthetic grammar and vocabulary remain."
+    },
+    "scope": "Synthetic experiment; explicit new templates plus rule-assisted migration of old training references. No independent real-data or human-annotation claim.",
+    "selection": "Checkpoint and tagger selection on validation only; new generated test opened after freeze; no test-informed retraining.",
+    "legacy_models_preserved": "C:\\Users\\bhara\\OneDrive\\Desktop\\TA AND BDA - Copy\\Final Project\\artifacts\\models\\v3_1"
+  },
+  "selected": "CRF",
+  "validation": {
+    "CRF": 0.7209363492898474,
+    "BERT": 0.6651657797789603
+  },
+  "models": {
+    "CRF": {
+      "strict_entity_f1": 0.6151703178422187,
+      "report": {
+        "DATE": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 200
+        },
+        "EVIDENCE": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 267
+        },
+        "LOCATION": {
+          "precision": 0.7956204379562044,
+          "recall": 0.545,
+          "f1-score": 0.6468842729970327,
+          "support": 200
+        },
+        "ORGANIZATION": {
+          "precision": 1.0,
+          "recall": 0.3490364025695932,
+          "f1-score": 0.5174603174603175,
+          "support": 467
+        },
+        "PROPERTY": {
+          "precision": 0.9635627530364372,
+          "recall": 0.68,
+          "f1-score": 0.7973199329983249,
+          "support": 700
+        },
+        "SUSPECT": {
+          "precision": 0.41746641074856045,
+          "recall": 0.54375,
+          "f1-score": 0.47231270358306193,
+          "support": 800
+        },
+        "TIME": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 200
+        },
+        "VICTIM": {
+          "precision": 0.6174603174603175,
+          "recall": 0.48625,
+          "f1-score": 0.544055944055944,
+          "support": 800
+        },
+        "WEAPON": {
+          "precision": 1.0,
+          "recall": 0.6333333333333333,
+          "f1-score": 0.7755102040816326,
+          "support": 300
+        },
+        "WITNESS": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 640
+        },
+        "micro avg": {
+          "precision": 0.730965994583208,
+          "recall": 0.5310450371665938,
+          "f1-score": 0.6151703178422187,
+          "support": 4574
+        },
+        "macro avg": {
+          "precision": 0.779410991920152,
+          "recall": 0.6237369735902927,
+          "f1-score": 0.6753543375176314,
+          "support": 4574
+        },
+        "weighted avg": {
+          "precision": 0.6767729333808153,
+          "recall": 0.5310450371665938,
+          "f1-score": 0.5775913325946429,
+          "support": 4574
+        }
+      }
+    },
+    "BERT": {
+      "strict_entity_f1": 0.5576123128119801,
+      "report": {
+        "DATE": {
+          "precision": 0.9950248756218906,
+          "recall": 1.0,
+          "f1-score": 0.9975062344139651,
+          "support": 200
+        },
+        "EVIDENCE": {
+          "precision": 0.8959731543624161,
+          "recall": 1.0,
+          "f1-score": 0.9451327433628318,
+          "support": 267
+        },
+        "LOCATION": {
+          "precision": 0.40358744394618834,
+          "recall": 0.45,
+          "f1-score": 0.425531914893617,
+          "support": 200
+        },
+        "ORGANIZATION": {
+          "precision": 0.40358744394618834,
+          "recall": 0.3854389721627409,
+          "f1-score": 0.3943044906900328,
+          "support": 467
+        },
+        "PROPERTY": {
+          "precision": 0.8447837150127226,
+          "recall": 0.9485714285714286,
+          "f1-score": 0.8936742934051144,
+          "support": 700
+        },
+        "SUSPECT": {
+          "precision": 0.30431432973805855,
+          "recall": 0.49375,
+          "f1-score": 0.3765490943755958,
+          "support": 800
+        },
+        "TIME": {
+          "precision": 0.9803921568627451,
+          "recall": 1.0,
+          "f1-score": 0.99009900990099,
+          "support": 200
+        },
+        "VICTIM": {
+          "precision": 0.3642322097378277,
+          "recall": 0.48625,
+          "f1-score": 0.41648822269807284,
+          "support": 800
+        },
+        "WEAPON": {
+          "precision": 0.9737827715355806,
+          "recall": 0.8666666666666667,
+          "f1-score": 0.9171075837742504,
+          "support": 300
+        },
+        "WITNESS": {
+          "precision": 0.14342629482071714,
+          "recall": 0.05625,
+          "f1-score": 0.08080808080808081,
+          "support": 640
+        },
+        "micro avg": {
+          "precision": 0.5317334391114638,
+          "recall": 0.5861390467861828,
+          "f1-score": 0.5576123128119801,
+          "support": 4574
+        },
+        "macro avg": {
+          "precision": 0.6309104395584335,
+          "recall": 0.6686927067400837,
+          "f1-score": 0.643720166832255,
+          "support": 4574
+        },
+        "weighted avg": {
+          "precision": 0.5276813633710861,
+          "recall": 0.5861390467861828,
+          "f1-score": 0.5478726229479226,
+          "support": 4574
+        }
+      }
+    }
+  },
+  "frozen_at": "2026-11-08T09:34:10.085426+00:00",
+  "evaluated_at": "2026-11-08T09:34:12.646304+00:00",
+  "test_data_sha256": "58b152c90b3ff564e85b2faa38030b203477cafd94552b317a24f0647a800b46",
+  "predictions_sha256": "26b106ee19d05ba9d0de82c639a010849447b8bc291cde2bde2bb8227bc0e3ff",
+  "candidate_directory": "C:\\Users\\bhara\\OneDrive\\Desktop\\TA AND BDA - Copy\\Final Project\\artifacts\\models\\v4_entities",
+  "bert_history": [
+    {
+      "epoch": 1,
+      "loss": 1.223356613070258,
+      "validation_entity_f1": 0.5357462463955454
+    },
+    {
+      "epoch": 2,
+      "loss": 0.2859076238464843,
+      "validation_entity_f1": 0.6277564232247622
+    },
+    {
+      "epoch": 3,
+      "loss": 0.2388229495830567,
+      "validation_entity_f1": 0.6633227556556455
+    },
+    {
+      "epoch": 4,
+      "loss": 0.22566298465775356,
+      "validation_entity_f1": 0.6623708704101462
+    },
+    {
+      "epoch": 5,
+      "loss": 0.21953839922766732,
+      "validation_entity_f1": 0.6592577487765089
+    },
+    {
+      "epoch": 6,
+      "loss": 0.21582964807748795,
+      "validation_entity_f1": 0.6651657797789603
+    }
+  ]
+}

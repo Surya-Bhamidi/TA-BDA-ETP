@@ -5,6 +5,13 @@ The 3.1 entity revision adds generated ownership, active/passive violence and FI
 
 Version 3 adds informal English and spelling variation within the original algorithms. Read ROBUSTNESS_V3.md for the precise changes, development challenges and limits. The measured appendix contains the current results; the explicitly labeled V2 discussion is historical.
 
+The schema-4 generalization upgrade retains that core and adds separately
+trained organization/witness recognition, full-document retrieval and BERT
+windows, qualified action/reference notes, entity corrections, and a human
+annotation/quality-review workflow. See UPGRADE_STATUS.md. Its synthetic
+diagnostics are separate from the legacy benchmarks; real-data validation and
+human quality judgments remain pending.
+
 ### How to read this report
 
 Start at Chapter 1 even if you have never used machine learning. Chapters 1–4 explain the problem and the data. Chapters 5–9 explain every NLP component with examples. Chapters 10–13 explain evaluation, the dashboard and how to run the code. Chapters 14–17 cover the syllabus, limitations, improvements and glossary. The measured-results appendix is generated from the actual saved experiment outputs, rather than manually typed scores.
@@ -154,7 +161,7 @@ Machine-learning models consume numerical representations. This project compares
 
 Suppose the vocabulary is [phone, stolen, fire]. “Stolen phone” becomes [1, 1, 0]; “fire fire” becomes [0, 0, 2]. This representation counts words and largely ignores order. Bigrams add adjacent pairs such as “stolen phone,” giving limited local order information.
 
-The implementation uses CountVectorizer and logistic regression. Logistic regression learns a weight for each feature and class, then converts scores into class probabilities.
+The implementation uses CountVectorizer and logistic regression. Logistic regression learns a weight for each feature and class, then converts scores into class probabilities. Validation tuning selects binary word/phrase presence, L2 normalization and C=10 for the current Bag of Words model; the original baseline used raw counts.
 
 ### 6.2 TF-IDF
 
@@ -168,13 +175,13 @@ In a corpus of 100 documents, a word appearing in 99 has IDF about 1.01; a word 
 
 The vocabulary and IDF are fitted on training text only. Fitting them on the test set would leak information about the evaluation distribution.
 
-Version 3 combines word unigrams/bigrams with character 3–5-grams in the same TF-IDF representation and logistic regression model. A typo can lose its whole-word match while retaining useful character fragments. Character features receive weight 0.75 relative to the word branch. This does not autocorrect the source and does not introduce a new classification algorithm. Keyword search continues to use the word branch so a misspelled string cannot become an unexplained exact-keyword match.
+Version 3 combines word unigrams/bigrams with character 3–5-grams in the same TF-IDF representation and logistic regression model. A typo can lose its whole-word match while retaining useful character fragments. Character features received weight 0.75 in the baseline; validation tuning selects weight 1.5 and logistic-regression C=0.25 for the current model. This does not autocorrect the source and does not introduce a new classification algorithm. Keyword search continues to use the word branch so a misspelled string cannot become an unexplained exact-keyword match.
 
 ### 6.3 Neural Word2Vec embeddings
 
-Word2Vec is a small neural model trained to learn contextual relationships between words. This project uses Gensim skip-gram with 100-dimensional vectors, trained on its training partition. A document vector is the average of its known word vectors, followed by logistic regression.
+Word2Vec is a small neural model trained to learn contextual relationships between words. This project uses Gensim skip-gram with 100-dimensional vectors, trained on its training partition. The deployed baseline averages known word vectors. A validation-selected candidate concatenates an IDF-weighted mean with max pooling, producing 200-dimensional document features. Training-only IDF emphasizes less common words; L2 normalization and logistic regression follow. The candidate improved validation but fell to 75.75% accuracy on the viewed diagnostic test, compared with 82.17% for the baseline. Its experiment is preserved and deployment retains the baseline. This release rollback uses diagnostic test results; it is not an untouched final evaluation, and no further tuning followed that result.
 
-Averaging is efficient but loses word order. “Alex accused Morgan” and “Morgan accused Alex” can have similar averages even though their roles differ. Unknown words contribute no vector; an entirely unknown document gets a zero vector.
+Pooling is efficient but loses word order. “Alex accused Morgan” and “Morgan accused Alex” can have similar pooled vectors even though their roles differ. Unknown words contribute no vector; an entirely unknown document gets a zero vector.
 
 ### 6.4 Contextual BERT representations
 
@@ -182,13 +189,15 @@ BERT uses transformer attention so a word's representation depends on surroundin
 
 The checkpoint is selected using validation macro-F1. A larger neural model is not automatically better than a simple word-count model, especially on repetitive synthetic data with a small training sample.
 
-The BERT document classifier has an input token limit; long narratives are truncated by its tokenizer. BERT entity extraction uses overlapping word windows instead. These are two separately fine-tuned tasks.
+The archived tuned BERT document classifier uses a 192-subword truncating limit, compared with 160 in the baseline. The live schema-4 mode now covers the full document with overlapping windows and averages their predictions. A separately trained windowed candidate did not beat validation and was retained only as an experiment; the active mode uses the original weights. BERT entity extraction already uses overlapping word windows. The original benchmark files remain unchanged. See UPGRADE_STATUS.md and ACCURACY_IMPROVEMENTS.md for the separate recipes and evaluation scopes.
 
 ## 7. Sequence labeling: finding entity roles
 
 Document classification assigns one category to a complete narrative. Sequence labeling assigns a label to each token.
 
 Eight entity types are supported: SUSPECT, VICTIM, LOCATION, WEAPON, PROPERTY, DATE, TIME and EVIDENCE.
+
+A disclosed media-evidence context check corrects clear footage/recording mentions in collection/review contexts after model prediction. For example, “Camera footage was collected” is EVIDENCE. These corrections retain exact source offsets, record their extraction method and have no model probability. Bare stolen cameras remain property. The existing learned model weights and raw benchmark metrics are retained; see EVIDENCE_CONTEXT_FIX.md for regression and non-regression verification.
 
 ### BIO notation
 
@@ -203,6 +212,16 @@ Eight entity types are supported: SUSPECT, VICTIM, LOCATION, WEAPON, PROPERTY, D
 B means beginning, I means inside the same entity, and O means outside an entity. Both span boundaries and entity type must be correct for strict entity scoring.
 
 ### CRF
+
+The core context layer separates named witness clauses from locations and
+checks clear syntactic participant/ownership roles. Its repairs have no model
+probability and do not alter the retained core weights. The schema-4 specialist
+now also supplies learned ORGANIZATION/WITNESS mentions with separate scores;
+witnesses remain stored separately for compatibility. The older context layer
+has its own measured scores, including a small CRF
+validation regression, in `artifacts/narrative_context_validation.json`. See
+NARRATIVE_VALIDATION.md for the two reported cases, development audit and
+cross-checks; the earlier media-only receipt does not measure this broader layer.
 
 A Conditional Random Field learns relationships between nearby labels and features such as capitalization, neighboring words, position and sentence context. It can learn that a name after a reporting phrase often describes a victim, while a name after an identification phrase may be a suspect. These are learned patterns, not guaranteed rules.
 
@@ -238,7 +257,7 @@ A separate transparent heuristic counts selected unnegated threat-language cues.
 
 ### TextRank summarization
 
-TextRank treats sentences as nodes in a graph, connects similar sentences, and ranks them using PageRank. The implementation also includes a small lead-sentence preference. Selected sentences are copied from the source and placed in source order.
+TextRank treats sentences as nodes in a graph, connects similar sentences, and ranks them using PageRank. The implementation also includes a small lead-sentence preference. The application selects one source sentence for each case and normalizes its whitespace to one line. The original narrative is unchanged, and structured notes retain the original sentence citation. These summaries are stored in the enriched dataset, shown in case search, included in CSV exports, and computed on demand for new narratives. A long source sentence can still produce a long summary.
 
 This is **extractive** summarization. It does not generate a new account. It can still omit an important denial or overemphasize repeated material. Structured notes list extracted mentions and source sentence references; users should check them against the narrative.
 
@@ -248,7 +267,7 @@ No ROUGE score is claimed because human reference summaries have not been collec
 
 Keyword search uses TF-IDF cosine similarity. It works well when query and report share terms. Semantic search uses the pretrained all-MiniLM-L6-v2 encoder, attention-mask mean pooling and normalized 384-dimensional embeddings.
 
-Each case embedding uses at most 128 subword tokens for bounded CPU cost. Later details in a long case can be missed. The index stores float16 vectors on disk and loads them through a memory map. Query scoring reads chunks instead of copying the entire embedding matrix.
+The legacy case embedding used only the first 128 subword tokens. Live retrieval now indexes every source window with 128-subword limits and 32-subword overlap: 61,300 windows cover the 60,000 reports. Ranking takes the best window match per report. Source offsets, report order and text fingerprints are checked. The float16 index uses memory maps and block scoring. Evidence retrieval also scans later windows of long sentences; relevance quality still needs human judgments.
 
 Hybrid search combines keyword and semantic **ranks**, using reciprocal-rank fusion. It does not pretend that the two raw similarity scales are identical. Entity filters use predicted mentions stored in SQLite; missed entities can therefore cause missed filtered results.
 
@@ -272,6 +291,8 @@ The complete corpus has larger split partitions. These samples keep the CPU expe
 Incident variants, participant phrasings and first-name pools are assigned before fitting. Composite groups do not overlap between splits. Three-fold grouped cross-validation of TF-IDF uses incident variants within training, keeping related layouts together.
 
 A SHA-256 receipt records model files before final predictions. The final-test receipt records completion. Once results have been viewed, the test is no longer unseen to the researchers; future tuning should use a new independent evaluation protocol.
+
+The current rebuild checks cross-split report IDs, scenario groups and normalized text before fitting, and records split fingerprints and source hashes. It saves row-level document and entity predictions. Run `python scripts/verify_evaluation.py` to check frozen model/prediction hashes, source labels and entity spans, and recompute Accuracy, macro/weighted F1 and strict Span-F1 without retraining. This remains a repeat synthetic evaluation on previously viewed test data; the additional audit checks do not make it an untouched benchmark. See IMPLEMENTATION_STATUS.md for the requirement mapping and local deployment commands.
 
 The corpus still shares generator vocabulary and grammar across splits. This protocol reduces some leakage but cannot establish real-world generalization.
 

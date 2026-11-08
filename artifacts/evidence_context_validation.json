@@ -1,0 +1,26 @@
+{
+  "status": "passed",
+  "verified_at": "2026-11-07T16:52:11.722795+00:00",
+  "crf_validation": {
+    "rows": 400,
+    "raw_span_f1": 0.9439467622216534,
+    "context_checked_span_f1": 0.9439467622216534,
+    "changed_reports": 0
+  },
+  "test": {
+    "CRF": {
+      "rows": 600,
+      "raw_span_f1": 0.9222779989613987,
+      "context_checked_span_f1": 0.9222779989613987,
+      "changed_reports": 0
+    },
+    "BERT": {
+      "rows": 600,
+      "raw_span_f1": 0.7911874291268427,
+      "context_checked_span_f1": 0.7911874291268427,
+      "changed_reports": 0
+    }
+  },
+  "correction_source_sha256": "9e3b8fb24020c4e6b5bf26000c1673c8292af18b7bbc8871cac330f0e538723d",
+  "scope": "Narrow disclosed context-rule correction, not CRF retraining. Existing viewed synthetic cases are diagnostic; reported-example tests are development regressions. Raw model weights and benchmark predictions are retained."
+}

@@ -3,13 +3,16 @@ import html
 import joblib
 import json
 import numpy as np
+from pathlib import Path
 from functools import lru_cache
 
-from .config import MODELS, RUNTIME, SETTINGS
+from .config import MODELS, RUNTIME, SETTINGS, ARTIFACTS
 from .text import tokens_with_offsets, token_features, spans_from_bio, summarize, threat_language
 
 COLORS = {"SUSPECT": "#ffd9c9", "VICTIM": "#d9e6ff", "LOCATION": "#c4eee5", "WEAPON": "#ffe8ad"}
 COLORS.update(PROPERTY="#eee0fb", DATE="#dfeec9", TIME="#dbeaf2", EVIDENCE="#f9d8e9")
+COLORS["WITNESS"] = "#cdebe8"
+COLORS["ORGANIZATION"] = "#e2d9fa"
 
 
 @lru_cache(maxsize=1)
@@ -20,7 +23,24 @@ def language_model():
 
 def model_revision():
     names = ["tfidf.joblib", "crf.joblib", "topics.joblib", "calibration.json", "ner_selection.json"]
-    return tuple((str(MODELS / name), (MODELS / name).stat().st_mtime_ns, (MODELS / name).stat().st_size) for name in names)
+    for folder in ["bert_classifier", "bert_ner"]:
+        names.extend(str(path.relative_to(MODELS)) for path in sorted((MODELS / folder).glob("*"))
+                     if path.suffix in {".json", ".safetensors", ".bin"})
+    paths = [MODELS / name for name in names] + [Path(__file__).with_name(name) for name in ["evidence_context.py", "narrative_context.py", "material_context.py"]]
+    from .trained_roles import revision_paths
+    paths.extend(revision_paths())
+    paths.extend(Path(__file__).with_name(name) for name in ["trained_roles.py", "assertions.py", "relations.py", "references.py", "confidence.py"] if Path(__file__).with_name(name).exists())
+    calibration = ARTIFACTS / "core_entity_calibration.json"
+    if calibration.exists():
+        paths.append(calibration)
+    document_contract = ARTIFACTS / "active_document_model.json"
+    if document_contract.exists():
+        paths.append(document_contract)
+        directory = (ARTIFACTS / json.loads(document_contract.read_text(encoding="utf-8"))["directory"]).resolve()
+        if not directory.is_relative_to((ARTIFACTS / "models").resolve()):
+            raise ValueError("Classifier must be inside project model artifacts")
+        paths.extend(path for path in directory.glob("*") if path.suffix in {".json", ".safetensors", ".bin"})
+    return tuple((str(path), path.stat().st_mtime_ns, path.stat().st_size) for path in paths)
 
 
 def model_revision_id():
@@ -43,12 +63,18 @@ def _load_models(revision):
             "ner_selection": json.loads((MODELS / "ner_selection.json").read_text())["selected"]}
 
 
-@lru_cache(maxsize=1)
 def bert_model():
+    return _load_bert_model(model_revision())
+
+
+@lru_cache(maxsize=1)
+def _load_bert_model(revision):
     import torch
     from transformers import AutoTokenizer, AutoModelForSequenceClassification
     torch.set_num_threads(4)
-    path = MODELS / "bert_classifier"
+    contract_path = ARTIFACTS / "active_document_model.json"
+    contract = json.loads(contract_path.read_text(encoding="utf-8")) if contract_path.exists() else {}
+    path = ARTIFACTS / contract["directory"] if contract else MODELS / "bert_classifier"
     return AutoModelForSequenceClassification.from_pretrained(path, local_files_only=True), AutoTokenizer.from_pretrained(path, local_files_only=True)
 
 
@@ -106,8 +132,23 @@ def analyze(text, use_bert=False, ner_choice="Automatic"):
     probabilities = temperature_scale(raw_probabilities, resources["calibration"]["temperature"])[0]
     topic_distribution = resources["topics"]["model"].transform(resources["topics"]["vectorizer"].transform(topic_input([text])))[0]
     doc = language_model()(text)
+    from .narrative_context import resolve_narrative_context
+    raw_entities = [dict(entity) for entity in entities]
+    entities, contextual_roles = resolve_narrative_context(text, entities, doc)
+    from .evidence_context import validate_evidence_context
+    entities = validate_evidence_context(text, entities)
+    from .trained_roles import predict_roles, merge_roles
+    learned_roles = predict_roles(text)
+    entities, contextual_roles = merge_roles(text, entities, contextual_roles, learned_roles)
     entities = annotate_assertions(text, entities)
-    result = {"text": text, "entities": entities, "summary": summarize(text), "ner_model": selected_ner,
+    contextual_roles = annotate_assertions(text, contextual_roles)
+    from .assertions import qualify_entities, entity_review
+    entities = qualify_entities(text, entities, doc)
+    contextual_roles = qualify_entities(text, contextual_roles, doc)
+    from .confidence import calibrate_core
+    entities = calibrate_core(entities, selected_ner)
+    result = {"text": text, "entities": entities, "summary": " ".join(summarize(text, count=1).split()), "ner_model": selected_ner,
+              "contextual_roles": contextual_roles, "raw_entities": raw_entities, "raw_role_entities": learned_roles,
               "crime_type": str(classifier.classes_[probabilities.argmax()]), "model_score": float(probabilities.max()),
               "sentiment": resources["sentiment"].polarity_scores(text), "threat": threat_language(text),
               "topic_id": int(topic_distribution.argmax()), "topic_distribution": topic_distribution.tolist(),
@@ -115,6 +156,7 @@ def analyze(text, use_bert=False, ner_choice="Automatic"):
               "generic_entities": [{"text": e.text, "label": e.label_} for e in doc.ents]}
     from .features import prediction_review
     result.update(prediction_review(classifier, text, probabilities, resources["calibration"]["threshold"], raw_probabilities[0]))
+    result["entity_context_corrections"] = [entity for entity in entities + contextual_roles if entity.get("extraction_method")]
     import re
     if re.search(r"\b(kill(?:ed|ing)?|murder(?:ed)?|homicide)\b", text, re.I):
         result["review_required"] = True
@@ -123,12 +165,28 @@ def analyze(text, use_bert=False, ner_choice="Automatic"):
     result["model_revision"] = model_revision_id()
     result["explanation"] = explain_prediction(classifier, text)
     result["structured_summary"] = structured_summary(text, entities, result["summary"])
+    result["structured_summary"]["contextual_roles"] = contextual_roles
+    from .relations import action_notes
+    from .references import reference_notes
+    result["references"] = reference_notes(text, entities + contextual_roles, doc)
+    result["relations"] = action_notes(text, entities, doc, result["references"])
+    events = result["relations"]["events"]
+    if events and all(event["assertion"] in {"negated", "disputed", "uncertain"} for event in events):
+        result["review_required"] = True
+        result["review_reasons"].append("Identified incident actions are only negated, disputed or uncertain; review the suggested category.")
+    result["structured_summary"]["action_notes"] = result["relations"]
+    result["structured_summary"]["references"] = result["references"]
+    result["entity_review"] = entity_review(entities + contextual_roles)
+    result["entity_review_required"] = bool(result["entity_review"])
     people = [{"start": e.start_char, "end": e.end_char, "label": "PERSON"} for e in doc.ents if e.label_ == "PERSON"]
-    result["redacted_text"] = redact(text, entities + people)
+    result["redacted_text"] = redact(text, entities + contextual_roles + people)
     if use_bert:
         from .bert_model import predict_bert
         model, tokenizer = bert_model()
-        result["bert_prediction"] = predict_bert(model, tokenizer, [text])[0]
+        contract_path = ARTIFACTS / "active_document_model.json"
+        document_contract = json.loads(contract_path.read_text(encoding="utf-8")) if contract_path.exists() else {}
+        result["bert_prediction"] = predict_bert(model, tokenizer, [text], full_text=document_contract.get("full_text"))[0]
+        result["bert_full_document"] = document_contract.get("full_text", getattr(model.config, "narrative_windowed", False))
     return result
 
 

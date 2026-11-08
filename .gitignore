@@ -20,10 +20,15 @@ artifacts/browser_check.json
 artifacts/run_*.json
 artifacts/delivery_manifest.json
 artifacts/semantic_embeddings.npy
+artifacts/semantic_chunk_embeddings.npy
+artifacts/semantic_chunk_rows.npy
+artifacts/semantic_chunk_offsets.npy
 artifacts/stage_state/
 artifacts/runs/
+artifacts/demos/
 artifacts/version2_ready.json
 data/external/
+data/quality_review/
 .ruff_cache/
 .coverage
 htmlcov/

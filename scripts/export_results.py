@@ -26,6 +26,8 @@ def main():
              "| Model | Accuracy | Macro F1 | Weighted F1 |", "|---|---:|---:|---:|"]
     for name, result in evaluation["models"].items():
         lines.append(f"| {name} | {result['accuracy']:.4f} | {result['macro_f1']:.4f} | {result['weighted_f1']:.4f} |")
+    if evaluation["protocol"].get("evaluation_scope"):
+        lines += ["", evaluation["protocol"]["evaluation_scope"]]
     lines += ["", "## Entity extraction", "", f"Validation-selected {ner['model']} strict entity F1: **{ner['strict_entity_f1']:.4f}** on {ner['test_rows']} evaluation narratives.", "", ner.get("split", ""), "",
               "| Entity | Precision | Recall | F1 |", "|---|---:|---:|---:|"]
     for label in ner["labels"]:
@@ -67,7 +69,7 @@ def main():
         accepted = f"{item['accuracy_when_accepted']:.4f}" if item["accuracy_when_accepted"] is not None else "not applicable"
         lines.append(f"| {name} | {item['ece']:.4f} | {item['log_loss']:.4f} | {item['coverage']:.4f} | {accepted} |")
     lines += ["", "Temperature is fitted on validation only. Calibration is not guaranteed to improve under a shifted test distribution.", "",
-              "## Both entity models", "", "| Model | Validation strict F1 | Final-test strict F1 |", "|---|---:|---:|"]
+              "## Both entity models", "", "| Model | Validation strict F1 | Diagnostic evaluation strict F1 |", "|---|---:|---:|"]
     for name, result in ner["models"].items():
         lines.append(f"| {name} | {ner['validation'][name]:.4f} | {result['strict_entity_f1']:.4f} |")
     robustness = ARTIFACTS / "robustness_development.json"
@@ -80,7 +82,71 @@ def main():
                 result = comparisons[version]
                 lines.append(f"| {version} | {sum(row['correct'] for row in result['cases'])} | {result['exact_role_cases']} |")
         lines += ["", "These hand-written examples informed development. They are not an untouched final benchmark or evidence of flawless real-world performance. Every case is retained in artifacts/robustness_development.json."]
-    lines += ["", "## Interpretation", "", "The corpus is synthetic. Scenario groups are separated, but vocabulary and generator conventions are shared. V3 model hashes were frozen before final predictions. No human-reference accuracy is claimed for syntax, sentiment, threat heuristics, search or summarization. " + spark["deployment_note"] + " Docker and multi-host deployment were not exercised. Version benchmarks use different corpora and protocols.", "",
+    verification = ARTIFACTS / "evaluation_verification.json"
+    if verification.exists():
+        checked = read("evaluation_verification.json")
+        current_freeze = read("final_evaluation_receipt.json")["frozen_at"]
+        if checked.get("frozen_at") == current_freeze:
+            lines += ["", "## Independent score recomputation", "", f"Verification: **{checked['status']}**. Recomputed classification metrics on {checked['document_rows']} saved predictions and entity span F1 on {checked['entity_rows']} narratives. Frozen model/prediction hashes, reference spans and test IDs were checked. No models were fitted during verification."]
+    if enriched.get("summary"):
+        lines += ["", "## Case summaries", "", f"All {enriched['rows']:,} enriched cases include a one-line TextRank summary in Parquet, SQLite and case-search exports. " + enriched["summary"] + ". Summary quality has not been evaluated against human reference summaries."]
+    context_receipt = ARTIFACTS / "evidence_context_validation.json"
+    if context_receipt.exists():
+        context = read("evidence_context_validation.json")
+        lines += ["", "## Initial media evidence correction (historical)", "", "This receipt covers the earlier narrow media-only rule. The current broader context layer is measured separately below.", "", context["scope"], "",
+                  "The reported Camera footage false-person label is corrected to EVIDENCE by a disclosed context check. Rule corrections have no model probability.", "",
+                  f"CRF validation Span-F1: {context['crf_validation']['raw_span_f1']:.4f} before and {context['crf_validation']['context_checked_span_f1']:.4f} after. CRF diagnostic Span-F1: {context['test']['CRF']['raw_span_f1']:.4f} before and {context['test']['CRF']['context_checked_span_f1']:.4f} after. Original model weights and reference labels are unchanged."]
+    if (ARTIFACTS / "narrative_context_validation.json").exists():
+        context = read("narrative_context_validation.json")
+        audit, crosscheck = read("narrative_audit_after.json"), read("narrative_crosscheck.json")
+        lines += ["", "## Legacy eight-label context diagnostics", "", context["scope"], "",
+                  "These core/context measurements precede the separately scored ten-label role upgrade below. Witness clauses are separated from locations; context repairs have no model probability. Legacy learned weights remain unchanged.", "",
+                  "| Diagnostic dataset | Raw Span-F1 | Context pipeline Span-F1 |", "|---|---:|---:|"]
+        for name, result in [("CRF validation", context["crf_validation"]), *context["test"].items()]:
+            lines.append(f"| {name} | {result['raw_span_f1']:.4f} | {result['context_span_f1']:.4f} |")
+        lines += ["", "These are previously viewed synthetic cases. Validation and diagnostic-test changes can differ; the context layer is not an across-the-board benchmark improvement. Some added mentions and article boundaries differ from generator annotations.", "",
+                  f"Hand-annotated development audit: {audit['summary']['all_requirements_passed']}/{audit['summary']['cases']} cases meet their specified requirements. Separate variations: {crosscheck['summary']['all_requirements_passed']}/{crosscheck['summary']['cases']}. These examples informed repairs and are not a real-world accuracy estimate. See docs/NARRATIVE_VALIDATION.md."]
+        if (ARTIFACTS / "entity_store_validation.json").exists():
+            stored = read("entity_store_validation.json")
+            lines += ["", f"Stored entity structural validation: **{stored['status']}** across {stored['rows']:,} reports; {stored['failures']} source-offset/overlap failures. This checks data integrity, not semantic correctness."]
+    improvement_path = ARTIFACTS / "accuracy_improvements.json"
+    if (ARTIFACTS / "material_context_after.json").exists():
+        materials = read("material_context_after.json")["summary"]
+        lines += ["", "## Petrol and material roles", "",
+                  f"Automatic entity pipeline: {materials['passed']}/{materials['cases']} material-role development checks passed. Petrol used to set a shop on fire is highlighted as WEAPON (accelerant); theft and forensic collection contexts are distinguished. Corrections have no model probability. These are development checks, not an independent accuracy estimate. See docs/MATERIAL_HIGHLIGHTING.md for scope and diagnostic tradeoffs."]
+        if (ARTIFACTS / "material_context_bert.json").exists():
+            bert_materials = read("material_context_bert.json")["summary"]
+            lines += ["", f"BERT with context layer: {bert_materials['passed']}/{bert_materials['cases']} material-role checks passed."]
+    if improvement_path.exists():
+        improvements = read("accuracy_improvements.json")
+        lines += ["", "## Validation-selected accuracy revision", "", improvements["scope"], "",
+                  "| Model | Previous accuracy | Current accuracy | Change (percentage points) |",
+                  "|---|---:|---:|---:|"]
+        for name, item in improvements["classification"].items():
+            lines.append(f"| {name} | {item['before_accuracy']:.4f} | {item['after_accuracy']:.4f} | {item['accuracy_change_pp']:+.2f} |")
+        lines += ["", "| Entity model | Previous strict Span-F1 | Current strict Span-F1 | Change (percentage points) |", "|---|---:|---:|---:|"]
+        for name, item in improvements["entities"].items():
+            lines.append(f"| {name} | {item['before_span_f1']:.4f} | {item['after_span_f1']:.4f} | {item['change_pp']:+.2f} |")
+        for name, rejected in improvements.get("rejected_candidates", {}).items():
+            lines += ["", f"**Rejected {name} experiment:** validation-selected candidate accuracy was {rejected['after_accuracy']:.2%}, versus {rejected['before_accuracy']:.2%} for the baseline. The baseline is retained for deployment. This release rollback used the viewed test results; no new fitting or tuning followed. Candidate evidence is preserved under artifacts/experiments/accuracy_20261107."]
+        lines += ["", "Training sizes and evaluation cases are unchanged. Model tuning used validation; any test-informed release rollback is disclosed above. The viewed synthetic evaluation does not establish real-world accuracy. See docs/ACCURACY_IMPROVEMENTS.md for recipes and reproduction."]
+    if (ARTIFACTS / "hybrid_entity_evaluation.json").exists():
+        hybrid = read("hybrid_entity_evaluation.json")
+        lines += ["", "## Schema-4 generalization upgrade", "", hybrid["scope"], "",
+                  "| Same ten-label diagnostic | Strict Span-F1 |", "|---|---:|"]
+        for name, result in hybrid["splits"]["test"].items():
+            if name != "rows":
+                lines.append(f"| {name.replace('_', ' ')} | {result['strict_entity_f1']:.4f} |")
+        specialist = read("role_specialist_broad_evaluation.json")
+        lines += ["", "The selected CRF role specialist adds ORGANIZATION/WITNESS while preserving the legacy core. These task-specific results are not comparable with the legacy eight-label table.", "",
+                  f"Role-specialist validation F1: {specialist['validation']['CRF']:.4f}; diagnostic F1: {specialist['models']['CRF']['strict_entity_f1']:.4f}. Its high precision and limited recall are documented in UPGRADE_STATUS.md."]
+        classifier = read("windowed_classification_experiment.json")
+        window_eval = read("windowed_classification_evaluation.json")
+        lines += ["", f"Windowed BERT candidate validation macro-F1: {classifier['candidate_validation_macro_f1']:.4f}, versus retained {classifier['legacy_validation_macro_f1']:.4f}. The candidate was rejected. Full-document inference with the retained weights scores {window_eval['full_document']['accuracy']:.4f} on the viewed diagnostic test; no classification accuracy gain is claimed."]
+        delivery = read("upgrade_delivery.json")
+        lines += ["", f"Source-window retrieval: {delivery['semantic_windows']:,} windows cover {delivery['corpus_rows']:,} reports. Source text, offsets and ordering were verified. The dashboard includes entity correction, opt-in annotation drafts, qualified action/reference notes and per-entity review.", "",
+                  "The annotation contract supports ten labels. Agreement, adjudication and source-separated preparation tools are provided. Thirty-six human quality-review forms remain unreviewed; real-source accuracy and human summary/search/topic quality are not measured. See UPGRADE_STATUS.md, ANNOTATION_GUIDELINES_V4.md and REAL_DATA_WORKFLOW.md."]
+    lines += ["", "## Interpretation", "", "The corpus is synthetic. Scenario groups are separated, but vocabulary and generator conventions are shared. Model and prediction hashes record the release state; repeat evaluation, prediction reuse and any test-informed release rollback are disclosed in the evaluation receipts and above. No human-reference accuracy is claimed for syntax, sentiment, threat heuristics, search or summarization. " + spark["deployment_note"] + " Docker and multi-host deployment were not exercised. Version benchmarks use different corpora and protocols.", "",
               "Resources: `artifacts/evaluation.json`, `ner_evaluation.json`, `spark_metrics.json`, `topics.json`, split ID CSVs, and `logs/`."]
     markdown = "\n".join(lines) + "\n"
     (ROOT / "docs" / "RESULTS.md").write_text(markdown, encoding="utf-8")

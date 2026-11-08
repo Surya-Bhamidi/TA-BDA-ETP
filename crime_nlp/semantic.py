@@ -1,8 +1,10 @@
 """Local sentence embeddings, hybrid retrieval, and evidence-grounded answers."""
 from functools import lru_cache
+import json
 import numpy as np
 from .config import RUNTIME, ARTIFACTS, SETTINGS
 from .text import sentences
+from .windowing import source_windows
 
 
 @lru_cache(maxsize=1)
@@ -37,8 +39,30 @@ def embedding_index():
 
 def semantic_scores(query):
     vector = encode([query])[0]
+    paths = [ARTIFACTS / "semantic_chunk_embeddings.npy", ARTIFACTS / "semantic_chunk_rows.npy"]
+    manifest = ARTIFACTS / "semantic_chunk_manifest.json"
+    legacy_manifest = ARTIFACTS / "index_manifest.json"
+    ready = all(path.exists() for path in paths) and manifest.exists() and legacy_manifest.exists()
+    if ready:
+        chunk_info = json.loads(manifest.read_text(encoding="utf-8"))
+        corpus_info = json.loads(legacy_manifest.read_text(encoding="utf-8"))
+        ready = chunk_info["source_ids_sha256"] == corpus_info["report_order_sha256"] and bool(chunk_info.get("source_narratives_sha256")) and chunk_info.get("source_narratives_sha256") == corpus_info.get("report_text_sha256")
+    if ready:
+        chunks, rows = chunk_index(tuple((str(path), path.stat().st_mtime_ns) for path in paths))
+        if len(chunks) != len(rows) or len(rows) and int(rows.max()) >= len(embedding_index()):
+            raise RuntimeError("Semantic source-window index is incomplete; rebuild the chunk index")
+        scores = np.full(len(embedding_index()), -1., dtype=np.float32)
+        for start in range(0, len(chunks), 4096):
+            similarities = np.asarray(chunks[start:start + 4096], dtype=np.float32) @ vector
+            np.maximum.at(scores, rows[start:start + 4096], similarities)
+        return scores
     matrix = embedding_index()
     return np.concatenate([np.asarray(matrix[start:start + 4096], dtype=np.float32) @ vector for start in range(0, len(matrix), 4096)])
+
+
+@lru_cache(maxsize=1)
+def chunk_index(revision):
+    return np.load(ARTIFACTS / "semantic_chunk_embeddings.npy", mmap_mode="r"), np.load(ARTIFACTS / "semantic_chunk_rows.npy", mmap_mode="r")
 
 
 def rank_scores(lexical, semantic, mode="Hybrid"):
@@ -62,12 +86,23 @@ def semantic_evidence(question, text, report_id="custom narrative"):
     source = sentences(text)
     if not source or not question.strip():
         return {"answer": "Insufficient evidence in this narrative.", "citations": [], "score": 0.}
-    # Avoid unbounded attention over an arbitrary uploaded file.
-    scores = encode(source) @ encode([question])[0]
+    _, tokenizer = encoder()
+    chunks = source_windows(source, tokenizer)
+    if not chunks:
+        return {"answer": "Insufficient evidence in this narrative.", "citations": [], "score": 0.}
+    chunk_scores = encode([chunk["text"] for chunk in chunks]) @ encode([question])[0]
+    scores = np.full(len(source), -1., dtype=np.float32)
+    best_chunks = {}
+    for index, (chunk, score) in enumerate(zip(chunks, chunk_scores)):
+        if score > scores[chunk["source"]]:
+            scores[chunk["source"]] = score
+            best_chunks[chunk["source"]] = index
     order = np.argsort(-scores)[:2]
     chosen = [int(i) for i in order if scores[i] >= .30]
     if not chosen:
         return {"answer": "Insufficient evidence in this narrative.", "citations": [], "score": float(scores.max())}
-    return {"answer": " ".join(source[i] for i in sorted(chosen)), "score": float(scores[order[0]]),
-            "citations": [{"report_id": report_id, "sentence": i + 1, "text": source[i]} for i in chosen],
+    selected = [chunks[best_chunks[i]] for i in sorted(chosen)]
+    return {"answer": " ".join(chunk["text"] for chunk in selected), "score": float(scores[order[0]]),
+            "citations": [{"report_id": report_id, "sentence": chunk["source"] + 1, "text": chunk["text"],
+                           "sentence_start": chunk["start"], "sentence_end": chunk["end"]} for chunk in selected],
             "method": "Semantic evidence retrieval; threshold heuristic, not an answer-confidence probability"}

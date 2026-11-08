@@ -1,0 +1,7 @@
+{
+  "directory": "models/v3_1/bert_classifier",
+  "full_text": true,
+  "validation_choice": "legacy_windowed",
+  "selection_artifact": "windowed_classification_experiment.json",
+  "legacy_benchmark": "Unchanged archived truncating inference; live full-document mode is reported separately"
+}

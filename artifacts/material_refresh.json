@@ -1,0 +1,7 @@
+{
+  "status": "passed",
+  "rows": 60000,
+  "material_rows_refreshed": 3086,
+  "unrelated_rows_preserved": 56914,
+  "scope": "Rerun raw selected NER and current context checks for material narratives; preserve other rows, models, classifier outputs and retrieval indexes"
+}

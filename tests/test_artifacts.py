@@ -5,6 +5,7 @@ import pytest
 from scipy import sparse
 
 from crime_nlp.config import ARTIFACTS, PROCESSED, CATEGORIES, ENTITY_LABELS
+from crime_nlp.annotation_schema import LABELS
 
 pytestmark = pytest.mark.skipif(not (PROCESSED / "dashboard.parquet").exists(), reason="Run the pipeline before artifact integration tests.")
 
@@ -36,15 +37,48 @@ def test_split_has_no_template_or_duplicate_leakage(data):
         assert set(data.loc[data.split == split, "crime_type"]) == set(CATEGORIES)
 
 
+def test_case_summaries_are_one_source_sentence_and_match_sqlite(data):
+    from crime_nlp.text import sentences
+    from crime_nlp.store import fetch_reports
+    assert data.summary.notna().all()
+    assert data.summary.str.strip().ne("").all()
+    assert not data.summary.str.contains(r"[\r\n]").any()
+    sample = data.sample(100, random_state=42)
+    for row in sample.itertuples():
+        assert row.summary and "\n" not in row.summary and "\r" not in row.summary
+        assert len(sentences(row.summary)) == 1
+        assert row.summary in {" ".join(sentence.split()) for sentence in sentences(row.narrative)}
+    assert fetch_reports(sample.index.tolist()).summary.tolist() == sample.summary.tolist()
+
+
 def test_predictions_and_spans_are_valid(data):
     assert set(data.predicted_crime) <= set(CATEGORIES)
     assert data.sentiment.between(-1, 1).all()
     assert data.topic_probability.between(0, 1).all()
     assert data.threat_score.between(0, 12).all()
-    for row in data.sample(300, random_state=42).itertuples():
-        for ent in json.loads(row.predicted_entities_json):
+    for row in data.itertuples():
+        entities = json.loads(row.predicted_entities_json)
+        roles = json.loads(row.contextual_roles_json)
+        for ent in entities:
             assert row.narrative[ent["start"]:ent["end"]] == ent["text"]
-            assert ent["label"] in ENTITY_LABELS
+            assert ent["label"] in LABELS
+        for role in roles:
+            assert role["label"] == "WITNESS"
+            assert row.narrative[role["start"]:role["end"]] == role["text"]
+            assert role["confidence"] is None or role.get("trained_model") and 0 <= role["confidence"] <= 1
+        mentions = sorted(entities + roles, key=lambda entity: (entity["start"], entity["end"]))
+        assert all(left["end"] <= right["start"] for left, right in zip(mentions, mentions[1:]))
+
+
+def test_stored_arson_materials_are_searchable(data):
+    from crime_nlp.store import entity_matches
+    selected = data.loc[data.narrative.str.contains("poured petrol and set", case=False, regex=False)]
+    assert len(selected) > 0
+    matches = set(entity_matches("WEAPON", "petrol"))
+    for position, row in selected.iterrows():
+        assert any(entity["text"].lower() == "petrol" and entity["label"] == "WEAPON"
+                   for entity in json.loads(row.predicted_entities_json))
+        assert position in matches
 
 
 def test_metrics_are_consistent_with_test_count():

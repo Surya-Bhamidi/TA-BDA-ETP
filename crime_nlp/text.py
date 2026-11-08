@@ -98,11 +98,15 @@ def token_features(tokens):
                 cue = lowered[j]
                 kinds = {"action": cue in ROLE_ACTIONS, "place": cue in {"near", "at", "in", "outside"},
                          "by": cue == "by", "victim": cue in {"victim", "complainant"},
-                         "suspect": cue in {"suspect", "accused", "offender"}}
+                         "suspect": cue in {"suspect", "accused", "offender"},
+                         "witness": cue in {"witness", "witnessed", "eyewitness", "observer", "bystander", "saw", "seen", "observed"},
+                         "organization": cue in {"company", "bank", "oil", "energy", "telecom", "retail", "trading", "business", "firm", "corporation", "services", "petroleum", "fuels"}}
                 for kind, present in kinds.items():
                     if present and kind not in found:
                         f[f"{side}:{kind}:distance"] = str(distance)
                         found.add(kind)
+                        if kind in {"witness", "organization"}:
+                            f[f"nearby:{kind}:cue"] = True
         result.append(f)
     return result
 
@@ -138,7 +142,7 @@ def sentences(text):
     return result
 
 
-def summarize(text, count=2):
+def summarize(text, count=1):
     """TextRank over TF-IDF sentence cosine similarities, preserving source order."""
     from sklearn.feature_extraction.text import TfidfVectorizer
     import networkx as nx

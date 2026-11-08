@@ -4,6 +4,8 @@
 
 The [entity and text-fidelity revision](docs/ENTITY_CONTEXT_V3_1.md) addresses the reported short-sentence and long-FIR failures, including relatives/officers versus actual parties, punctuation, dotted dates and property lists. Model weights are in `artifacts/models/v3_1`; prior releases are retained.
 
+The [generalization upgrade](docs/UPGRADE_STATUS.md) adds separately trained organization/witness recognition, full-document search and BERT windows, qualified action/reference notes, entity corrections and an opt-in annotation queue. The legacy core and benchmarks remain preserved. Run **RUN_UPGRADE_DEMO.cmd** for the expanded example; use the [annotation contract](docs/ANNOTATION_GUIDELINES_V4.md) and [real-data workflow](docs/REAL_DATA_WORKFLOW.md) for future reviewed datasets. Synthetic diagnostic improvements do not establish real-world accuracy.
+
 Open **Narrative lab** and try `sir my moblie stoln from pocket in bus ystrday` or `José García hit Wei Zhang with iron rod near Nairobi`. Original spelling and entity offsets are preserved. See [the robustness update](docs/ROBUSTNESS_V3.md) for the constraints, evidence and remaining limits.
 
 ## Start here
@@ -12,7 +14,10 @@ Read the [beginner guide](docs/BEGINNER_GUIDE.md), then the [complete project re
 
 - [Editable report](docs/REPORT.md) and [standalone HTML report](docs/PROJECT_REPORT.html)
 - [Measured results](docs/RESULTS.md)
+- [BERT, CRF, topics, summaries and local deployment requirements](docs/IMPLEMENTATION_STATUS.md)
+- [Validation-selected accuracy improvements and reproduction](docs/ACCURACY_IMPROVEMENTS.md)
 - [Demonstration walkthrough](docs/DEMO_GUIDE.md)
+- [All execution methods, presentation script and benefits](docs/EXECUTION_GUIDE.md)
 - [Delivered improvements and remaining work](docs/IMPROVEMENTS_V2.md)
 - [Syllabus mapping](docs/SYLLABUS_MAPPING.md), [model card](docs/MODEL_CARD.md), [data card](docs/DATA_CARD.md)
 
@@ -28,14 +33,18 @@ Run **START_DASHBOARD.cmd**, then open **http://localhost:8502**. Alternatively,
 
 The pages are Overview, Case explorer, Narrative lab, Model evaluation, Topics, Pipeline & syllabus, and Learning guide. Models and data already exist in the completed local workspace. Inference uses local resources after the initial downloads.
 
+For a console demonstration of the saved models and live NLP/search, run **RUN_DEMO.cmd** or `.\.venv312\Scripts\python.exe scripts\demo_project.py`. This does not retrain models or rebuild the corpus. Use `--quick` to skip neural comparisons, or `--output artifacts/demos/demo.json` to explicitly save the demonstration, including its input text.
+
 ## Get the source and rebuild
 
 ```bash
-git clone https://github.com/Surya-Bhamidi/TA-and-BDA.git
-cd TA-and-BDA
+git clone https://github.com/Surya-Bhamidi/TA-BDA-ETP.git
+cd TA-BDA-ETP
 ```
 
 Source, tests, documentation, screenshots and measured results are tracked. Large datasets, weights, search indexes, virtual environments and downloaded runtimes are excluded. A fresh clone must run the pipeline.
+
+The basic pipeline commands below rebuild the baseline training recipe. To reproduce the latest validation-tuned accuracy revision, continue with [the accuracy experiment workflow](docs/ACCURACY_IMPROVEMENTS.md). It preserves candidate results and discloses the Word2Vec baseline retained after a diagnostic regression.
 
 Use **Python 3.12 and Java 17**. Allow several GB of disk and at least 8 GB RAM. From PowerShell:
 
@@ -87,12 +96,12 @@ Stop the dashboard before rebuilding. Changing an upstream stage requires downst
 | Area | Implementation |
 |---|---|
 | Data | 528 scenario groups; formal and informal English, real typo edits, international names/places, eight entity types |
-| Document models | BoW, word + character TF-IDF, neural Word2Vec averaging and fine-tuned two-layer BERT |
+| Document models | Normalized binary BoW, word + character TF-IDF, pooled neural Word2Vec and fine-tuned two-layer BERT |
 | Entity models | CRF and BERT BIO tagging; validation-selected default |
 | Topics | Lemmatized content words, LDA perplexity/coherence/diversity and NMF top terms |
 | Evaluation | Four splits, grouped training CV, frozen hashes, bootstrap intervals, calibration and review flags |
 | Search | Keyword, MiniLM semantic and reciprocal-rank hybrid retrieval; entity filters and source-sentence citations |
-| Dashboard | Pagination, disk-backed case lookup, feature explanations and a beginner Learning Guide |
+| Dashboard | Pagination, one-line case summaries, disk-backed case lookup, feature explanations and a beginner Learning Guide |
 | Privacy | Optional shared password, redacted text export, explicit local corrections stored with a text hash |
 | Ingestion | Validated external JSONL staging, quarantine and source/license receipt |
 | Engineering | Data-quality reports, physical Spark plan, unit/integration/UI tests and CI configuration |
@@ -138,6 +147,7 @@ Multi-host deployment requires shared storage, reachable driver networking and e
 
 ```powershell
 .\.venv312\Scripts\python.exe -m pytest -q
+.\.venv312\Scripts\python.exe scripts\verify_evaluation.py
 .\.venv312\Scripts\python.exe scripts\export_results.py
 ```
 

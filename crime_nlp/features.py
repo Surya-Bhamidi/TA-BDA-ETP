@@ -7,11 +7,11 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.pipeline import FeatureUnion
 
 
-def robust_tfidf():
+def robust_tfidf(char_weight=.75):
     return FeatureUnion([
         ("word", TfidfVectorizer(max_features=18000, ngram_range=(1, 2), min_df=2, sublinear_tf=True)),
         ("char", TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 5), max_features=26000, min_df=3, sublinear_tf=True)),
-    ], transformer_weights={"word": 1., "char": .75})
+    ], transformer_weights={"word": 1., "char": char_weight})
 
 
 def keyword_vectorizer(classifier):

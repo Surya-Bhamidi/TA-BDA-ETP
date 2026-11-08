@@ -1,0 +1,48 @@
+{
+  "scope": "Repeat evaluation on the previously viewed synthetic test split. All candidates and checkpoints were selected on validation, before test prediction. No retuning from this run's test results.",
+  "same_document_test_ids": true,
+  "document_rows": 1200,
+  "entity_rows": 600,
+  "classification": {
+    "Bag of Words": {
+      "before_accuracy": 0.8066666666666666,
+      "after_accuracy": 0.835,
+      "before_macro_f1": 0.8067520094939817,
+      "after_macro_f1": 0.8361366379164841,
+      "accuracy_change_pp": 2.833333333333332
+    },
+    "TF-IDF": {
+      "before_accuracy": 0.8825,
+      "after_accuracy": 0.9241666666666667,
+      "before_macro_f1": 0.8814991835001185,
+      "after_macro_f1": 0.9225174601186519,
+      "accuracy_change_pp": 4.166666666666674
+    },
+    "Word2Vec": {
+      "before_accuracy": 0.8216666666666667,
+      "after_accuracy": 0.7575,
+      "before_macro_f1": 0.8187755444949286,
+      "after_macro_f1": 0.7498347855793446,
+      "accuracy_change_pp": -6.4166666666666705
+    },
+    "BERT": {
+      "before_accuracy": 0.7958333333333333,
+      "after_accuracy": 0.8166666666666667,
+      "before_macro_f1": 0.7926006007113606,
+      "after_macro_f1": 0.8138525335739131,
+      "accuracy_change_pp": 2.083333333333337
+    }
+  },
+  "entities": {
+    "CRF": {
+      "before_span_f1": 0.9177563661390226,
+      "after_span_f1": 0.9222779989613987,
+      "change_pp": 0.4521632822376165
+    },
+    "BERT": {
+      "before_span_f1": 0.7911874291268427,
+      "after_span_f1": 0.7911874291268427,
+      "change_pp": 0.0
+    }
+  }
+}

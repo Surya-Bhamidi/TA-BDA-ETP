@@ -545,30 +545,113 @@
       ]
     },
     "selection": "Validation only; final predictions after model hashes are frozen",
-    "limitations": "Synthetic composite templates share grammar and vocabulary; this is not external real-world validation."
+    "limitations": "Synthetic composite templates share grammar and vocabulary; this is not external real-world validation.",
+    "integrity": {
+      "status": "passed",
+      "checks": [
+        "report_id",
+        "template_group",
+        "normalized_text"
+      ],
+      "splits": {
+        "train": {
+          "rows": 39528,
+          "scenario_groups": 336,
+          "ids_and_original_text_sha256": "37b8ab28d1620d89428c31a8272a2f6e48d3ca415efab462ca3928a68a30e93b"
+        },
+        "validation": {
+          "rows": 6824,
+          "scenario_groups": 64,
+          "ids_and_original_text_sha256": "c212f4c478df425ed39044a64e0692402a764a69c7fb480fff3d512f6ae0f0a6"
+        },
+        "development": {
+          "rows": 6824,
+          "scenario_groups": 64,
+          "ids_and_original_text_sha256": "0ede42c0e6aee5c763c18899a466e34206e2a37cdf2febcaa407f3aaebb83b93"
+        },
+        "test": {
+          "rows": 6824,
+          "scenario_groups": 64,
+          "ids_and_original_text_sha256": "64c8fc4d9eb493500fdfcdba5486c7004aff2795daf374ad932d4b786f10f397"
+        }
+      },
+      "scope": "Exact record/group separation; shared synthetic grammar and vocabulary remain."
+    },
+    "evaluation_scope": "Repeat evaluation on previously viewed synthetic cases. BoW, TF-IDF, BERT and CRF candidates were selected on validation. Word2Vec deployment retained its baseline after observing a diagnostic test regression. This release choice used test results; it is not an untouched final benchmark. No further training or tuning was performed.",
+    "entity_integrity": {
+      "status": "passed",
+      "checks": [
+        "report_id",
+        "template_group",
+        "normalized_text"
+      ],
+      "splits": {
+        "train": {
+          "rows": 8000,
+          "scenario_groups": 498,
+          "ids_and_original_text_sha256": "0abfa9e39848793f16ca4e68850719536648b36d2f886c94ba2aa23be90fc96b"
+        },
+        "validation": {
+          "rows": 400,
+          "scenario_groups": 118,
+          "ids_and_original_text_sha256": "3f752a744709cfd1e038269ca50995db941162c1c08cc78ba5bd5b22e487c61b"
+        },
+        "test": {
+          "rows": 600,
+          "scenario_groups": 96,
+          "ids_and_original_text_sha256": "ad8c01db8f1549dc74673ec1578780f86277a5fb254af8e4d3659386b0cd8491"
+        }
+      },
+      "scope": "Exact record/group separation; shared synthetic grammar and vocabulary remain."
+    },
+    "entity_evaluation_scope": "Previously viewed synthetic test subset plus generated role/context cases sharing grammar; diagnostic evaluation, not untouched real-source validation.",
+    "accuracy_revision": {
+      "selection": "Bounded feature/regularization and BERT schedule comparisons on validation only",
+      "training_sizes_unchanged": true,
+      "baseline": ".runtime\\accuracy-backups\\20261107-153000",
+      "selected_document_recipes": {
+        "Bag of Words": {
+          "name": "binary=True, L2=True, C=10.0",
+          "macro_f1": 0.924742072528909,
+          "accuracy": 0.92625
+        },
+        "TF-IDF": {
+          "name": "character weight=1.5, C=0.25",
+          "macro_f1": 0.9912482088090204,
+          "accuracy": 0.99125
+        },
+        "Word2Vec": {
+          "name": "size=100, window=3, sg=1, pooling=idf_max, C=3.0",
+          "macro_f1": 0.9243861552984056,
+          "accuracy": 0.92375
+        }
+      },
+      "word2vec_release_gate": "The validation-selected candidate fell from 82.17% to 75.75% accuracy on the viewed diagnostic test set. Retain the previous Word2Vec model; preserve the failed experiment; perform no further tuning."
+    },
+    "freeze_policy": "Known diagnostic test regression caused a disclosed Word2Vec deployment rollback. No further fitting or hyperparameter search. Other selected weights are unchanged."
   },
   "models": {
     "Bag of Words": {
-      "accuracy": 0.8066666666666666,
-      "macro_f1": 0.8067520094939817,
-      "weighted_f1": 0.8067520094939817,
+      "accuracy": 0.835,
+      "macro_f1": 0.8361366379164841,
+      "weighted_f1": 0.836136637916484,
       "classification_report": {
         "Arson": {
           "precision": 1.0,
-          "recall": 0.49333333333333335,
-          "f1-score": 0.6607142857142857,
+          "recall": 0.54,
+          "f1-score": 0.7012987012987013,
           "support": 150.0
         },
         "Assault": {
-          "precision": 0.8021390374331551,
+          "precision": 0.9803921568627451,
           "recall": 1.0,
-          "f1-score": 0.8902077151335311,
+          "f1-score": 0.9900990099009901,
           "support": 150.0
         },
         "Burglary": {
-          "precision": 1.0,
-          "recall": 0.76,
-          "f1-score": 0.8636363636363636,
+          "precision": 0.9838709677419355,
+          "recall": 0.8133333333333334,
+          "f1-score": 0.8905109489051095,
           "support": 150.0
         },
         "Cybercrime": {
@@ -578,53 +661,53 @@
           "support": 150.0
         },
         "Fraud": {
-          "precision": 1.0,
-          "recall": 0.74,
-          "f1-score": 0.8505747126436781,
+          "precision": 0.975609756097561,
+          "recall": 0.8,
+          "f1-score": 0.8791208791208791,
           "support": 150.0
         },
         "Robbery": {
-          "precision": 0.5688622754491018,
-          "recall": 0.6333333333333333,
-          "f1-score": 0.5993690851735016,
+          "precision": 0.5614035087719298,
+          "recall": 0.64,
+          "f1-score": 0.5981308411214953,
           "support": 150.0
         },
         "Theft": {
-          "precision": 0.5916666666666667,
-          "recall": 0.9466666666666667,
-          "f1-score": 0.7282051282051282,
+          "precision": 0.6363636363636364,
+          "recall": 0.98,
+          "f1-score": 0.7716535433070866,
           "support": 150.0
         },
         "Vandalism": {
-          "precision": 0.8511904761904762,
-          "recall": 0.9533333333333334,
-          "f1-score": 0.89937106918239,
+          "precision": 0.8258426966292135,
+          "recall": 0.98,
+          "f1-score": 0.8963414634146342,
           "support": 150.0
         },
-        "accuracy": 0.8066666666666666,
+        "accuracy": 0.835,
         "macro avg": {
-          "precision": 0.851732306967425,
-          "recall": 0.8066666666666666,
-          "f1-score": 0.8067520094939817,
+          "precision": 0.8704353403083777,
+          "recall": 0.835,
+          "f1-score": 0.8361366379164841,
           "support": 1200.0
         },
         "weighted avg": {
-          "precision": 0.8517323069674249,
-          "recall": 0.8066666666666666,
-          "f1-score": 0.8067520094939817,
+          "precision": 0.8704353403083777,
+          "recall": 0.835,
+          "f1-score": 0.836136637916484,
           "support": 1200.0
         }
       },
       "confusion_matrix": [
         [
-          74,
-          14,
+          81,
+          0,
+          2,
           0,
           0,
+          62,
           0,
-          61,
-          0,
-          1
+          5
         ],
         [
           0,
@@ -638,13 +721,13 @@
         ],
         [
           0,
-          6,
-          114,
+          1,
+          122,
           0,
           0,
           0,
-          6,
-          24
+          1,
+          26
         ],
         [
           0,
@@ -658,43 +741,43 @@
         ],
         [
           0,
+          0,
+          0,
+          0,
+          120,
+          1,
+          29,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          96,
+          54,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          3,
+          0,
+          147,
+          0
+        ],
+        [
+          0,
           2,
           0,
           0,
-          111,
           0,
-          37,
-          0
-        ],
-        [
+          1,
           0,
-          0,
-          0,
-          0,
-          0,
-          95,
-          55,
-          0
-        ],
-        [
-          0,
-          8,
-          0,
-          0,
-          0,
-          0,
-          142,
-          0
-        ],
-        [
-          0,
-          7,
-          0,
-          0,
-          0,
-          0,
-          0,
-          143
+          147
         ]
       ],
       "labels": [
@@ -708,87 +791,88 @@
         "Vandalism"
       ],
       "accuracy_ci95": [
-        0.7816666666666666,
-        0.8275208333333334
+        0.8141666666666667,
+        0.8558333333333333
       ],
       "ci_note": "400 report-level bootstrap resamples; excludes uncertainty from new templates or real-world sources.",
-      "train_seconds": 0.58197579998523
+      "train_seconds": 11.600650900043547,
+      "timing_note": "Includes the full bounded candidate search when search_seconds is recorded."
     },
     "TF-IDF": {
-      "accuracy": 0.8825,
-      "macro_f1": 0.8814991835001185,
-      "weighted_f1": 0.8814991835001185,
+      "accuracy": 0.9241666666666667,
+      "macro_f1": 0.9225174601186519,
+      "weighted_f1": 0.922517460118652,
       "classification_report": {
         "Arson": {
           "precision": 1.0,
-          "recall": 0.6933333333333334,
-          "f1-score": 0.8188976377952756,
+          "recall": 0.98,
+          "f1-score": 0.98989898989899,
           "support": 150.0
         },
         "Assault": {
-          "precision": 0.974025974025974,
+          "precision": 0.9933774834437086,
           "recall": 1.0,
-          "f1-score": 0.9868421052631579,
+          "f1-score": 0.9966777408637874,
           "support": 150.0
         },
         "Burglary": {
           "precision": 1.0,
-          "recall": 0.7866666666666666,
-          "f1-score": 0.8805970149253731,
+          "recall": 0.8,
+          "f1-score": 0.8888888888888888,
           "support": 150.0
         },
         "Cybercrime": {
           "precision": 1.0,
-          "recall": 0.9933333333333333,
-          "f1-score": 0.9966555183946488,
+          "recall": 1.0,
+          "f1-score": 1.0,
           "support": 150.0
         },
         "Fraud": {
-          "precision": 1.0,
-          "recall": 0.9666666666666667,
-          "f1-score": 0.9830508474576272,
+          "precision": 0.9933333333333333,
+          "recall": 0.9933333333333333,
+          "f1-score": 0.9933333333333333,
           "support": 150.0
         },
         "Robbery": {
-          "precision": 0.6737588652482269,
+          "precision": 0.9693877551020408,
           "recall": 0.6333333333333333,
-          "f1-score": 0.6529209621993127,
+          "f1-score": 0.7661290322580645,
           "support": 150.0
         },
         "Theft": {
-          "precision": 0.7142857142857143,
-          "recall": 1.0,
-          "f1-score": 0.8333333333333334,
+          "precision": 0.7268292682926829,
+          "recall": 0.9933333333333333,
+          "f1-score": 0.8394366197183099,
           "support": 150.0
         },
         "Vandalism": {
-          "precision": 0.8268156424581006,
-          "recall": 0.9866666666666667,
-          "f1-score": 0.8996960486322189,
+          "precision": 0.8324022346368715,
+          "recall": 0.9933333333333333,
+          "f1-score": 0.9057750759878419,
           "support": 150.0
         },
-        "accuracy": 0.8825,
+        "accuracy": 0.9241666666666667,
         "macro avg": {
-          "precision": 0.8986107745022519,
-          "recall": 0.8825000000000001,
-          "f1-score": 0.8814991835001185,
+          "precision": 0.9394162593510796,
+          "recall": 0.9241666666666667,
+          "f1-score": 0.9225174601186519,
           "support": 1200.0
         },
         "weighted avg": {
-          "precision": 0.8986107745022519,
-          "recall": 0.8825,
-          "f1-score": 0.8814991835001185,
+          "precision": 0.9394162593510798,
+          "recall": 0.9241666666666667,
+          "f1-score": 0.922517460118652,
           "support": 1200.0
         }
       },
       "confusion_matrix": [
         [
-          104,
-          1,
+          147,
           0,
           0,
           0,
-          45,
+          0,
+          3,
           0,
           0
         ],
@@ -804,32 +888,32 @@
         ],
         [
           0,
-          1,
-          118,
+          0,
+          120,
           0,
           0,
           0,
           0,
-          31
+          30
         ],
         [
+          0,
+          0,
+          0,
+          150,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
           0,
           0,
           0,
           149,
           0,
           1,
-          0,
-          0
-        ],
-        [
-          0,
-          0,
-          0,
-          0,
-          145,
-          0,
-          5,
           0
         ],
         [
@@ -847,20 +931,20 @@
           0,
           0,
           0,
+          1,
           0,
-          0,
-          150,
+          149,
           0
         ],
         [
           0,
-          2,
+          1,
           0,
           0,
           0,
           0,
           0,
-          148
+          149
         ]
       ],
       "labels": [
@@ -874,11 +958,12 @@
         "Vandalism"
       ],
       "accuracy_ci95": [
-        0.8633124999999999,
-        0.9000416666666666
+        0.9083125,
+        0.9391666666666667
       ],
       "ci_note": "400 report-level bootstrap resamples; excludes uncertainty from new templates or real-world sources.",
-      "train_seconds": 2.7042288999946322
+      "train_seconds": 37.286756000015885,
+      "timing_note": "Includes the full bounded candidate search when search_seconds is recorded."
     },
     "Word2Vec": {
       "accuracy": 0.8216666666666667,
@@ -1044,85 +1129,86 @@
         0.8425208333333334
       ],
       "ci_note": "400 report-level bootstrap resamples; excludes uncertainty from new templates or real-world sources.",
-      "train_seconds": 5.142857899976661
+      "train_seconds": 5.037866899976507,
+      "release_status": "Baseline retained after disclosed diagnostic regression"
     },
     "BERT": {
-      "accuracy": 0.7958333333333333,
-      "macro_f1": 0.7926006007113606,
-      "weighted_f1": 0.7926006007113606,
+      "accuracy": 0.8166666666666667,
+      "macro_f1": 0.8138525335739131,
+      "weighted_f1": 0.813852533573913,
       "classification_report": {
         "Arson": {
           "precision": 1.0,
-          "recall": 0.5533333333333333,
-          "f1-score": 0.7124463519313304,
+          "recall": 0.64,
+          "f1-score": 0.7804878048780488,
           "support": 150.0
         },
         "Assault": {
-          "precision": 0.9146341463414634,
+          "precision": 0.9036144578313253,
           "recall": 1.0,
-          "f1-score": 0.9554140127388535,
+          "f1-score": 0.9493670886075949,
           "support": 150.0
         },
         "Burglary": {
-          "precision": 0.9666666666666667,
-          "recall": 0.38666666666666666,
-          "f1-score": 0.5523809523809524,
+          "precision": 0.7431192660550459,
+          "recall": 0.54,
+          "f1-score": 0.6254826254826255,
           "support": 150.0
         },
         "Cybercrime": {
-          "precision": 0.9932885906040269,
+          "precision": 0.9866666666666667,
           "recall": 0.9866666666666667,
-          "f1-score": 0.9899665551839465,
+          "f1-score": 0.9866666666666667,
           "support": 150.0
         },
         "Fraud": {
           "precision": 1.0,
-          "recall": 0.94,
-          "f1-score": 0.9690721649484536,
+          "recall": 0.9866666666666667,
+          "f1-score": 0.9932885906040269,
           "support": 150.0
         },
         "Robbery": {
-          "precision": 0.7698412698412699,
-          "recall": 0.6466666666666666,
-          "f1-score": 0.7028985507246377,
+          "precision": 0.5888888888888889,
+          "recall": 0.7066666666666667,
+          "f1-score": 0.6424242424242425,
           "support": 150.0
         },
         "Theft": {
-          "precision": 0.7619047619047619,
-          "recall": 0.8533333333333334,
-          "f1-score": 0.8050314465408805,
+          "precision": 0.7703703703703704,
+          "recall": 0.6933333333333334,
+          "f1-score": 0.7298245614035088,
           "support": 150.0
         },
         "Vandalism": {
-          "precision": 0.4854368932038835,
-          "recall": 1.0,
-          "f1-score": 0.6535947712418301,
+          "precision": 0.6805555555555556,
+          "recall": 0.98,
+          "f1-score": 0.8032786885245902,
           "support": 150.0
         },
-        "accuracy": 0.7958333333333333,
+        "accuracy": 0.8166666666666667,
         "macro avg": {
-          "precision": 0.8614715410702589,
-          "recall": 0.7958333333333334,
-          "f1-score": 0.7926006007113606,
+          "precision": 0.8341519006709817,
+          "recall": 0.8166666666666667,
+          "f1-score": 0.8138525335739131,
           "support": 1200.0
         },
         "weighted avg": {
-          "precision": 0.8614715410702589,
-          "recall": 0.7958333333333333,
-          "f1-score": 0.7926006007113606,
+          "precision": 0.8341519006709817,
+          "recall": 0.8166666666666667,
+          "f1-score": 0.813852533573913,
           "support": 1200.0
         }
       },
       "confusion_matrix": [
         [
-          83,
+          96,
           0,
-          2,
+          7,
           0,
           0,
-          5,
+          47,
           0,
-          60
+          0
         ],
         [
           0,
@@ -1137,12 +1223,12 @@
         [
           0,
           0,
-          58,
+          81,
           0,
           0,
           0,
           0,
-          92
+          69
         ],
         [
           0,
@@ -1156,13 +1242,13 @@
         ],
         [
           0,
-          1,
-          0,
-          1,
-          141,
           0,
           0,
-          7
+          2,
+          148,
+          0,
+          0,
+          0
         ],
         [
           0,
@@ -1170,29 +1256,29 @@
           0,
           0,
           0,
-          97,
-          40,
+          106,
+          31,
           0
         ],
         [
           0,
           0,
+          21,
           0,
           0,
-          0,
-          22,
-          128,
+          25,
+          104,
           0
         ],
         [
           0,
+          3,
           0,
           0,
           0,
           0,
           0,
-          0,
-          150
+          147
         ]
       ],
       "labels": [
@@ -1206,286 +1292,299 @@
         "Vandalism"
       ],
       "accuracy_ci95": [
-        0.7749791666666667,
-        0.82
+        0.7958124999999999,
+        0.8391666666666666
       ],
       "ci_note": "400 report-level bootstrap resamples; excludes uncertainty from new templates or real-world sources.",
-      "train_seconds": 192.29,
       "history": [
         {
           "epoch": 1,
-          "loss": 0.30953541337822876,
-          "validation_macro_f1": 0.8858536965481949
+          "loss": 1.9612909253438313,
+          "validation_macro_f1": 0.7591144512922734
         },
         {
           "epoch": 2,
-          "loss": 0.008140556270256638,
-          "validation_macro_f1": 0.8291558843853936
+          "loss": 1.097676062742869,
+          "validation_macro_f1": 0.8585081321561263
         },
         {
           "epoch": 3,
-          "loss": 0.005175055436789989,
-          "validation_macro_f1": 0.8290933416972917
+          "loss": 0.4751804112593333,
+          "validation_macro_f1": 0.9149677910391336
         },
         {
           "epoch": 4,
-          "loss": 0.006245425755934169,
-          "validation_macro_f1": 0.7822312969469041
+          "loss": 0.2754679567416509,
+          "validation_macro_f1": 0.9216573041725313
+        },
+        {
+          "epoch": 5,
+          "loss": 0.22293622024854023,
+          "validation_macro_f1": 0.9256782924586686
+        },
+        {
+          "epoch": 6,
+          "loss": 0.2093197523355484,
+          "validation_macro_f1": 0.92702486498081
         }
       ],
-      "best_validation_macro_f1": 0.8858536965481949,
+      "best_validation_macro_f1": 0.92702486498081,
+      "train_seconds": 285.81,
       "architecture": "Pretrained BERT: 2 layers, 128 hidden units, 2 attention heads; all layers fine-tuned",
-      "max_tokens": 160
+      "max_tokens": 192,
+      "recipe": {
+        "learning_rate": 5e-05,
+        "warmup_ratio": 0.1,
+        "linear_decay": true,
+        "dropout": 0.2,
+        "label_smoothing": 0.03,
+        "epochs": 6,
+        "train_only_mention_dropout": 0.35
+      }
     }
   },
   "grouped_cv": {
     "model": "TF-IDF",
     "fold_macro_f1": [
-      0.7291119019058283,
-      0.6165478218744955,
-      0.6668050870697122
+      0.7479761203121513,
+      0.6146337561036774,
+      0.686753666419122
     ],
-    "mean": 0.6708216036166786,
+    "mean": 0.6831211809449836,
     "groups": "incident variants within training only"
   },
   "calibration_development": {
     "before": {
-      "ece": 0.27409788098275034,
-      "log_loss": 0.6718227806386149,
+      "ece": 0.3115692248054932,
+      "log_loss": 0.6546689740663463,
       "threshold": 0.6,
-      "coverage": 0.4975,
-      "accuracy_when_accepted": 0.9974874371859297,
+      "coverage": 0.4775,
+      "accuracy_when_accepted": 1.0,
       "bins": [
         {
           "bin_start": 0.1,
-          "mean_confidence": 0.19238374596123595,
+          "mean_confidence": 0.19056941084651155,
           "accuracy": 0.3333333333333333,
           "count": 3
         },
         {
           "bin_start": 0.2,
-          "mean_confidence": 0.2584664817449008,
-          "accuracy": 0.4891304347826087,
-          "count": 92
+          "mean_confidence": 0.2532232375137801,
+          "accuracy": 0.5360824742268041,
+          "count": 97
         },
         {
           "bin_start": 0.3,
-          "mean_confidence": 0.35108637341350657,
-          "accuracy": 0.7166666666666667,
-          "count": 120
+          "mean_confidence": 0.3486298841260461,
+          "accuracy": 0.6822429906542056,
+          "count": 107
         },
         {
           "bin_start": 0.4,
-          "mean_confidence": 0.4457614206211064,
-          "accuracy": 0.8425925925925926,
-          "count": 108
+          "mean_confidence": 0.45430756462419536,
+          "accuracy": 0.968421052631579,
+          "count": 95
         },
         {
           "bin_start": 0.5,
-          "mean_confidence": 0.5459566267648929,
-          "accuracy": 0.9493670886075949,
-          "count": 79
+          "mean_confidence": 0.5474890097342919,
+          "accuracy": 1.0,
+          "count": 116
         },
         {
           "bin_start": 0.6,
-          "mean_confidence": 0.6494907808456724,
-          "accuracy": 0.9888888888888889,
-          "count": 90
+          "mean_confidence": 0.6541223649188054,
+          "accuracy": 1.0,
+          "count": 118
         },
         {
           "bin_start": 0.7,
-          "mean_confidence": 0.7478735662115367,
-          "accuracy": 1.0,
-          "count": 112
-        },
-        {
-          "bin_start": 0.8,
-          "mean_confidence": 0.8534651509090602,
+          "mean_confidence": 0.7538734247438184,
           "accuracy": 1.0,
           "count": 107
         },
         {
-          "bin_start": 0.9,
-          "mean_confidence": 0.9486030906200706,
+          "bin_start": 0.8,
+          "mean_confidence": 0.839110803830784,
           "accuracy": 1.0,
           "count": 89
-        }
-      ]
-    },
-    "after": {
-      "ece": 0.0354731685483057,
-      "log_loss": 0.3686912137817129,
-      "threshold": 0.6,
-      "coverage": 0.905,
-      "accuracy_when_accepted": 0.9240331491712708,
-      "bins": [
-        {
-          "bin_start": 0.3,
-          "mean_confidence": 0.3660062762043832,
-          "accuracy": 0.4,
-          "count": 5
-        },
-        {
-          "bin_start": 0.4,
-          "mean_confidence": 0.4581324713649441,
-          "accuracy": 0.2,
-          "count": 25
-        },
-        {
-          "bin_start": 0.5,
-          "mean_confidence": 0.5430182185466935,
-          "accuracy": 0.41304347826086957,
-          "count": 46
-        },
-        {
-          "bin_start": 0.6,
-          "mean_confidence": 0.6474633706673646,
-          "accuracy": 0.43333333333333335,
-          "count": 30
-        },
-        {
-          "bin_start": 0.7,
-          "mean_confidence": 0.7503624990738371,
-          "accuracy": 0.631578947368421,
-          "count": 38
-        },
-        {
-          "bin_start": 0.8,
-          "mean_confidence": 0.8567939328236147,
-          "accuracy": 0.8,
-          "count": 85
         },
         {
           "bin_start": 0.9,
-          "mean_confidence": 0.9877210928063731,
-          "accuracy": 0.9877408056042032,
-          "count": 571
-        }
-      ]
-    },
-    "temperature": 0.2677230878976578
-  },
-  "calibration_test": {
-    "before": {
-      "ece": 0.22023942139934913,
-      "log_loss": 0.546463536445618,
-      "threshold": 0.6,
-      "coverage": 0.6033333333333334,
-      "accuracy_when_accepted": 0.9834254143646409,
-      "bins": [
-        {
-          "bin_start": 0.1,
-          "mean_confidence": 0.18153124330254325,
-          "accuracy": 0.4,
-          "count": 5
-        },
-        {
-          "bin_start": 0.2,
-          "mean_confidence": 0.25992013923724033,
-          "accuracy": 0.4358974358974359,
-          "count": 78
-        },
-        {
-          "bin_start": 0.3,
-          "mean_confidence": 0.3496348603345504,
-          "accuracy": 0.5783132530120482,
-          "count": 83
-        },
-        {
-          "bin_start": 0.4,
-          "mean_confidence": 0.45289597299395606,
-          "accuracy": 0.7647058823529411,
-          "count": 136
-        },
-        {
-          "bin_start": 0.5,
-          "mean_confidence": 0.5518139136808252,
-          "accuracy": 0.9137931034482759,
-          "count": 174
-        },
-        {
-          "bin_start": 0.6,
-          "mean_confidence": 0.6454633812311319,
-          "accuracy": 0.9382716049382716,
-          "count": 162
-        },
-        {
-          "bin_start": 0.7,
-          "mean_confidence": 0.7481025989283444,
-          "accuracy": 0.9936708860759493,
-          "count": 158
-        },
-        {
-          "bin_start": 0.8,
-          "mean_confidence": 0.8492875954985037,
-          "accuracy": 0.9951456310679612,
-          "count": 206
-        },
-        {
-          "bin_start": 0.9,
-          "mean_confidence": 0.9554726134623267,
+          "mean_confidence": 0.9574582274311543,
           "accuracy": 1.0,
-          "count": 198
+          "count": 68
         }
       ]
     },
     "after": {
-      "ece": 0.06718051793140346,
-      "log_loss": 0.32535683879282906,
+      "ece": 0.030074988307607832,
+      "log_loss": 0.25413563243558435,
       "threshold": 0.6,
-      "coverage": 0.9483333333333334,
-      "accuracy_when_accepted": 0.9042179261862917,
+      "coverage": 0.9025,
+      "accuracy_when_accepted": 0.9556786703601108,
       "bins": [
         {
-          "bin_start": 0.2,
-          "mean_confidence": 0.24262217888443557,
-          "accuracy": 0.5,
-          "count": 2
-        },
-        {
           "bin_start": 0.3,
-          "mean_confidence": 0.3884873370987457,
-          "accuracy": 0.5,
-          "count": 2
+          "mean_confidence": 0.3632802530640841,
+          "accuracy": 0.16666666666666666,
+          "count": 6
         },
         {
           "bin_start": 0.4,
-          "mean_confidence": 0.45581543274200903,
-          "accuracy": 0.5555555555555556,
-          "count": 18
+          "mean_confidence": 0.4603624231182638,
+          "accuracy": 0.28125,
+          "count": 32
         },
         {
           "bin_start": 0.5,
-          "mean_confidence": 0.5483196168471934,
-          "accuracy": 0.45,
+          "mean_confidence": 0.5452478669497804,
+          "accuracy": 0.4,
           "count": 40
         },
         {
           "bin_start": 0.6,
-          "mean_confidence": 0.6489485183080806,
-          "accuracy": 0.34615384615384615,
-          "count": 26
+          "mean_confidence": 0.6530641414978059,
+          "accuracy": 0.6451612903225806,
+          "count": 31
         },
         {
           "bin_start": 0.7,
-          "mean_confidence": 0.7616269379214714,
-          "accuracy": 0.4482758620689655,
-          "count": 29
+          "mean_confidence": 0.7555264947705622,
+          "accuracy": 0.6341463414634146,
+          "count": 41
         },
         {
           "bin_start": 0.8,
-          "mean_confidence": 0.8519054659762875,
-          "accuracy": 0.6666666666666666,
-          "count": 57
+          "mean_confidence": 0.8575650705182846,
+          "accuracy": 0.9090909090909091,
+          "count": 44
         },
         {
           "bin_start": 0.9,
-          "mean_confidence": 0.9898950091898029,
-          "accuracy": 0.9444444444444444,
-          "count": 1026
+          "mean_confidence": 0.9903463938272185,
+          "accuracy": 0.9966996699669967,
+          "count": 606
         }
       ]
     },
-    "temperature": 0.2677230878976578
+    "temperature": 0.25000334700835525
+  },
+  "calibration_test": {
+    "before": {
+      "ece": 0.2825935822725739,
+      "log_loss": 0.5516130598170512,
+      "threshold": 0.6,
+      "coverage": 0.5616666666666666,
+      "accuracy_when_accepted": 0.9970326409495549,
+      "bins": [
+        {
+          "bin_start": 0.1,
+          "mean_confidence": 0.19443381995582393,
+          "accuracy": 0.75,
+          "count": 4
+        },
+        {
+          "bin_start": 0.2,
+          "mean_confidence": 0.2626341819715973,
+          "accuracy": 0.7375,
+          "count": 80
+        },
+        {
+          "bin_start": 0.3,
+          "mean_confidence": 0.34869397590672024,
+          "accuracy": 0.7981651376146789,
+          "count": 109
+        },
+        {
+          "bin_start": 0.4,
+          "mean_confidence": 0.4522109484279999,
+          "accuracy": 0.8055555555555556,
+          "count": 144
+        },
+        {
+          "bin_start": 0.5,
+          "mean_confidence": 0.5472156057028542,
+          "accuracy": 0.91005291005291,
+          "count": 189
+        },
+        {
+          "bin_start": 0.6,
+          "mean_confidence": 0.6471794743188725,
+          "accuracy": 0.9941520467836257,
+          "count": 171
+        },
+        {
+          "bin_start": 0.7,
+          "mean_confidence": 0.7527670542058358,
+          "accuracy": 0.9929078014184397,
+          "count": 141
+        },
+        {
+          "bin_start": 0.8,
+          "mean_confidence": 0.8469735144303756,
+          "accuracy": 1.0,
+          "count": 184
+        },
+        {
+          "bin_start": 0.9,
+          "mean_confidence": 0.9488679247377365,
+          "accuracy": 1.0,
+          "count": 178
+        }
+      ]
+    },
+    "after": {
+      "ece": 0.03316389962267298,
+      "log_loss": 0.21953055252312736,
+      "threshold": 0.6,
+      "coverage": 0.9683333333333334,
+      "accuracy_when_accepted": 0.9363166953528399,
+      "bins": [
+        {
+          "bin_start": 0.3,
+          "mean_confidence": 0.37654878905712497,
+          "accuracy": 0.0,
+          "count": 1
+        },
+        {
+          "bin_start": 0.4,
+          "mean_confidence": 0.4617630497856273,
+          "accuracy": 0.6153846153846154,
+          "count": 13
+        },
+        {
+          "bin_start": 0.5,
+          "mean_confidence": 0.5542759121904345,
+          "accuracy": 0.5416666666666666,
+          "count": 24
+        },
+        {
+          "bin_start": 0.6,
+          "mean_confidence": 0.655528377936952,
+          "accuracy": 0.5714285714285714,
+          "count": 28
+        },
+        {
+          "bin_start": 0.7,
+          "mean_confidence": 0.7568734076845083,
+          "accuracy": 0.7575757575757576,
+          "count": 33
+        },
+        {
+          "bin_start": 0.8,
+          "mean_confidence": 0.8501970512119941,
+          "accuracy": 0.7777777777777778,
+          "count": 63
+        },
+        {
+          "bin_start": 0.9,
+          "mean_confidence": 0.9905395396510517,
+          "accuracy": 0.9614643545279383,
+          "count": 1038
+        }
+      ]
+    },
+    "temperature": 0.25000334700835525
   }
 }

@@ -1,28 +1,54 @@
 {
-  "frozen_at": "2026-09-29T04:08:54.111355+00:00",
+  "frozen_at": "2026-11-07T10:24:44.083942+00:00",
   "model_sha256": {
-    "bert_classifier/config.json": "60577572c16765a2925d6c9dd8a89e0145ce876a17320f418eb66c02c52909d2",
-    "bert_classifier/model.safetensors": "53a57aea47591019fd5cf65d293894f67cc1369658ddfaa63455c5426f4d2a14",
+    "accuracy_selection.json": "d74f8d7923338f0e69e0eb8781d59ca0f263159d0554c4016b25697cca7892f8",
+    "bert_classifier/config.json": "44e74aed95984a22b0076378eb523ca59fe3e619fca809abbd1364b585fdb046",
+    "bert_classifier/model.safetensors": "a3461f5178471357ceef03adf3286e08647fdfc1d26236ded64cf4a3c367a616",
     "bert_classifier/special_tokens_map.json": "5aa43c2f985a25296d5a5ce621c2f77376ca8091a47993c492fd5460b895b140",
-    "bert_classifier/tokenizer.json": "1b19820b21bee2ab9a5d3f2ac461f9517c4589536c7d751d60d38877993c5e8b",
+    "bert_classifier/tokenizer.json": "1df3266d8f29dd3afdf73a9ee31322104ff93f8575a6bae998be07284b792e89",
     "bert_classifier/tokenizer_config.json": "584049ddfff5d6aa7c6c839da38fdd25ae3af017385120c99db5140d77315d2f",
     "bert_classifier/vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3",
     "bert_ner/config.json": "235a1d85396c2d954f90bd73058e1cd8efaf73e82be0ebb3d454d80e4458fd0f",
-    "bert_ner/model.safetensors": "7e69e649c3d60ee0d7325232ddab66e8a32b9d0a188aecb8784196053608ec42",
+    "bert_ner/model.safetensors": "f6203bad2ffb3256058e0793524fb9e85408d407fcb501bbc52d8816c5ca10cf",
     "bert_ner/special_tokens_map.json": "5aa43c2f985a25296d5a5ce621c2f77376ca8091a47993c492fd5460b895b140",
     "bert_ner/tokenizer.json": "f17212c38517cfedc9306b57eeffbaf58c4976fcb42e5a87b405f36a7b9a9eb2",
     "bert_ner/tokenizer_config.json": "584049ddfff5d6aa7c6c839da38fdd25ae3af017385120c99db5140d77315d2f",
-    "bert_ner/training.json": "ac9403f2c643e93267b3bc80232fc77f66a27dfa7a77300d4c92f9dbcae31b54",
+    "bert_ner/training.json": "67ef05b78da15bd46cd804c87ecf3f58ddee0e6b56d393204d3b4c61c2cf3fdb",
     "bert_ner/vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3",
-    "bow.joblib": "606858792fb936595d8861745a0c07c3b51fc052b6f1d0a13e43d81cc92366dd",
-    "calibration.json": "9bcd0d7bfeca066c435e61aaadc1902958de9be6fc4463b77e41c33dda15ae9a",
-    "crf.joblib": "c53692892117b19dc3e42de67328eb05ed2f30ee6a1ab7b3dee30149e8dd516f",
-    "ner_selection.json": "b12f07149f8f85f77c582139a46c38eb4bd89554bda67d5aec98cdbe8efbefbe",
+    "bow.joblib": "8bf5f20554d1a8b78cfadf753b00b1f75eb24861b0676edb4fe9276a9767fea9",
+    "calibration.json": "942e7fc5ef046727ec23464c4384e04bfbaf00e48eb7d13046598f138770774c",
+    "crf.joblib": "f8125c50c4da67bcd7ae7809edc08d3995040e1914a05200a14a14bb507f46d0",
+    "ner_selection.json": "433f7052008e6acf1c58255425ddf72a7141342d6429222165ba084778a229c6",
     "nmf.joblib": "044992e4dce750ae26c51fce9367ad214720391d5a8aa419ffa3785574b056cb",
-    "tfidf.joblib": "aeadb63e6630c57115313bff60a69264e77c8f46cab5729ad5821ca0d0ba3d22",
-    "topics.joblib": "34dc0283030a707772e576e7b99503e5ed3ef8404443532aede09f42d44ca6c9",
-    "word2vec.model": "e41df2c37165ea137b2638fddb52fbdd41c8083da5f74c905c0b63a0b893a1d1",
-    "word2vec_classifier.joblib": "593b8b5ac56ad37405716ee99dd89536abb30af498cc88e4ebcce5cef7ec8e1a"
+    "tfidf.joblib": "e31134730a040ceb80027b96e779e0ce9d182819391013cda3517d88843c814f",
+    "topics.joblib": "5931d69708a19c3d0d87fe79472c873dc3ff1afbac4a1ae5f18fab270e3342a9",
+    "word2vec.model": "fcec6204fae7c861fcbdda6b52a038e81b8dd5198b8d8b9facece2f4ee4f5e5b",
+    "word2vec_classifier.joblib": "593b8b5ac56ad37405716ee99dd89536abb30af498cc88e4ebcce5cef7ec8e1a",
+    "word2vec_features.json": "96a2db3cb8470de396b9feefd3d63455f53c22b24b2656f70954b52416f44e98"
+  },
+  "source_sha256": {
+    "__init__.py": "efe73db3a8739c59bc8cd3b1c725b52084a9f4e429d345565933e040993c6483",
+    "audit.py": "33ce74755e20c8bf5d8d2ceb5ac95db89a53b74aeac206e23026796764b9a071",
+    "bert_model.py": "25255e54cfc022704d8f41392473f2a24b71fbd1b76b4ceb94691ec4c45ec5ee",
+    "config.py": "3a238b6e3b263488eb9ef84ad87f2038a0303e7e665a8360f150e63b1999548f",
+    "corpus_patterns.py": "eaef93cad8a117ae4954156c7b4dbf03cd742acf012b562e4c2decf2d291ff74",
+    "enrich.py": "acfdcc840d27d298cadd872cf3121a201052c5af1ebdbecdf6bb0b470dcb52e1",
+    "entity_corpus.py": "54e3295475f26c88d1045d4bf6ce473757af43ebbe6bf3941570590c1fa65d15",
+    "evaluation.py": "d77ef10be461a4fffb9787945ba4af32d605b0a63dcf84ed7084453c1fd2d75d",
+    "features.py": "bce4287b2a833c6327deee993f5af2c4275153ed4aaa0d6f4e36174cdfabaae2",
+    "generate.py": "bf1b070591cd7d35e840d0e32062d4e6351650aa76cfab04767900cd654b9357",
+    "import_data.py": "dc6f201974f64ef49e5bd70be0068b608586055df23b9e0f69f5bfbcd4f141c1",
+    "inference.py": "e753f5bf4f5c48ab6d8a46a91fca39abce8f67846f147df88a089a9ba4411710",
+    "ner_model.py": "f1dd95ef6e153aebca3dd3bf8a237dff78b058137d64bf58ba16021439b084d3",
+    "privacy.py": "420e5aa4a0812158086d8e271905d929fd2ca4a5a9b1fd21fa1ee9418e0f2f77",
+    "robust_corpus.py": "139feee2cef991ae9c15954d60fbdc7d52e32cd0a9b97d73e4b16e6eb429ebc8",
+    "semantic.py": "ef8ad5fc5d4f7b7d7c4b8e492a730ee5045c174a65d7ae34adb817b7fb4b7ebc",
+    "spark_pipeline.py": "288c3867a1d180c77a6a243be7d40f92c554600d23f19d514325326c783918c4",
+    "store.py": "31164aeb532f177142170a114bb6ac8894c33ea2e3669bccf46aaebad216cd79",
+    "text.py": "dff7611fc0bfa9380c903ffd6a31caf27c22c5cd281eacb2292bdafb88f0a520",
+    "topics.py": "3cec4d04193ee399971d7e84e4e76a01a5f65fe1bee41288de93fbedb3170f35",
+    "train.py": "76948ceaeef390607567561c6eba46adbc23f0dd937b7b809c79abd9014e3013",
+    "tuning.py": "2a661c869e4cedcb8a1aed747d8628286589841ace056392d6938bd8e257d286"
   },
   "plan": {
     "seed": 42,
@@ -571,13 +597,89 @@
     },
     "selection": "Validation only; final predictions after model hashes are frozen",
     "limitations": "Synthetic composite templates share grammar and vocabulary; this is not external real-world validation.",
-    "entity_revision": {
-      "version": "3.1",
-      "train_rows": 8000,
-      "validation_rows": 400,
-      "recipe": "50% existing corpus, 50% generated role/ownership/administrative contexts; CRF additionally refined for destination phrasing; unchanged eight labels and model families",
-      "evaluation_note": "Retained V3 test subset is previously viewed; new synthetic context cases share grammar. Screenshot cases are development regressions, not a final benchmark."
-    }
+    "integrity": {
+      "status": "passed",
+      "checks": [
+        "report_id",
+        "template_group",
+        "normalized_text"
+      ],
+      "splits": {
+        "train": {
+          "rows": 39528,
+          "scenario_groups": 336,
+          "ids_and_original_text_sha256": "37b8ab28d1620d89428c31a8272a2f6e48d3ca415efab462ca3928a68a30e93b"
+        },
+        "validation": {
+          "rows": 6824,
+          "scenario_groups": 64,
+          "ids_and_original_text_sha256": "c212f4c478df425ed39044a64e0692402a764a69c7fb480fff3d512f6ae0f0a6"
+        },
+        "development": {
+          "rows": 6824,
+          "scenario_groups": 64,
+          "ids_and_original_text_sha256": "0ede42c0e6aee5c763c18899a466e34206e2a37cdf2febcaa407f3aaebb83b93"
+        },
+        "test": {
+          "rows": 6824,
+          "scenario_groups": 64,
+          "ids_and_original_text_sha256": "64c8fc4d9eb493500fdfcdba5486c7004aff2795daf374ad932d4b786f10f397"
+        }
+      },
+      "scope": "Exact record/group separation; shared synthetic grammar and vocabulary remain."
+    },
+    "evaluation_scope": "Repeat evaluation on previously viewed synthetic cases. BoW, TF-IDF, BERT and CRF candidates were selected on validation. Word2Vec deployment retained its baseline after observing a diagnostic test regression. This release choice used test results; it is not an untouched final benchmark. No further training or tuning was performed.",
+    "entity_integrity": {
+      "status": "passed",
+      "checks": [
+        "report_id",
+        "template_group",
+        "normalized_text"
+      ],
+      "splits": {
+        "train": {
+          "rows": 8000,
+          "scenario_groups": 498,
+          "ids_and_original_text_sha256": "0abfa9e39848793f16ca4e68850719536648b36d2f886c94ba2aa23be90fc96b"
+        },
+        "validation": {
+          "rows": 400,
+          "scenario_groups": 118,
+          "ids_and_original_text_sha256": "3f752a744709cfd1e038269ca50995db941162c1c08cc78ba5bd5b22e487c61b"
+        },
+        "test": {
+          "rows": 600,
+          "scenario_groups": 96,
+          "ids_and_original_text_sha256": "ad8c01db8f1549dc74673ec1578780f86277a5fb254af8e4d3659386b0cd8491"
+        }
+      },
+      "scope": "Exact record/group separation; shared synthetic grammar and vocabulary remain."
+    },
+    "entity_evaluation_scope": "Previously viewed synthetic test subset plus generated role/context cases sharing grammar; diagnostic evaluation, not untouched real-source validation.",
+    "accuracy_revision": {
+      "selection": "Bounded feature/regularization and BERT schedule comparisons on validation only",
+      "training_sizes_unchanged": true,
+      "baseline": ".runtime\\accuracy-backups\\20261107-153000",
+      "selected_document_recipes": {
+        "Bag of Words": {
+          "name": "binary=True, L2=True, C=10.0",
+          "macro_f1": 0.924742072528909,
+          "accuracy": 0.92625
+        },
+        "TF-IDF": {
+          "name": "character weight=1.5, C=0.25",
+          "macro_f1": 0.9912482088090204,
+          "accuracy": 0.99125
+        },
+        "Word2Vec": {
+          "name": "size=100, window=3, sg=1, pooling=idf_max, C=3.0",
+          "macro_f1": 0.9243861552984056,
+          "accuracy": 0.92375
+        }
+      },
+      "word2vec_release_gate": "The validation-selected candidate fell from 82.17% to 75.75% accuracy on the viewed diagnostic test set. Retain the previous Word2Vec model; preserve the failed experiment; perform no further tuning."
+    },
+    "freeze_policy": "Known diagnostic test regression caused a disclosed Word2Vec deployment rollback. No further fitting or hyperparameter search. Other selected weights are unchanged."
   },
-  "policy": "No hyperparameter or feature changes based on final-test outputs in this run."
+  "policy": "Known diagnostic test regression caused a disclosed Word2Vec deployment rollback. No further fitting or hyperparameter search. Other selected weights are unchanged."
 }

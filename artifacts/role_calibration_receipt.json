@@ -1,0 +1,25 @@
+{
+  "path": "artifacts\\models\\v4_roles_broad\\role_calibration.json",
+  "sha256": "8490e8b5037dd010bd836180f5b7e596fb5e4cb2693db622302a17c37f70ba8e",
+  "models": {
+    "ORGANIZATION": {
+      "coefficient": 0.0,
+      "intercept": 5.81413053182507,
+      "validation_spans": 167,
+      "empirical_precision": 1.0,
+      "raw_brier": 7.61964177770117e-05,
+      "crossfit_brier": null,
+      "scope": "Span correctness on synthetic validation; cannot estimate missed entities or guarantee real-source calibration"
+    },
+    "WITNESS": {
+      "coefficient": 0.39672088088990026,
+      "intercept": 1.3943389136303763,
+      "validation_spans": 584,
+      "empirical_precision": 0.9434931506849316,
+      "raw_brier": 0.060289516929605436,
+      "crossfit_brier": 0.05290088458048673,
+      "scope": "Span correctness on synthetic validation; cannot estimate missed entities or guarantee real-source calibration"
+    }
+  },
+  "scope": "Validation-only reliability model; no claim of real-data calibration. One-class labels use a smoothed empirical constant."
+}

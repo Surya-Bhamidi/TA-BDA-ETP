@@ -1,0 +1,345 @@
+{
+  "scope": "Diagnostic comparison on previously viewed synthetic ten-label annotations; same current core/context rules in both arms",
+  "frozen_at": "2026-11-08T09:57:43.347721+00:00",
+  "evaluated_at": "2026-11-08T09:57:56.025672+00:00",
+  "splits": {
+    "validation": {
+      "rows": 800,
+      "without_trained_roles": {
+        "strict_entity_f1": 0.6600570419665897,
+        "report": {
+          "DATE": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 200
+          },
+          "EVIDENCE": {
+            "precision": 1.0,
+            "recall": 0.9737827715355806,
+            "f1-score": 0.9867172675521821,
+            "support": 267
+          },
+          "LOCATION": {
+            "precision": 0.6358974358974359,
+            "recall": 0.62,
+            "f1-score": 0.6278481012658227,
+            "support": 200
+          },
+          "ORGANIZATION": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1-score": 0.0,
+            "support": 467
+          },
+          "PROPERTY": {
+            "precision": 1.0,
+            "recall": 0.5557142857142857,
+            "f1-score": 0.7144168962350781,
+            "support": 700
+          },
+          "SUSPECT": {
+            "precision": 0.7405159332321699,
+            "recall": 0.61,
+            "f1-score": 0.6689513365318711,
+            "support": 800
+          },
+          "TIME": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 200
+          },
+          "VICTIM": {
+            "precision": 0.8871794871794871,
+            "recall": 0.4325,
+            "f1-score": 0.5815126050420167,
+            "support": 800
+          },
+          "WEAPON": {
+            "precision": 1.0,
+            "recall": 0.6633333333333333,
+            "f1-score": 0.7975951903807615,
+            "support": 300
+          },
+          "WITNESS": {
+            "precision": 0.7542087542087542,
+            "recall": 0.35,
+            "f1-score": 0.4781216648879402,
+            "support": 640
+          },
+          "micro avg": {
+            "precision": 0.8712800286841161,
+            "recall": 0.5312636641888937,
+            "f1-score": 0.6600570419665897,
+            "support": 4574
+          },
+          "macro avg": {
+            "precision": 0.8017801610517846,
+            "recall": 0.6205330390583199,
+            "f1-score": 0.6855163061895672,
+            "support": 4574
+          },
+          "weighted avg": {
+            "precision": 0.7824725461745553,
+            "recall": 0.5312636641888937,
+            "f1-score": 0.6197556917262291,
+            "support": 4574
+          }
+        }
+      },
+      "with_trained_roles": {
+        "strict_entity_f1": 0.7447837150127226,
+        "report": {
+          "DATE": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 200
+          },
+          "EVIDENCE": {
+            "precision": 1.0,
+            "recall": 0.9737827715355806,
+            "f1-score": 0.9867172675521821,
+            "support": 267
+          },
+          "LOCATION": {
+            "precision": 0.6358974358974359,
+            "recall": 0.62,
+            "f1-score": 0.6278481012658227,
+            "support": 200
+          },
+          "ORGANIZATION": {
+            "precision": 1.0,
+            "recall": 0.3533190578158458,
+            "f1-score": 0.5221518987341772,
+            "support": 467
+          },
+          "PROPERTY": {
+            "precision": 1.0,
+            "recall": 0.5557142857142857,
+            "f1-score": 0.7144168962350781,
+            "support": 700
+          },
+          "SUSPECT": {
+            "precision": 0.7405159332321699,
+            "recall": 0.61,
+            "f1-score": 0.6689513365318711,
+            "support": 800
+          },
+          "TIME": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 200
+          },
+          "VICTIM": {
+            "precision": 0.8871794871794871,
+            "recall": 0.4325,
+            "f1-score": 0.5815126050420167,
+            "support": 800
+          },
+          "WEAPON": {
+            "precision": 1.0,
+            "recall": 0.6633333333333333,
+            "f1-score": 0.7975951903807615,
+            "support": 300
+          },
+          "WITNESS": {
+            "precision": 0.8839427662957074,
+            "recall": 0.86875,
+            "f1-score": 0.8762805358550039,
+            "support": 640
+          },
+          "micro avg": {
+            "precision": 0.8907486305538649,
+            "recall": 0.639921294271972,
+            "f1-score": 0.7447837150127226,
+            "support": 4574
+          },
+          "macro avg": {
+            "precision": 0.9147535622604799,
+            "recall": 0.7077399448399045,
+            "f1-score": 0.7775473831596914,
+            "support": 4574
+          },
+          "weighted avg": {
+            "precision": 0.902723916470937,
+            "recall": 0.639921294271972,
+            "f1-score": 0.7287776886933873,
+            "support": 4574
+          }
+        }
+      }
+    },
+    "test": {
+      "rows": 800,
+      "without_trained_roles": {
+        "strict_entity_f1": 0.592060696382604,
+        "report": {
+          "DATE": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 200
+          },
+          "EVIDENCE": {
+            "precision": 1.0,
+            "recall": 0.9737827715355806,
+            "f1-score": 0.9867172675521821,
+            "support": 267
+          },
+          "LOCATION": {
+            "precision": 0.5882352941176471,
+            "recall": 0.45,
+            "f1-score": 0.509915014164306,
+            "support": 200
+          },
+          "ORGANIZATION": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1-score": 0.0,
+            "support": 467
+          },
+          "PROPERTY": {
+            "precision": 0.9962546816479401,
+            "recall": 0.38,
+            "f1-score": 0.5501551189245087,
+            "support": 700
+          },
+          "SUSPECT": {
+            "precision": 0.5340909090909091,
+            "recall": 0.47,
+            "f1-score": 0.5,
+            "support": 800
+          },
+          "TIME": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 200
+          },
+          "VICTIM": {
+            "precision": 0.6281138790035588,
+            "recall": 0.44125,
+            "f1-score": 0.5183553597650514,
+            "support": 800
+          },
+          "WEAPON": {
+            "precision": 0.9210526315789473,
+            "recall": 0.5833333333333334,
+            "f1-score": 0.7142857142857143,
+            "support": 300
+          },
+          "WITNESS": {
+            "precision": 0.977859778597786,
+            "recall": 0.4140625,
+            "f1-score": 0.5817782656421515,
+            "support": 640
+          },
+          "micro avg": {
+            "precision": 0.7784111150694691,
+            "recall": 0.4777000437254045,
+            "f1-score": 0.592060696382604,
+            "support": 4574
+          },
+          "macro avg": {
+            "precision": 0.7645607174036788,
+            "recall": 0.5712428604868914,
+            "f1-score": 0.6361206740333915,
+            "support": 4574
+          },
+          "weighted avg": {
+            "precision": 0.7245157879818385,
+            "recall": 0.4777000437254045,
+            "f1-score": 0.5579040639757722,
+            "support": 4574
+          }
+        }
+      },
+      "with_trained_roles": {
+        "strict_entity_f1": 0.6230290181529085,
+        "report": {
+          "DATE": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 200
+          },
+          "EVIDENCE": {
+            "precision": 1.0,
+            "recall": 0.9737827715355806,
+            "f1-score": 0.9867172675521821,
+            "support": 267
+          },
+          "LOCATION": {
+            "precision": 0.5882352941176471,
+            "recall": 0.45,
+            "f1-score": 0.509915014164306,
+            "support": 200
+          },
+          "ORGANIZATION": {
+            "precision": 1.0,
+            "recall": 0.3554603854389722,
+            "f1-score": 0.5244865718799369,
+            "support": 467
+          },
+          "PROPERTY": {
+            "precision": 0.9962546816479401,
+            "recall": 0.38,
+            "f1-score": 0.5501551189245087,
+            "support": 700
+          },
+          "SUSPECT": {
+            "precision": 0.5340909090909091,
+            "recall": 0.47,
+            "f1-score": 0.5,
+            "support": 800
+          },
+          "TIME": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1-score": 1.0,
+            "support": 200
+          },
+          "VICTIM": {
+            "precision": 0.6281138790035588,
+            "recall": 0.44125,
+            "f1-score": 0.5183553597650514,
+            "support": 800
+          },
+          "WEAPON": {
+            "precision": 0.9210526315789473,
+            "recall": 0.5833333333333334,
+            "f1-score": 0.7142857142857143,
+            "support": 300
+          },
+          "WITNESS": {
+            "precision": 0.977859778597786,
+            "recall": 0.4140625,
+            "f1-score": 0.5817782656421515,
+            "support": 640
+          },
+          "micro avg": {
+            "precision": 0.7907837201479987,
+            "recall": 0.5139921294271972,
+            "f1-score": 0.6230290181529085,
+            "support": 4574
+          },
+          "macro avg": {
+            "precision": 0.8645607174036789,
+            "recall": 0.6067888990307886,
+            "f1-score": 0.6885693312213851,
+            "support": 4574
+          },
+          "weighted avg": {
+            "precision": 0.826614607395918,
+            "recall": 0.5139921294271972,
+            "f1-score": 0.6114535237632516,
+            "support": 4574
+          }
+        }
+      }
+    }
+  }
+}

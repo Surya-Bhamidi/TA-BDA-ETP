@@ -15,7 +15,7 @@ def annotate_assertions(text, entities):
 def redact(text, entities):
     result, end = [], 0
     for entity in sorted(entities, key=lambda e: e["start"]):
-        if entity["label"] not in {"SUSPECT", "VICTIM", "PERSON"} or entity["start"] < end:
+        if entity["label"] not in {"SUSPECT", "VICTIM", "PERSON", "WITNESS"} or entity["start"] < end:
             continue
         result.extend([text[end:entity["start"]], f"[{entity['label']}]"])
         end = entity["end"]
@@ -29,8 +29,11 @@ def redact(text, entities):
 def structured_summary(text, entities, summary):
     from .text import sentences
     source = sentences(text)
-    facts = {label: sorted({e["text"] for e in entities if e["label"] == label and e.get("assertion") != "negated"})
-             for label in ["SUSPECT", "VICTIM", "LOCATION", "WEAPON", "PROPERTY", "DATE", "TIME", "EVIDENCE"]}
-    citations = [{"sentence": i + 1, "text": sentence} for i, sentence in enumerate(source) if sentence in sentences(summary)]
+    facts = {label: sorted({e["text"] for e in entities if e["label"] == label and e.get("assertion", "mentioned") == "mentioned"})
+             for label in ["SUSPECT", "VICTIM", "LOCATION", "WEAPON", "PROPERTY", "DATE", "TIME", "EVIDENCE", "ORGANIZATION"]}
+    summary_sentences = {" ".join(sentence.split()) for sentence in sentences(summary)}
+    citations = [{"sentence": i + 1, "text": sentence} for i, sentence in enumerate(source)
+                 if " ".join(sentence.split()) in summary_sentences]
     return {"summary": summary, "mentioned_facts": facts, "citations": citations,
+            "qualified_mentions": [entity for entity in entities if entity.get("assertion", "mentioned") != "mentioned"],
             "note": "Extracted mentions may be allegations; model errors and omissions are possible."}

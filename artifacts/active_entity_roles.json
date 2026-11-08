@@ -1,0 +1,11 @@
+{
+  "directory": "models/v4_roles_broad",
+  "selected": "CRF",
+  "labels": [
+    "ORGANIZATION",
+    "WITNESS"
+  ],
+  "validation_span_f1": 0.7728740581270184,
+  "selection_artifact": "role_specialist_broad_evaluation.json",
+  "strategy": "Retain legacy eight-label core and context safeguards; add non-overlapping learned roles. No diagnostic test score is used for selection."
+}

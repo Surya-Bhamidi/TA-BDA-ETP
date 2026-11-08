@@ -42,6 +42,23 @@ def save_feedback(text, predicted, correction, comment=""):
         connection.commit()
 
 
+def save_entity_feedback(text, predicted, corrected, revision, include_text=False):
+    """Store hash + offset/label corrections; source text requires explicit opt-in."""
+    from .annotation_schema import validate_record, SCHEMA_VERSION
+    corrected = validate_record({"narrative": text, "entities": corrected})
+    def minimal(entities):
+        return [{key: entity[key] for key in ("start", "end", "label")} for entity in entities]
+    payload = {"annotation_schema": SCHEMA_VERSION, "model_revision": revision,
+               "predicted": minimal(predicted), "corrected": minimal(corrected), "review_status": "unreviewed"}
+    if include_text:
+        payload.update(narrative=text, entities=corrected)
+    with closing(sqlite3.connect(PROCESSED / "feedback.sqlite")) as connection:
+        connection.execute("CREATE TABLE IF NOT EXISTS entity_feedback (created_at TEXT, narrative_sha256 TEXT, includes_text INTEGER, payload_json TEXT)")
+        connection.execute("INSERT INTO entity_feedback VALUES (?,?,?,?)", (datetime.now(timezone.utc).isoformat(),
+                           hashlib.sha256(text.encode()).hexdigest(), int(include_text), json.dumps(payload, ensure_ascii=False)))
+        connection.commit()
+
+
 def entity_matches(label="Any", value=""):
     clauses, params = [], []
     if label != "Any":
@@ -52,9 +69,14 @@ def entity_matches(label="Any", value=""):
         params.append(value.strip())
     if not clauses:
         return None
-    sql = "SELECT row_number FROM reports r WHERE EXISTS (SELECT 1 FROM json_each(r.predicted_entities_json) e WHERE " + " AND ".join(clauses) + ")"
     with closing(sqlite3.connect(DB.as_uri() + "?mode=ro", uri=True)) as connection:
-        return [row[0] for row in connection.execute(sql, params)]
+        columns = {row[1] for row in connection.execute("PRAGMA table_info(reports)")}
+        sources = ["r.predicted_entities_json"]
+        if "contextual_roles_json" in columns:
+            sources.append("r.contextual_roles_json")
+        tests = ["EXISTS (SELECT 1 FROM json_each(" + source + ") e WHERE " + " AND ".join(clauses) + ")" for source in sources]
+        sql = "SELECT row_number FROM reports r WHERE " + " OR ".join(tests)
+        return [row[0] for row in connection.execute(sql, params * len(sources))]
 
 
 def record_audit(event, report_id):

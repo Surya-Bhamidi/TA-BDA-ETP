@@ -8,13 +8,14 @@ from .evaluation import entity_metrics, repair_bio
 BIO_TAGS = ["O"] + [prefix + name for name in ENTITY_LABELS for prefix in ("B-", "I-")]
 
 
-def align_labels(encoding, word_labels):
+def align_labels(encoding, word_labels, bio_tags=None):
     """Only each word's first subtoken contributes to loss; others use -100."""
+    bio_tags = bio_tags or BIO_TAGS
     aligned = []
     for i, labels in enumerate(word_labels):
         previous, row = None, []
         for word_id in encoding.word_ids(batch_index=i):
-            row.append(BIO_TAGS.index(labels[word_id]) if word_id is not None and word_id != previous else -100)
+            row.append(bio_tags.index(labels[word_id]) if word_id is not None and word_id != previous else -100)
             previous = word_id
         aligned.append(row)
     return aligned
@@ -51,7 +52,8 @@ def predict_tags(model, tokenizer, token_lists, batch_size=32):
             for offset, bounded in bounded_windows(words, tokenizer, model.config.max_position_embeddings, start):
                 windows.append(bounded)
                 mapping.append((doc_id, offset, len(bounded)))
-    sums = [np.zeros((len(tokens), len(BIO_TAGS)), dtype=np.float32) for tokens in token_lists]
+    bio_tags = [model.config.id2label[index] for index in range(model.config.num_labels)]
+    sums = [np.zeros((len(tokens), len(bio_tags)), dtype=np.float32) for tokens in token_lists]
     counts = [np.zeros(len(tokens), dtype=np.float32) for tokens in token_lists]
     model.eval()
     with torch.inference_mode():
@@ -69,43 +71,65 @@ def predict_tags(model, tokenizer, token_lists, batch_size=32):
     predictions, confidence = [], []
     for scores, count in zip(sums, counts):
         averages = scores / np.maximum(count[:, None], 1)
-        predictions.append(repair_bio([BIO_TAGS[i] for i in averages.argmax(axis=1)]))
+        predictions.append(repair_bio([bio_tags[i] for i in averages.argmax(axis=1)]))
         confidence.append(averages.max(axis=1).tolist())
     return predictions, confidence
 
 
-def train_ner(train, validation, epochs=5):
+def train_ner(train, validation, epochs=5, scheduled=False, target_dir=None, entity_labels=None):
     import torch
     from transformers import AutoTokenizer, AutoModelForTokenClassification, set_seed
+    from transformers.utils import logging
+    logging.set_verbosity_error()
     set_seed(SEED)
     torch.set_num_threads(4)
+    bio_tags = ["O"] + [prefix + label for label in (entity_labels or ENTITY_LABELS) for prefix in ("B-", "I-")]
     tokenizer = AutoTokenizer.from_pretrained(RUNTIME / "bert", local_files_only=True)
-    model = AutoModelForTokenClassification.from_pretrained(RUNTIME / "bert", num_labels=len(BIO_TAGS), id2label=dict(enumerate(BIO_TAGS)), label2id={v: k for k, v in enumerate(BIO_TAGS)}, local_files_only=True, attn_implementation="eager")
+    options = {"hidden_dropout_prob": .15, "attention_probs_dropout_prob": .15, "classifier_dropout": .15} if scheduled else {}
+    model = AutoModelForTokenClassification.from_pretrained(RUNTIME / "bert", num_labels=len(bio_tags), id2label=dict(enumerate(bio_tags)), label2id={v: k for k, v in enumerate(bio_tags)}, local_files_only=True, attn_implementation="eager", **options)
     train_tokens, train_gold = sequences(train)
     words, tags = [], []
     for tokens, labels in zip(train_tokens, train_gold):
-        for start in range(0, len(tokens), 40):
-            words.append([t["text"] for t in tokens[start:start + 64]])
-            tags.append(repair_bio(labels[start:start + 64]))
-    encoded = tokenizer(words, is_split_into_words=True, padding=True, truncation=False, return_tensors="pt")
-    labels = torch.tensor(align_labels(encoded, tags))
+        window, stride = (48, 32) if scheduled else (64, 40)
+        for start in range(0, len(tokens), stride):
+            chunk = [t["text"] for t in tokens[start:start + window]]
+            for offset, bounded in bounded_windows(chunk, tokenizer, model.config.max_position_embeddings):
+                words.append(bounded)
+                tags.append(repair_bio(labels[start + offset:start + offset + len(bounded)]))
+    encoded = tokenizer(words, is_split_into_words=True, padding=False, truncation=False)
+    labels = align_labels(encoded, tags, bio_tags)
     val_tokens, val_gold = sequences(validation)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=3e-4, weight_decay=.01)
+    learning_rate = 1.5e-4 if scheduled else 3e-4
+    optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate, weight_decay=.03 if scheduled else .01)
+    total_steps = epochs * ((len(labels) + 31) // 32)
+    warmup = max(1, int(total_steps * .1))
+    scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lambda step: min(step / warmup, (total_steps - step) / max(1, total_steps - warmup))) if scheduled else None
+    class_weights = torch.ones(len(bio_tags))
+    if scheduled:
+        class_weights[0] = .7
     random = torch.Generator().manual_seed(SEED)
     history, best = [], -1.
-    target = MODELS / "bert_ner"
+    target = target_dir or MODELS / "bert_ner"
     for epoch in range(epochs):
         model.train()
         order = torch.randperm(len(labels), generator=random)
         losses = []
         for start in range(0, len(order), 32):
-            indices = order[start:start + 32]
+            indices = order[start:start + 32].tolist()
+            batch = tokenizer.pad([{key: value[i] for key, value in encoded.items()} for i in indices], padding=True, return_tensors="pt")
+            batch_labels = torch.full(batch["input_ids"].shape, -100, dtype=torch.long)
+            for row, index in enumerate(indices):
+                batch_labels[row, :len(labels[index])] = torch.tensor(labels[index])
             optimizer.zero_grad(set_to_none=True)
-            output = model(**{key: value[indices] for key, value in encoded.items()}, labels=labels[indices])
-            output.loss.backward()
+            output = model(**batch)
+            loss = torch.nn.functional.cross_entropy(output.logits.reshape(-1, len(bio_tags)), batch_labels.reshape(-1),
+                                                     weight=class_weights, label_smoothing=.02 if scheduled else 0.)
+            loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)
             optimizer.step()
-            losses.append(float(output.loss.detach()))
+            if scheduler is not None:
+                scheduler.step()
+            losses.append(float(loss.detach()))
         guesses, _ = predict_tags(model, tokenizer, val_tokens)
         score = entity_metrics(val_gold, guesses)["strict_entity_f1"]
         history.append({"epoch": epoch + 1, "loss": float(np.mean(losses)), "validation_entity_f1": score})
@@ -114,15 +138,17 @@ def train_ner(train, validation, epochs=5):
             best = score
             model.save_pretrained(target, safe_serialization=True)
             tokenizer.save_pretrained(target)
-    write_json(target / "training.json", {"history": history, "validation_f1": best, "labels": BIO_TAGS, "train_rows": len(train), "validation_rows": len(validation), "window_words": 48, "stride_words": 32})
+    write_json(target / "training.json", {"history": history, "validation_f1": best, "labels": bio_tags, "train_rows": len(train), "validation_rows": len(validation), "window_words": 48 if scheduled else 64, "stride_words": 32 if scheduled else 40,
+               "recipe": {"learning_rate": learning_rate, "linear_decay": scheduled, "warmup_ratio": .1 if scheduled else 0.,
+                          "dropout": .15 if scheduled else .1, "label_smoothing": .02 if scheduled else 0., "outside_class_weight": .7 if scheduled else 1.}})
     return {"history": history, "validation_f1": best}
 
 
-def load_ner():
+def load_ner(path=None):
     import torch
     from transformers import AutoTokenizer, AutoModelForTokenClassification
     torch.set_num_threads(4)
-    path = MODELS / "bert_ner"
+    path = path or MODELS / "bert_ner"
     return AutoModelForTokenClassification.from_pretrained(path, local_files_only=True), AutoTokenizer.from_pretrained(path, local_files_only=True)
 
 

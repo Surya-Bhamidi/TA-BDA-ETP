@@ -1,0 +1,10 @@
+{
+  "evaluated_at": "2026-11-07T10:17:01.338901+00:00",
+  "frozen_at": "2026-11-07T10:16:57.934867+00:00",
+  "selected_ner": "CRF",
+  "prediction_files": {
+    "evaluation_predictions.parquet": "1a835a91b77795553e7b335a9ceeaca136a865c770f57e313773946e0689bdbf",
+    "entity_evaluation_predictions.jsonl": "c76a6f90869b564f58105f98eed8c7420df9df6e96c7c226088fb212e1c3b516"
+  },
+  "note": "Repeat evaluation on the previously viewed synthetic test split. All candidates and checkpoints were selected on validation, before test prediction. No retuning from this run's test results."
+}

@@ -144,7 +144,8 @@ def show_analysis(result, key):
     top[0].metric("Suggested category" if result["review_required"] else "TF-IDF prediction", result["crime_type"])
     top[1].metric("VADER polarity", f"{result['sentiment']['compound']:+.2f}")
     top[2].metric("Threat-language cues", result["threat"]["level"])
-    top[3].metric("Extracted entities", len(result["entities"]))
+    display_entities = sorted(result["entities"] + result.get("contextual_roles", []), key=lambda entity: entity["start"])
+    top[3].metric("Extracted mentions", len(display_entities))
     st.caption(f"Calibrated category score: {result['model_score']:.1%}. Entity model: {result['ner_model']}. Release {result.get('model_version', 'earlier')}. Scores are model estimates, not proof.")
     if result["review_required"]:
         st.warning("Needs review: " + " ".join(result.get("review_reasons", ["Limited classification confidence."])))
@@ -153,15 +154,39 @@ def show_analysis(result, key):
     tabs = st.tabs(["Entities & summary", "Syntax & morphology", "Evidence search", "Analysis details"])
     with tabs[0]:
         st.markdown("#### Annotated narrative")
-        st.caption("Colored mentions include participants, places, weapons, property, dates, times and evidence. Role labels may describe allegations.")
-        st.markdown(highlight_entities(result["text"], result["entities"]), unsafe_allow_html=True)
+        st.caption("Colored mentions include participants, organizations, places, weapons, property, dates, times and evidence. Role labels may describe allegations.")
+        st.markdown(highlight_entities(result["text"], display_entities), unsafe_allow_html=True)
+        if any(entity.get("instrument_type") == "accelerant" for entity in display_entities):
+            st.caption("WEAPON includes accelerants used to start a fire, such as petrol or kerosene.")
         with st.expander("Original text, exactly as entered"):
             st.code(result["text"], language=None, wrap_lines=True)
-        st.markdown("#### Case summary")
+        st.markdown("#### One-line case summary")
         st.markdown(highlight_entities(result["summary"], []), unsafe_allow_html=True)
-        st.caption("Extractive TextRank: source sentences ranked by similarity, with a small lead-sentence prior.")
-        if result["entities"]:
-            st.dataframe(pd.DataFrame(result["entities"])[["text", "label", "assertion", "confidence", "start", "end"]], hide_index=True, width="stretch")
+        st.caption("TextRank selects one source sentence, with a small lead-sentence prior. Only summary whitespace is normalized; the original narrative is preserved.")
+        if display_entities:
+            entity_table = pd.DataFrame(display_entities)
+            if "extraction_method" in entity_table:
+                entity_table["extraction_method"] = entity_table.extraction_method.fillna(result["ner_model"])
+            columns = [name for name in ["text", "label", "assertion", "confidence", "calibrated_confidence", "review_required", "trained_model", "extraction_method", "start", "end"] if name in entity_table]
+            st.dataframe(entity_table[columns], hide_index=True, width="stretch")
+        if result.get("entity_context_corrections"):
+            st.caption("Context corrections have no model probability. A separately trained model can identify organizations and witnesses; its scores and provenance are shown per mention.")
+        if result.get("entity_review_required"):
+            with st.expander(f"Review {len(result['entity_review'])} extracted mentions"):
+                st.dataframe(pd.DataFrame([{"Mention": entity["text"], "Label": entity["label"], "Reason": "; ".join(entity["review_reasons"])} for entity in result["entity_review"]]), hide_index=True)
+        if any(entity.get("calibrated_confidence") is not None for entity in display_entities):
+            st.caption("Entity reliability is fitted on synthetic validation spans. It does not measure real-world certainty or the number of missed entities.")
+        if result.get("relations", {}).get("events"):
+            st.markdown("#### Described actions")
+            st.dataframe(pd.DataFrame([{"Action": event["predicate"], "Actor": ", ".join(entity["text"] for entity in event["actors"]),
+                                        "Affected person/property": ", ".join(entity["text"] for entity in event["affected"]),
+                                        "Instrument": ", ".join(entity["text"] for entity in event["instruments"]),
+                                        "Assertion": event["assertion"]} for event in result["relations"]["events"]]), hide_index=True)
+            st.caption("Action links follow bounded syntax and entity roles. Check the original source; complex references can remain unresolved.")
+        unresolved = [reference for reference in result.get("references", []) if reference["status"] != "resolved"]
+        if unresolved:
+            with st.expander(f"Review {len(unresolved)} unresolved references"):
+                st.dataframe(pd.DataFrame([{"Reference": reference["pronoun"]["text"], "Position": reference["pronoun"]["start"], "Status": reference["status"]} for reference in unresolved]), hide_index=True)
         with st.expander("Structured case notes and source sentences"):
             st.json(result["structured_summary"])
         st.download_button("Download redacted narrative", result["redacted_text"], "redacted_narrative.txt", "text/plain", key=key + "_redacted")
@@ -198,6 +223,31 @@ def show_analysis(result, key):
             from crime_nlp.store import save_feedback
             save_feedback(result["text"], result["crime_type"], correction)
             st.success("Saved the correction and a text hash locally. This does not retrain the model or save the narrative.")
+        with st.expander("Correct extracted entities"):
+            from crime_nlp.annotation_schema import LABELS
+            import hashlib
+            editor_key = key + "_" + hashlib.sha256((result["text"] + result["model_revision"]).encode()).hexdigest()[:12]
+            st.caption("Offsets count original characters; the end position is exclusive. Add, remove or relabel mentions. Corrections remain drafts for review.")
+            initial = pd.DataFrame([{name: entity[name] for name in ["start", "end", "label"]} for entity in display_entities], columns=["start", "end", "label"])
+            initial = initial.astype({"start": "Int64", "end": "Int64", "label": "string"})
+            edits = st.data_editor(initial, num_rows="dynamic", hide_index=True, key=editor_key + "_entity_editor",
+                                   column_config={"label": st.column_config.SelectboxColumn("Label", options=LABELS, required=True),
+                                                  "start": st.column_config.NumberColumn("Start", min_value=0, step=1, required=True),
+                                                  "end": st.column_config.NumberColumn("End", min_value=1, step=1, required=True)})
+            include_text = st.checkbox("Include this narrative in the local annotation queue", key=editor_key + "_entity_include_text")
+            if st.button("Save entity corrections", key=editor_key + "_entity_feedback"):
+                from crime_nlp.store import save_entity_feedback
+                try:
+                    corrected = []
+                    for row in edits.to_dict("records"):
+                        first, last = int(row["start"]), int(row["end"])
+                        if row["start"] != first or row["end"] != last:
+                            raise ValueError("Entity offsets must be whole character positions")
+                        corrected.append({"start": first, "end": last, "label": row["label"], "text": result["text"][first:last]})
+                    save_entity_feedback(result["text"], display_entities, corrected, result["model_revision"], include_text)
+                    st.success("Saved an unreviewed annotation draft locally." if include_text else "Saved offset/label corrections and a text hash; narrative text was not saved.")
+                except (ValueError, TypeError) as error:
+                    st.error(str(error))
 
 
 if page == "Overview":
@@ -237,7 +287,8 @@ elif page == "Case explorer":
     query = st.text_input("Search narratives", placeholder="Try: unauthorized account access, stolen phone, fire, or a report ID")
     mode = st.radio("Search method", ["Keyword", "Semantic", "Hybrid"], horizontal=True)
     selected = filters(data, "explorer")
-    label = st.selectbox("Entity type", ["Any", *ENTITY_LABELS])
+    from crime_nlp.annotation_schema import LABELS
+    label = st.selectbox("Entity type", ["Any", *LABELS])
     entity_value = st.text_input("Entity contains", placeholder="Optional: a person, location or item")
     matches = entity_matches(label, entity_value)
     if matches is not None:
@@ -265,21 +316,23 @@ elif page == "Case explorer":
     page_key = hashlib.sha256((query + mode + str(selected.index.tolist()) + str(limit)).encode()).hexdigest()[:12]
     page_number = st.number_input("Page", min_value=1, max_value=max(1, (len(selected) + limit - 1) // limit), value=1, key="page_" + page_key)
     display = selected.iloc[(page_number - 1) * limit:page_number * limit]
-    st.dataframe(display[["report_id", "crime_type", "district", "reported_at", "predicted_crime", "threat_level"]].rename(columns={"crime_type": "Source label", "predicted_crime": "TF-IDF prediction", "threat_level": "Language cues"}), hide_index=True, width="stretch")
+    display_reports = fetch_reports(display.index.tolist())
+    columns = ["report_id", "summary", "crime_type", "district", "reported_at", "predicted_crime", "threat_level"]
+    st.dataframe(display_reports[columns].rename(columns={"summary": "One-line summary", "crime_type": "Source label", "predicted_crime": "TF-IDF prediction", "threat_level": "Language cues"}), hide_index=True, width="stretch")
     choice = st.selectbox("Open a report", display.report_id.tolist(), format_func=lambda report_id: f"{report_id} · {display.loc[display.report_id == report_id, 'crime_type'].iloc[0]}")
     row = display.loc[display.report_id == choice].iloc[0]
     st.divider()
     st.markdown(f"#### {choice}")
     st.caption(f"{row.district} · {row.reported_at} · {row.split} split")
     with st.spinner("Analyzing the narrative..."):
-        result = dict(cached_analysis(fetch_reports([row.name]).iloc[0].narrative))
+        result = dict(cached_analysis(display_reports.loc[row.name].narrative))
         result["report_id"] = choice
     show_analysis(result, "case")
-    st.download_button("Export this page CSV", fetch_reports(display.index.tolist())[["report_id", "narrative", "crime_type", "district", "predicted_crime"]].to_csv(index=False), "search_results.csv", "text/csv")
+    st.download_button("Export this page CSV", display_reports[["report_id", "summary", "narrative", "crime_type", "district", "predicted_crime"]].to_csv(index=False), "search_results.csv", "text/csv")
 
 elif page == "Narrative lab":
     heading("Research workspace / narrative lab", "Read between the lines", "Analyze your own text with the trained NLP pipeline.")
-    st.caption("Write in your own words, including short sentences, informal English or spelling mistakes. Names and places can be from anywhere. Your original text is preserved and is not saved by the app.")
+    st.caption("Write in your own words, including informal English or spelling mistakes. Analysis stays in memory. Saving a narrative to the local annotation queue is optional.")
     with st.expander("Try an informal example"):
         st.code("sir ystrday two fellows showed knife and took my moblie near bus stand")
         st.code("José García hit Wei Zhang with iron rod near Nairobi")
@@ -324,7 +377,7 @@ elif page == "Narrative lab":
         st.info("The text has changed. Select Analyze narrative to update the results.")
 
 elif page == "Model evaluation":
-    heading("Research workspace / model evaluation", "Measure what the models learn", "Real metrics from a fixed test set of previously unseen scenario templates.")
+    heading("Research workspace / model evaluation", "Measure what the models learn", "Measured classification and strict entity-span scores on fixed synthetic evaluation splits.")
     protocol = evaluation["protocol"]
     a, b, c, d = st.columns(4)
     a.metric("TRAIN NARRATIVES", f"{protocol['train_rows']:,}")
@@ -332,9 +385,21 @@ elif page == "Model evaluation":
     c.metric("TEST NARRATIVES", f"{protocol['test_rows']:,}")
     d.metric(f"{ner_evaluation['model']} ENTITY F1", f"{ner_evaluation['strict_entity_f1']:.1%}")
     st.info("Templates are disjoint across train, validation and test. Vectorizers and Word2Vec are fit only on training text. BERT checkpoints are selected by validation macro-F1. These are synthetic benchmark scores.")
+    if protocol.get("evaluation_scope"):
+        st.caption(protocol["evaluation_scope"])
     scores = pd.DataFrame([{"Model": name, "Accuracy": item["accuracy"], "Macro F1": item["macro_f1"], "Weighted F1": item["weighted_f1"]} for name, item in evaluation["models"].items()])
     chart(px.bar(scores.melt(id_vars="Model", var_name="Metric", value_name="Score"), x="Model", y="Score", color="Metric", barmode="group", range_y=[0, 1.05]), 340)
     st.dataframe(scores.style.format({"Accuracy": "{:.3f}", "Macro F1": "{:.3f}", "Weighted F1": "{:.3f}"}), hide_index=True, width="stretch")
+    if (ARTIFACTS / "accuracy_improvements.json").exists():
+        with st.expander("Changes after validation-based tuning", expanded=True):
+            improvements = read_artifact("accuracy_improvements.json")
+            comparison = [{"Model": name, "Previous accuracy": item["before_accuracy"],
+                           "Current accuracy": item["after_accuracy"], "Change (percentage points)": item["accuracy_change_pp"]}
+                          for name, item in improvements["classification"].items()]
+            st.dataframe(pd.DataFrame(comparison), hide_index=True, width="stretch")
+            st.caption(improvements["scope"])
+            for name, rejected in improvements.get("rejected_candidates", {}).items():
+                st.info(f"{name}: the candidate scored {rejected['after_accuracy']:.2%} on the repeat synthetic test, so the previous {rejected['before_accuracy']:.2%} model is retained. No further tuning used these test results.")
     with st.expander("Accuracy intervals and confidence calibration"):
         st.dataframe(pd.DataFrame([{"Model": name, "95% lower": item["accuracy_ci95"][0], "95% upper": item["accuracy_ci95"][1]} for name, item in evaluation["models"].items()]), hide_index=True)
         bins = pd.DataFrame([{**item, "Calibration": name} for name in ("before", "after") for item in evaluation["calibration_test"][name]["bins"]])
@@ -353,11 +418,39 @@ elif page == "Model evaluation":
         per_class = pd.DataFrame(m["classification_report"]).T
         st.dataframe(per_class.loc[m["labels"], ["precision", "recall", "f1-score", "support"]].round(3), width="stretch")
     st.markdown("#### Entity extraction: strict span evaluation")
-    st.dataframe(pd.DataFrame([{"Model": name, "Validation F1": ner_evaluation["validation"][name], "Final-test F1": item["strict_entity_f1"]} for name, item in ner_evaluation["models"].items()]), hide_index=True)
+    st.dataframe(pd.DataFrame([{"Model": name, "Validation F1": ner_evaluation["validation"][name], "Evaluation span F1": item["strict_entity_f1"]} for name, item in ner_evaluation["models"].items()]), hide_index=True)
     entity_rows = {k: v for k, v in ner_evaluation["report"].items() if k in ner_evaluation["labels"]}
     st.dataframe(pd.DataFrame(entity_rows).T.round(3), width="stretch")
     st.caption(f"{ner_evaluation['model']} evaluated on {ner_evaluation['test_rows']} narratives. Both the span and label must be correct. " + ner_evaluation.get("split", ""))
     st.caption("The entity model is selected on validation. Shared synthetic grammar and previously viewed evaluation subsets limit generalization claims.")
+    if (ARTIFACTS / "role_specialist_broad_evaluation.json").exists():
+        specialist = read_artifact("role_specialist_broad_evaluation.json")
+        st.markdown("#### Trained organization and witness additions")
+        st.dataframe(pd.DataFrame([{"Model": name, "Role validation Span-F1": specialist["validation"][name],
+                                    "Role diagnostic Span-F1": result["strict_entity_f1"]} for name, result in specialist["models"].items()]), hide_index=True)
+        st.caption("This two-label task uses different annotations and examples from the eight-label table above. The selected specialist adds non-overlapping roles to the retained core tagger. Diagnostic synthetic scores do not establish real-world accuracy.")
+        role_report = specialist["models"][specialist["selected"]]["report"]
+        st.dataframe(pd.DataFrame({label: role_report[label] for label in ["ORGANIZATION", "WITNESS"]}).T, width="stretch")
+    if (ARTIFACTS / "windowed_classification_experiment.json").exists():
+        with st.expander("Full-document BERT experiment"):
+            experiment = read_artifact("windowed_classification_experiment.json")
+            st.json({key: value for key, value in experiment.items() if key not in {"details"}})
+            st.caption("The candidate was compared on validation. Legacy benchmark predictions remain archived; the active mode is recorded separately.")
+    with st.expander("Evaluate summaries, search and topics"):
+        st.caption("These features need human judgments. Blank review forms are not accuracy results.")
+        review_packet = ROOT / "data" / "quality_review" / "drafts.jsonl"
+        if review_packet.exists():
+            st.download_button("Download unreviewed quality forms", review_packet.read_bytes(), "quality_review_forms.jsonl", "application/jsonl")
+        reviewed = st.file_uploader("Upload reviewed quality judgments", type=["jsonl"], key="quality_review_upload")
+        if reviewed:
+            try:
+                if reviewed.size > 2_000_000:
+                    raise ValueError("Use a review file smaller than 2 MB")
+                from crime_nlp.quality_review import evaluate
+                judgments = [json.loads(line) for line in reviewed.getvalue().decode("utf-8-sig").splitlines() if line.strip()]
+                st.json(evaluate(judgments))
+            except (ValueError, KeyError, TypeError) as error:
+                st.error(str(error))
     if (ARTIFACTS / "robustness_development.json").exists():
         with st.expander("Informal English and unfamiliar names: development checks", expanded=True):
             challenges = read_artifact("robustness_development.json")

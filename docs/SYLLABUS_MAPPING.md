@@ -6,7 +6,7 @@
 |---|---|---|---|
 | 1 | Computational linguistics, syntax, morphology, NLP problems | `crime_nlp/inference.py`, `app.py` | Token, lemma, POS, morphology and dependency table; document classification and role extraction |
 | 2 | BoW / TF-IDF; language representation | `crime_nlp/train.py`, `crime_nlp/features.py` | Word unigram/bigram counts; word and character-fragment TF-IDF feeding the same logistic regression; shared-split comparison |
-| 2 | Neural word embeddings | `crime_nlp/train.py` | Gensim neural Word2Vec skip-gram, document averaging; 100-dimensional vectors |
+| 2 | Neural word embeddings | `crime_nlp/train.py`, `crime_nlp/tuning.py` | Gensim neural Word2Vec skip-gram; retained mean-pooling model and evaluated IDF-weighted mean/max candidate; 100-dimensional word vectors |
 | 3 | Sequence models: BERT/GPT alongside HMM/CRF | `crime_nlp/bert_model.py`, `crime_nlp/train.py` | Pretrained BERT fine-tuning for classification; CRF BIO sequence labeling. BERT and CRF are the selected alternatives. |
 | 3 | Topic modeling | `crime_nlp/train.py`, `crime_nlp/topics.py` | LDA with lemmatized content words, perplexity/coherence/diversity, NMF top-term comparison |
 | 4 | POS tagging, named entity recognition, dependency parsing | `crime_nlp/inference.py`, `crime_nlp/ner_model.py`, `app.py` | CRF and fine-tuned BERT NER with eight entity types; spaCy tags and dependencies |

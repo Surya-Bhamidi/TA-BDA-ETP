@@ -1,0 +1,8 @@
+{
+  "status": "passed",
+  "verified_at": "2026-11-08T10:24:57.167394+00:00",
+  "scope": "All stored source offsets and span overlaps; this does not measure semantic accuracy",
+  "rows": 60000,
+  "failures": 0,
+  "examples": []
+}

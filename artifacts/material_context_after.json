@@ -1,0 +1,621 @@
+{
+  "scope": "Hand-written development checks; neutral cases prohibit false WEAPON/EVIDENCE claims, not all possible entity labels",
+  "summary": {
+    "cases": 37,
+    "passed": 37,
+    "ner": "Automatic"
+  },
+  "cases": [
+    {
+      "id": "reported_petrol",
+      "text": "Abebe Bekele poured petrol and set Olga Ivanova's shop on fire near Dubai. kindly take my complaint",
+      "mention": "petrol",
+      "expected": "WEAPON",
+      "actual": [
+        {
+          "text": "petrol",
+          "start": 20,
+          "end": 26,
+          "label": "WEAPON",
+          "confidence": null,
+          "extraction_method": "material role context",
+          "previous_labels": [],
+          "instrument_type": "accelerant",
+          "assertion": "mentioned",
+          "normalized": "petrol"
+        }
+      ],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "kerosene",
+      "text": "A man poured kerosene on the door then lit a match.",
+      "mention": "kerosene",
+      "expected": "WEAPON",
+      "actual": [
+        {
+          "text": "kerosene",
+          "start": 13,
+          "end": 21,
+          "label": "WEAPON",
+          "confidence": null,
+          "extraction_method": "material role context",
+          "previous_labels": [],
+          "instrument_type": "accelerant",
+          "assertion": "mentioned",
+          "normalized": "kerosene"
+        }
+      ],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "gasoline",
+      "text": "Ravi burned Asha's shop using gasoline.",
+      "mention": "gasoline",
+      "expected": "WEAPON",
+      "actual": [
+        {
+          "text": "gasoline",
+          "start": 30,
+          "end": 38,
+          "label": "WEAPON",
+          "confidence": null,
+          "extraction_method": "material role context",
+          "previous_labels": [],
+          "instrument_type": "accelerant",
+          "assertion": "mentioned",
+          "normalized": "gasoline"
+        }
+      ],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "diesel",
+      "text": "They splashed diesel over the shutter and started a blaze.",
+      "mention": "diesel",
+      "expected": "WEAPON",
+      "actual": [
+        {
+          "text": "diesel",
+          "start": 14,
+          "end": 20,
+          "label": "WEAPON",
+          "confidence": null,
+          "extraction_method": "material role context",
+          "previous_labels": [],
+          "instrument_type": "accelerant",
+          "assertion": "mentioned",
+          "normalized": "diesel"
+        }
+      ],
+      "category": "Robbery",
+      "passed": true
+    },
+    {
+      "id": "accelerant",
+      "text": "A person used an accelerant to ignite the garage.",
+      "mention": "accelerant",
+      "expected": "WEAPON",
+      "actual": [
+        {
+          "text": "accelerant",
+          "start": 17,
+          "end": 27,
+          "label": "WEAPON",
+          "confidence": null,
+          "extraction_method": "material role context",
+          "previous_labels": [],
+          "instrument_type": "accelerant",
+          "assertion": "mentioned",
+          "normalized": "accelerant"
+        }
+      ],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "lighter_fluid",
+      "text": "Ravi set the shed on fire with lighter fluid.",
+      "mention": "lighter fluid",
+      "expected": "WEAPON",
+      "actual": [
+        {
+          "text": "lighter fluid",
+          "start": 31,
+          "end": 44,
+          "label": "WEAPON",
+          "confidence": null,
+          "extraction_method": "material role context",
+          "previous_labels": [],
+          "instrument_type": "accelerant",
+          "assertion": "mentioned",
+          "normalized": "lighter fluid"
+        }
+      ],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "thinner",
+      "text": "They poured paint thinner and set the shed on fire.",
+      "mention": "paint thinner",
+      "expected": "WEAPON",
+      "actual": [
+        {
+          "text": "paint thinner",
+          "start": 12,
+          "end": 25,
+          "label": "WEAPON",
+          "confidence": null,
+          "extraction_method": "material role context",
+          "previous_labels": [],
+          "instrument_type": "accelerant",
+          "assertion": "mentioned",
+          "normalized": "paint thinner"
+        }
+      ],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "passive_fuel",
+      "text": "Petrol was used to set fire to the shop.",
+      "mention": "Petrol",
+      "expected": "WEAPON",
+      "actual": [
+        {
+          "text": "Petrol",
+          "start": 0,
+          "end": 6,
+          "label": "WEAPON",
+          "confidence": null,
+          "extraction_method": "material role context",
+          "previous_labels": [
+            "SUSPECT"
+          ],
+          "instrument_type": "accelerant",
+          "assertion": "mentioned",
+          "normalized": "petrol"
+        }
+      ],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "unicode_whitespace",
+      "text": "José poured\nPETROL and set Wei's shop on fire.",
+      "mention": "PETROL",
+      "expected": "WEAPON",
+      "actual": [
+        {
+          "text": "PETROL",
+          "start": 12,
+          "end": 18,
+          "label": "WEAPON",
+          "confidence": null,
+          "extraction_method": "material role context",
+          "previous_labels": [],
+          "instrument_type": "accelerant",
+          "assertion": "mentioned",
+          "normalized": "petrol"
+        }
+      ],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "fuel_property",
+      "text": "Ravi stole petrol from Asha's garage.",
+      "mention": "petrol",
+      "expected": "PROPERTY",
+      "actual": [
+        {
+          "text": "petrol",
+          "start": 11,
+          "end": 17,
+          "label": "PROPERTY",
+          "confidence": null,
+          "extraction_method": "syntactic role context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "petrol"
+        }
+      ],
+      "category": "Theft",
+      "passed": true
+    },
+    {
+      "id": "fuel_passive_property",
+      "text": "Petrol was stolen from the garage.",
+      "mention": "Petrol",
+      "expected": "PROPERTY",
+      "actual": [
+        {
+          "text": "Petrol",
+          "start": 0,
+          "end": 6,
+          "label": "PROPERTY",
+          "confidence": null,
+          "extraction_method": "syntactic role context",
+          "previous_labels": [
+            "SUSPECT"
+          ],
+          "assertion": "mentioned",
+          "normalized": "petrol"
+        }
+      ],
+      "category": "Theft",
+      "passed": true
+    },
+    {
+      "id": "evidence_sample",
+      "text": "Police collected petrol samples for forensic analysis.",
+      "mention": "petrol samples",
+      "expected": "EVIDENCE",
+      "actual": [
+        {
+          "text": "petrol samples",
+          "start": 17,
+          "end": 31,
+          "label": "EVIDENCE",
+          "confidence": null,
+          "extraction_method": "material role context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "petrol samples"
+        }
+      ],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "evidence_residue",
+      "text": "Investigators recovered kerosene residue for testing.",
+      "mention": "kerosene residue",
+      "expected": "EVIDENCE",
+      "actual": [
+        {
+          "text": "kerosene residue",
+          "start": 24,
+          "end": 40,
+          "label": "EVIDENCE",
+          "confidence": null,
+          "extraction_method": "material role context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "kerosene residue"
+        }
+      ],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "explicit_evidence",
+      "text": "Police seized petrol as evidence.",
+      "mention": "petrol",
+      "expected": "EVIDENCE",
+      "actual": [
+        {
+          "text": "petrol",
+          "start": 14,
+          "end": 20,
+          "label": "EVIDENCE",
+          "confidence": null,
+          "extraction_method": "material role context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "petrol"
+        }
+      ],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "ordinary_purchase",
+      "text": "Ravi bought petrol for his car.",
+      "mention": "petrol",
+      "expected": null,
+      "actual": [],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "ordinary_storage",
+      "text": "Petrol was stored safely in a sealed container.",
+      "mention": "Petrol",
+      "expected": null,
+      "actual": [
+        {
+          "start": 0,
+          "end": 6,
+          "label": "VICTIM",
+          "text": "Petrol",
+          "confidence": 0.40934308540649317,
+          "assertion": "mentioned",
+          "normalized": "petrol"
+        }
+      ],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "ordinary_spill",
+      "text": "Asha spilled petrol while filling her car.",
+      "mention": "petrol",
+      "expected": null,
+      "actual": [],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "separate_sentence",
+      "text": "Ravi bought petrol for his car. A nearby shop was set on fire.",
+      "mention": "petrol",
+      "expected": null,
+      "actual": [],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "unrelated_clause",
+      "text": "Ravi stored petrol while Asha set a shop on fire.",
+      "mention": "petrol",
+      "expected": null,
+      "actual": [],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "stolen_then_fire",
+      "text": "Ravi stole petrol while someone else set a shop on fire.",
+      "mention": "petrol",
+      "expected": "PROPERTY",
+      "actual": [
+        {
+          "text": "petrol",
+          "start": 11,
+          "end": 17,
+          "label": "PROPERTY",
+          "confidence": null,
+          "extraction_method": "syntactic role context",
+          "previous_labels": [],
+          "assertion": "mentioned",
+          "normalized": "petrol"
+        }
+      ],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "negated_fire",
+      "text": "Ravi poured petrol but did not set the shop on fire.",
+      "mention": "petrol",
+      "expected": null,
+      "actual": [],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "fuel_description",
+      "text": "Petrol burns easily.",
+      "mention": "Petrol",
+      "expected": null,
+      "actual": [],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "stove_fuel",
+      "text": "Ravi used kerosene to light a stove.",
+      "mention": "kerosene",
+      "expected": null,
+      "actual": [],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "controlled_fire",
+      "text": "Ravi used petrol to ignite a campfire.",
+      "mention": "petrol",
+      "expected": null,
+      "actual": [],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "waste_disposal",
+      "text": "Ravi used petrol to burn rubbish.",
+      "mention": "petrol",
+      "expected": null,
+      "actual": [],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "denied_use",
+      "text": "Petrol was not used to set fire to the shop.",
+      "mention": "Petrol",
+      "expected": null,
+      "actual": [
+        {
+          "start": 0,
+          "end": 6,
+          "label": "SUSPECT",
+          "text": "Petrol",
+          "confidence": 0.5392642889171898,
+          "assertion": "mentioned",
+          "normalized": "petrol"
+        }
+      ],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "different_actor",
+      "text": "Ravi poured petrol while Asha set a shop on fire.",
+      "mention": "petrol",
+      "expected": null,
+      "actual": [],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "all_capitals",
+      "text": "SIR JOSÉ GARCÍA POURED PETROL AND SET LAKSHMI'S SHOP ON FIRE IN NAIROBI.",
+      "mention": "PETROL",
+      "expected": "WEAPON",
+      "actual": [
+        {
+          "text": "PETROL",
+          "start": 23,
+          "end": 29,
+          "label": "WEAPON",
+          "confidence": null,
+          "extraction_method": "material role context",
+          "previous_labels": [],
+          "instrument_type": "accelerant",
+          "assertion": "mentioned",
+          "normalized": "petrol"
+        }
+      ],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "unfamiliar_names",
+      "text": "tseskalazu neha poured petrol and set sabaskazu's shop on fire.",
+      "mention": "petrol",
+      "expected": "WEAPON",
+      "actual": [
+        {
+          "text": "petrol",
+          "start": 23,
+          "end": 29,
+          "label": "WEAPON",
+          "confidence": null,
+          "extraction_method": "material role context",
+          "previous_labels": [],
+          "instrument_type": "accelerant",
+          "assertion": "mentioned",
+          "normalized": "petrol"
+        }
+      ],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "denied_pouring",
+      "text": "Ravi did not pour petrol and set the shop on fire.",
+      "mention": "petrol",
+      "expected": null,
+      "actual": [],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "different_actor_and",
+      "text": "Ravi poured petrol and Asha set a shop on fire.",
+      "mention": "petrol",
+      "expected": null,
+      "actual": [],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "initials",
+      "text": "LAKSHMI POURED PETROL AND SET R. K. MENON'S SHOP ON FIRE",
+      "mention": "PETROL",
+      "expected": "WEAPON",
+      "actual": [
+        {
+          "text": "PETROL",
+          "start": 15,
+          "end": 21,
+          "label": "WEAPON",
+          "confidence": null,
+          "extraction_method": "material role context",
+          "previous_labels": [],
+          "instrument_type": "accelerant",
+          "assertion": "mentioned",
+          "normalized": "petrol"
+        }
+      ],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "supplier_reuse",
+      "text": "Suresh used petrol from Indian Oil in Vanasthalipuram and used it to burn Ramesh's flat in Hasthinapuram",
+      "mention": "petrol",
+      "expected": "WEAPON",
+      "actual": [
+        {
+          "text": "petrol",
+          "start": 12,
+          "end": 18,
+          "label": "WEAPON",
+          "confidence": null,
+          "extraction_method": "material role context",
+          "previous_labels": [],
+          "instrument_type": "accelerant",
+          "assertion": "mentioned",
+          "normalized": "petrol"
+        }
+      ],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "reuse_kerosene",
+      "text": "Amir used kerosene from a shop and used it to burn Lina's shed.",
+      "mention": "kerosene",
+      "expected": "WEAPON",
+      "actual": [
+        {
+          "text": "kerosene",
+          "start": 10,
+          "end": 18,
+          "label": "WEAPON",
+          "confidence": null,
+          "extraction_method": "material role context",
+          "previous_labels": [],
+          "instrument_type": "accelerant",
+          "assertion": "mentioned",
+          "normalized": "kerosene"
+        }
+      ],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "negated_reuse",
+      "text": "Suresh used petrol from a shop and did not use it to burn Ramesh's flat.",
+      "mention": "petrol",
+      "expected": null,
+      "actual": [],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "other_actor_reuse",
+      "text": "Suresh used petrol from a shop and Ramesh used it to burn a flat.",
+      "mention": "petrol",
+      "expected": null,
+      "actual": [],
+      "category": "Arson",
+      "passed": true
+    },
+    {
+      "id": "competing_object",
+      "text": "Suresh used petrol to clean a bottle and used it to burn a flat.",
+      "mention": "petrol",
+      "expected": null,
+      "actual": [],
+      "category": "Arson",
+      "passed": true
+    }
+  ]
+}

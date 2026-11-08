@@ -36,9 +36,15 @@
       "entities": [
         {
           "start": 0,
-          "end": 19,
+          "end": 5,
           "label": "SUSPECT",
-          "text": "Surya Killed Mayank"
+          "text": "Surya"
+        },
+        {
+          "start": 13,
+          "end": 19,
+          "label": "VICTIM",
+          "text": "Mayank"
         },
         {
           "start": 23,

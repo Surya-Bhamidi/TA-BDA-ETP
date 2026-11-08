@@ -1,14 +1,18 @@
 {
   "rows": 60000,
-  "seconds": 424.99,
+  "seconds": 391.77,
   "batch_size": 1000,
   "classification": "TF-IDF logistic regression + validation temperature calibration",
   "entities": "CRF predictions",
   "sentiment": "NLTK VADER compound polarity; not an independently validated threat score",
   "threat": "Separate transparent cue heuristic, not calibrated risk",
   "topics": "LDA",
-  "syntax_and_summary": "spaCy morphology/POS/dependencies and TextRank are computed on demand in the dashboard",
-  "entity_refresh_seconds": 40.89,
+  "summary": "One-sentence extractive TextRank, whitespace normalized to one line; source text retained",
+  "syntax_and_summary": "spaCy syntax checks entity roles during enrichment and is displayed on demand; TextRank summaries are stored for every case and computed on demand for new text",
+  "entity_refresh_seconds": 309.56,
+  "entity_context_validation": "Disclosed syntax, witness-boundary, evidence and material-role context checks; corrections have no model probability; WITNESS stored separately",
   "entity_model_version": "3.1.0",
-  "entity_model_sha256": "7aa73d13366ff30fb640227a87b8f0c92112369411ecc45bb2acfcb948f486d8"
+  "entity_model_sha256": "f8125c50c4da67bcd7ae7809edc08d3995040e1914a05200a14a14bb507f46d0",
+  "entity_refresh_rows": 60000,
+  "entity_refresh_scope": "all narratives"
 }

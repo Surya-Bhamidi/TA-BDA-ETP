@@ -44,6 +44,18 @@ def test_summary_is_extractive_and_shorter():
     assert len(summary) < len(text)
 
 
+def test_one_sentence_summary_keeps_source_citation_with_multiline_input():
+    from crime_nlp.privacy import structured_summary
+    text = "The stolen phone\nwas recovered. A witness saw the phone. Police recorded the witness statement."
+    summary = " ".join(summarize(text).split())
+    notes = structured_summary(text, [], summary)
+    assert len(sentences(summary)) == 1
+    assert "\n" not in summary
+    assert len(notes["citations"]) == 1
+    assert notes["citations"][0]["text"] in text
+    assert " ".join(notes["citations"][0]["text"].split()) == summary
+
+
 def test_evidence_search_abstains():
     assert evidence_answer("satellite orbit", "The witness reported a stolen laptop.")["answer"] == "No matching evidence found."
     assert "laptop" in evidence_answer("laptop", "The witness reported a stolen laptop.")["answer"]

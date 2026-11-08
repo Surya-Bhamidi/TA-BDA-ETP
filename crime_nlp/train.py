@@ -3,6 +3,7 @@ import hashlib
 import json
 import time
 from datetime import datetime, timezone
+from pathlib import Path
 import joblib
 import numpy as np
 import pandas as pd
@@ -13,7 +14,7 @@ from sklearn.decomposition import LatentDirichletAllocation, NMF
 from sklearn.model_selection import GroupKFold, cross_val_score
 from .config import PROCESSED, MODELS, ARTIFACTS, CATEGORIES, ENTITY_LABELS, SEED, SETTINGS, write_json
 from .text import word_tokens, tokens_with_offsets, bio_labels, token_features
-from .evaluation import classification_metrics, entity_metrics, fit_temperature, temperature_scale, calibration_metrics
+from .evaluation import classification_metrics, entity_metrics, fit_temperature, temperature_scale, calibration_metrics, split_integrity
 from .features import robust_tfidf
 
 
@@ -25,11 +26,18 @@ def sample_split(df, name, limit):
     return pd.concat([g.sample(min(len(g), per_class), random_state=SEED) for _, g in part.groupby("crime_type", observed=True)]).sample(frac=1, random_state=SEED).reset_index(drop=True)
 
 
-def document_vectors(model, texts):
+def document_vectors(model, texts, recipe=None):
+    recipe = recipe or {"pooling": "mean"}
+    pooling, idf = recipe.get("pooling", "mean"), recipe.get("idf", {})
     vectors = []
     for text in texts:
         words = [w for w in word_tokens(text) if w in model.wv]
-        vectors.append(np.mean(model.wv[words], axis=0) if words else np.zeros(model.vector_size))
+        if not words:
+            vectors.append(np.zeros(model.vector_size * (2 if pooling == "idf_max" else 1)))
+            continue
+        rows = model.wv[words]
+        mean = np.average(rows, axis=0, weights=[idf.get(w, 1.) for w in words]) if pooling != "mean" else rows.mean(axis=0)
+        vectors.append(np.concatenate([mean, rows.max(axis=0)]) if pooling == "idf_max" else mean)
     return np.asarray(vectors, dtype=np.float32)
 
 
@@ -63,8 +71,9 @@ def file_hash(path):
 
 def freeze_models(plan):
     hashes = {p.relative_to(MODELS).as_posix(): file_hash(p) for p in sorted(MODELS.rglob("*")) if p.is_file()}
-    receipt = {"frozen_at": datetime.now(timezone.utc).isoformat(), "model_sha256": hashes, "plan": plan,
-               "policy": "No hyperparameter or feature changes based on final-test outputs in this run."}
+    sources = {p.name: file_hash(p) for p in sorted(Path(__file__).parent.glob("*.py"))}
+    receipt = {"frozen_at": datetime.now(timezone.utc).isoformat(), "model_sha256": hashes, "source_sha256": sources, "plan": plan,
+               "policy": plan.get("freeze_policy", "No hyperparameter or feature changes based on final-test outputs in this run.")}
     write_json(ARTIFACTS / "frozen_models.json", receipt)
     return receipt
 
@@ -101,14 +110,20 @@ def train_models(train_limit=12000, test_limit=1200, validation_limit=800, bert_
     from .ner_model import train_ner, load_ner, predict_tags, sequences
     from transformers import AutoTokenizer, AutoModelForSequenceClassification
     df = pd.read_parquet(PROCESSED / "reports").sort_values("report_id").reset_index(drop=True)
+    prior_evaluation = (ARTIFACTS / "evaluation.json").exists()
     split_names = ["train", "validation", "development", "test"]
+    integrity = split_integrity({name: df[df["split"] == name] for name in split_names})
     groups = {name: set(df.loc[df["split"] == name, "template_group"]) for name in split_names}
     assert all(not groups[a] & groups[b] for a in split_names for b in split_names if a != b)
     train, validation, development = (sample_split(df, name, limit) for name, limit in [("train", train_limit), ("validation", validation_limit), ("development", validation_limit)])
     plan = {"seed": SEED, "train_rows": len(train), "validation_rows": len(validation), "development_rows": len(development),
             "test_rows": min(test_limit, len(df[df.split == "test"])), "split": "V3 formal + informal event groups and name/place pools fixed before fitting",
             "groups": {k: sorted(v) for k, v in groups.items()}, "selection": "Validation only; final predictions after model hashes are frozen",
-            "limitations": "Synthetic composite templates share grammar and vocabulary; this is not external real-world validation."}
+            "limitations": "Synthetic composite templates share grammar and vocabulary; this is not external real-world validation.",
+            "integrity": integrity,
+            "evaluation_scope": ("Repeat evaluation on the existing synthetic test split, which has previously been viewed. "
+                                 "No fitting or checkpoint selection uses test scores in this run." if prior_evaluation else
+                                 "Synthetic test evaluation after validation selection and model freezing; not real-source validation.")}
     write_json(ARTIFACTS / "evaluation_plan.json", plan)
     for name, part in [("train", train), ("validation", validation), ("development", development)]:
         part[["report_id", "template_group", "crime_type"]].to_csv(ARTIFACTS / f"{name}_ids.csv", index=False)
@@ -131,11 +146,15 @@ def train_models(train_limit=12000, test_limit=1200, validation_limit=800, bert_
     w2v.save(str(MODELS / "word2vec.model"))
     word_classifier = LogisticRegression(max_iter=500, random_state=SEED).fit(document_vectors(w2v, x), y)
     joblib.dump(word_classifier, MODELS / "word2vec_classifier.joblib")
+    write_json(MODELS / "word2vec_features.json", {"pooling": "mean"})
     timing["Word2Vec"] = time.perf_counter() - started
     _, bert_details = fit_bert(x, y, validation.narrative.tolist(), validation.crime_type.tolist(), development.narrative.tolist(), epochs=bert_epochs)
     print("Training CRF and BERT entity taggers, selecting on validation...", flush=True)
     ner_train = entity_split(df, "train", SETTINGS["training"]["ner_train_limit"])
     ner_val = entity_split(df, "validation", min(400, validation_limit))
+    ner_test = entity_split(df, "test", min(600, test_limit))
+    plan["entity_integrity"] = split_integrity({"train": ner_train, "validation": ner_val, "test": ner_test})
+    plan["entity_evaluation_scope"] = "Previously viewed synthetic test subset plus generated role/context cases sharing grammar; diagnostic evaluation, not untouched real-source validation."
     train_x, train_y = sequence_data(ner_train)
     val_x, val_y = sequence_data(ner_val)
     crf = sklearn_crfsuite.CRF(algorithm="lbfgs", c1=.1, c2=.1, max_iterations=100, all_possible_transitions=True).fit(train_x, train_y)
@@ -155,6 +174,11 @@ def train_models(train_limit=12000, test_limit=1200, validation_limit=800, bert_
     guesses = {name: model.predict(test.narrative) for name, model in fitted.items()}
     guesses["Word2Vec"] = word_classifier.predict(document_vectors(w2v, test.narrative))
     guesses["BERT"] = predict_bert(bert, tokenizer, test.narrative.tolist())
+    document_predictions = test[["report_id", "crime_type", "template_group"]].copy()
+    for name, predicted in guesses.items():
+        document_predictions[name] = predicted
+    document_prediction_path = PROCESSED / "evaluation_predictions.parquet"
+    document_predictions.to_parquet(document_prediction_path, index=False)
     results = {"protocol": plan, "models": {}, "grouped_cv": {"model": "TF-IDF", "fold_macro_f1": cv.tolist(), "mean": float(cv.mean()), "groups": "incident variants within training only"}}
     for name, predicted in guesses.items():
         results["models"][name] = classification_metrics(test.crime_type, predicted)
@@ -168,22 +192,30 @@ def train_models(train_limit=12000, test_limit=1200, validation_limit=800, bert_
     errors["prediction"], errors["characters"] = guesses["TF-IDF"], test.narrative.str.len()
     errors[errors.crime_type != errors.prediction].to_csv(ARTIFACTS / "classification_errors.csv", index=False)
     write_json(ARTIFACTS / "evaluation.json", results)
-    ner_test = entity_split(df, "test", min(600, test_limit))
     final_x, final_y = sequence_data(ner_test)
-    crf_metrics = entity_metrics(final_y, crf.predict(final_x))
+    crf_predictions = crf.predict(final_x)
+    crf_metrics = entity_metrics(final_y, crf_predictions)
     ner_bert, ner_tokenizer = load_ner()
     final_tokens, gold = sequences(ner_test)
     ner_predictions, _ = predict_tags(ner_bert, ner_tokenizer, final_tokens)
     bert_metrics = entity_metrics(gold, ner_predictions)
+    entity_predictions = ner_test[["report_id", "narrative", "entities_json", "template_group"]].copy()
+    entity_predictions["gold_bio"] = final_y
+    entity_predictions["crf_bio"] = list(crf_predictions)
+    entity_predictions["bert_bio"] = ner_predictions
+    entity_prediction_path = PROCESSED / "entity_evaluation_predictions.jsonl"
+    entity_predictions.to_json(entity_prediction_path, orient="records", lines=True, force_ascii=False)
     selected = bert_metrics if selected_ner == "BERT" else crf_metrics
     write_json(ARTIFACTS / "ner_evaluation.json", {**selected, "model": selected_ner, "labels": ENTITY_LABELS, "train_rows": len(ner_train), "validation_rows": len(ner_val), "test_rows": len(ner_test),
                "models": {"CRF": crf_metrics, "BERT": bert_metrics}, "validation": {"CRF": crf_validation["strict_entity_f1"], "BERT": ner_details["validation_f1"]},
-               "bert_history": ner_details["history"], "split": "V3 held-out event patterns and name/place pools; models fixed before scoring"})
+               "bert_history": ner_details["history"], "split": plan["entity_evaluation_scope"]})
     from .topics import topic_input
     bundle = joblib.load(MODELS / "topics.joblib")
     topic_metrics["held_out_perplexity"] = float(bundle["model"].perplexity(bundle["vectorizer"].transform(topic_input(test.narrative.tolist()))))
     write_json(ARTIFACTS / "topics.json", topic_metrics)
     write_json(ARTIFACTS / "final_evaluation_receipt.json", {"evaluated_at": datetime.now(timezone.utc).isoformat(), "frozen_at": receipt["frozen_at"], "selected_ner": selected_ner,
-               "note": "Do not retune this release from final-test outputs; create a new version and independent holdout for future development."})
+               "prediction_files": {str(p.relative_to(PROCESSED)): file_hash(p) for p in [document_prediction_path, entity_prediction_path]},
+               "note": plan["evaluation_scope"] + " Create a new independent holdout for future model selection."})
+    write_json(ARTIFACTS / "evaluation_plan.json", plan)
     print(f"Final selected NER ({selected_ner}) strict entity F1={selected['strict_entity_f1']:.4f}", flush=True)
     return results

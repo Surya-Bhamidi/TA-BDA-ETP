@@ -1,0 +1,335 @@
+{
+  "rows": 1200,
+  "legacy": {
+    "accuracy": 0.8166666666666667,
+    "macro_f1": 0.8138525335739131,
+    "weighted_f1": 0.813852533573913,
+    "classification_report": {
+      "Arson": {
+        "precision": 1.0,
+        "recall": 0.64,
+        "f1-score": 0.7804878048780488,
+        "support": 150.0
+      },
+      "Assault": {
+        "precision": 0.9036144578313253,
+        "recall": 1.0,
+        "f1-score": 0.9493670886075949,
+        "support": 150.0
+      },
+      "Burglary": {
+        "precision": 0.7431192660550459,
+        "recall": 0.54,
+        "f1-score": 0.6254826254826255,
+        "support": 150.0
+      },
+      "Cybercrime": {
+        "precision": 0.9866666666666667,
+        "recall": 0.9866666666666667,
+        "f1-score": 0.9866666666666667,
+        "support": 150.0
+      },
+      "Fraud": {
+        "precision": 1.0,
+        "recall": 0.9866666666666667,
+        "f1-score": 0.9932885906040269,
+        "support": 150.0
+      },
+      "Robbery": {
+        "precision": 0.5888888888888889,
+        "recall": 0.7066666666666667,
+        "f1-score": 0.6424242424242425,
+        "support": 150.0
+      },
+      "Theft": {
+        "precision": 0.7703703703703704,
+        "recall": 0.6933333333333334,
+        "f1-score": 0.7298245614035088,
+        "support": 150.0
+      },
+      "Vandalism": {
+        "precision": 0.6805555555555556,
+        "recall": 0.98,
+        "f1-score": 0.8032786885245902,
+        "support": 150.0
+      },
+      "accuracy": 0.8166666666666667,
+      "macro avg": {
+        "precision": 0.8341519006709817,
+        "recall": 0.8166666666666667,
+        "f1-score": 0.8138525335739131,
+        "support": 1200.0
+      },
+      "weighted avg": {
+        "precision": 0.8341519006709817,
+        "recall": 0.8166666666666667,
+        "f1-score": 0.813852533573913,
+        "support": 1200.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        96,
+        0,
+        7,
+        0,
+        0,
+        47,
+        0,
+        0
+      ],
+      [
+        0,
+        150,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        81,
+        0,
+        0,
+        0,
+        0,
+        69
+      ],
+      [
+        0,
+        0,
+        0,
+        148,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        2,
+        148,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        13,
+        0,
+        0,
+        0,
+        106,
+        31,
+        0
+      ],
+      [
+        0,
+        0,
+        21,
+        0,
+        0,
+        25,
+        104,
+        0
+      ],
+      [
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        147
+      ]
+    ],
+    "labels": [
+      "Arson",
+      "Assault",
+      "Burglary",
+      "Cybercrime",
+      "Fraud",
+      "Robbery",
+      "Theft",
+      "Vandalism"
+    ],
+    "accuracy_ci95": [
+      0.7958124999999999,
+      0.8391666666666666
+    ],
+    "ci_note": "400 report-level bootstrap resamples; excludes uncertainty from new templates or real-world sources."
+  },
+  "full_document": {
+    "accuracy": 0.8166666666666667,
+    "macro_f1": 0.8138525335739131,
+    "weighted_f1": 0.813852533573913,
+    "classification_report": {
+      "Arson": {
+        "precision": 1.0,
+        "recall": 0.64,
+        "f1-score": 0.7804878048780488,
+        "support": 150.0
+      },
+      "Assault": {
+        "precision": 0.9036144578313253,
+        "recall": 1.0,
+        "f1-score": 0.9493670886075949,
+        "support": 150.0
+      },
+      "Burglary": {
+        "precision": 0.7431192660550459,
+        "recall": 0.54,
+        "f1-score": 0.6254826254826255,
+        "support": 150.0
+      },
+      "Cybercrime": {
+        "precision": 0.9866666666666667,
+        "recall": 0.9866666666666667,
+        "f1-score": 0.9866666666666667,
+        "support": 150.0
+      },
+      "Fraud": {
+        "precision": 1.0,
+        "recall": 0.9866666666666667,
+        "f1-score": 0.9932885906040269,
+        "support": 150.0
+      },
+      "Robbery": {
+        "precision": 0.5888888888888889,
+        "recall": 0.7066666666666667,
+        "f1-score": 0.6424242424242425,
+        "support": 150.0
+      },
+      "Theft": {
+        "precision": 0.7703703703703704,
+        "recall": 0.6933333333333334,
+        "f1-score": 0.7298245614035088,
+        "support": 150.0
+      },
+      "Vandalism": {
+        "precision": 0.6805555555555556,
+        "recall": 0.98,
+        "f1-score": 0.8032786885245902,
+        "support": 150.0
+      },
+      "accuracy": 0.8166666666666667,
+      "macro avg": {
+        "precision": 0.8341519006709817,
+        "recall": 0.8166666666666667,
+        "f1-score": 0.8138525335739131,
+        "support": 1200.0
+      },
+      "weighted avg": {
+        "precision": 0.8341519006709817,
+        "recall": 0.8166666666666667,
+        "f1-score": 0.813852533573913,
+        "support": 1200.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        96,
+        0,
+        7,
+        0,
+        0,
+        47,
+        0,
+        0
+      ],
+      [
+        0,
+        150,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        81,
+        0,
+        0,
+        0,
+        0,
+        69
+      ],
+      [
+        0,
+        0,
+        0,
+        148,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        2,
+        148,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        13,
+        0,
+        0,
+        0,
+        106,
+        31,
+        0
+      ],
+      [
+        0,
+        0,
+        21,
+        0,
+        0,
+        25,
+        104,
+        0
+      ],
+      [
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        147
+      ]
+    ],
+    "labels": [
+      "Arson",
+      "Assault",
+      "Burglary",
+      "Cybercrime",
+      "Fraud",
+      "Robbery",
+      "Theft",
+      "Vandalism"
+    ],
+    "accuracy_ci95": [
+      0.7958124999999999,
+      0.8391666666666666
+    ],
+    "ci_note": "400 report-level bootstrap resamples; excludes uncertainty from new templates or real-world sources."
+  },
+  "legacy_weights_sha256": "a3461f5178471357ceef03adf3286e08647fdfc1d26236ded64cf4a3c367a616",
+  "scope": "Mode selected on validation before this repeat diagnostic test. Existing legacy predictions and benchmarks are unchanged."
+}
