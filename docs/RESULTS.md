@@ -49,7 +49,7 @@ LDA held-out perplexity: **476.67**; top-term diversity: **0.900**.
 
 ## Verification
 
-Pytest: **280 passed, 0 failed, 0 errors, 0 skipped**. Source: artifacts/incident_sentiment_pytest.xml.
+Pytest: **281 passed, 0 failed, 0 errors, 0 skipped**. Source: artifacts/spark_backend_regressions.json.
 
 Scala report count verified: **60,000**.
 
@@ -182,3 +182,13 @@ The annotation contract supports ten labels. Agreement, adjudication and source-
 The corpus is synthetic. Scenario groups are separated, but vocabulary and generator conventions are shared. Model and prediction hashes record the release state; repeat evaluation, prediction reuse and any test-informed release rollback are disclosed in the evaluation receipts and above. No human-reference accuracy is claimed for syntax, sentiment, threat heuristics, search or summarization. Standalone Spark master and worker processes; see cluster_execution.json for verified workers and host scope. Docker and multi-host deployment were not exercised. Version benchmarks use different corpora and protocols.
 
 Resources: `artifacts/evaluation.json`, `ner_evaluation.json`, `spark_metrics.json`, `topics.json`, split ID CSVs, and `logs/`.
+
+## Scala Spark implementation verification
+
+The main Spark stage is Scala 2.12.18 / Spark 3.5.5. Comparison status: **passed**, with 3 fresh-process full-corpus runs per backend.
+
+All cleaned fields, SQL trends, quality reports, held-out MLlib labels and probability vectors matched. Fresh NLP inference reproduced the saved classification and entity scores; retained model hashes were unchanged.
+
+Local median end-to-end runtime: PySpark **25.722 seconds**, Scala **29.549 seconds** (+14.88% for Scala). Scala compilation on every invocation is included; no accuracy or end-to-end speed improvement is claimed.
+
+See docs/SPARK_BACKEND_COMPARISON.md and artifacts/spark_backend_comparison.json for complete results. Historical dataset and cluster receipts retain their original run provenance.

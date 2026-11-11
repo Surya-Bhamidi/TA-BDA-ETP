@@ -160,6 +160,11 @@ human quality judgments remain pending.</p>
 <p><code>scripts/import_jsonl.py</code> validates a separately supplied JSONL file, checks IDs, dates, text length and optional entity offsets, and records source URL, license and SHA-256 hash. Invalid rows are reported by line number and reason. The importer writes to an ignored staging directory.</p>
 <p>It does <strong>not</strong> automatically mix external data into the benchmark or train on it. A real-data experiment needs permission, a label mapping, reviewed annotations and a separate split design first. The source URL and license arguments document provenance; entering them does not itself prove that use is permitted.</p>
 <h2>4. Big Data processing with Apache Spark</h2>
+<p>The main Spark stage is now implemented in Scala in <code>scala/CrimePipeline.scala</code>.
+Python orchestrates compilation/submission and retains the NLP models and UI.
+The original PySpark implementation remains available with <code>--spark-engine pyspark</code>.
+See <a href="SCALA_SPARK.md">Scala execution and verification</a>; historical cluster and model
+receipts describe the runs that originally produced them.</p>
 <h3>Why Spark?</h3>
 <p>A normal Python script often processes a dataset in one process. Spark divides a DataFrame into <strong>partitions</strong> and schedules work on executors. A DataFrame resembles a table with named columns and known types.</p>
 <p>A <strong>driver</strong> plans the work. A <strong>master</strong> coordinates worker resources in standalone mode. A <strong>worker</strong> hosts executor processes. Executors run tasks over partitions. An <strong>action</strong>, such as counting or writing data, triggers execution; transformations such as filtering describe the work to do.</p>
@@ -442,8 +447,12 @@ cross-checks; the earlier media-only receipt does not measure this broader layer
 <td>Fictional corpus and reference spans</td>
 </tr>
 <tr>
-<td>crime_nlp/spark_pipeline.py</td>
-<td>Distributed cleaning, quality reports and MLlib</td>
+<td>scala/CrimePipeline.scala</td>
+<td>Main Scala Spark cleaning, SQL, quality reports and MLlib</td>
+</tr>
+<tr>
+<td>crime_nlp/spark_pipeline.py / scala_runner.py</td>
+<td>Engine selection, original PySpark implementation and Scala compilation/submission</td>
 </tr>
 <tr>
 <td>crime_nlp/train.py</td>
@@ -727,7 +736,7 @@ cross-checks; the earlier media-only receipt does not measure this broader layer
 <p>MLlib accuracy: <strong>0.7970</strong>; weighted F1: <strong>0.7895</strong>. It uses 39,528 training and 6,824 test rows, so sample sizes differ from the four-model comparison.</p>
 <p>LDA held-out perplexity: <strong>476.67</strong>; top-term diversity: <strong>0.900</strong>.</p>
 <h2>Verification</h2>
-<p>Pytest: <strong>280 passed, 0 failed, 0 errors, 0 skipped</strong>. Source: artifacts/incident_sentiment_pytest.xml.</p>
+<p>Pytest: <strong>281 passed, 0 failed, 0 errors, 0 skipped</strong>. Source: artifacts/spark_backend_regressions.json.</p>
 <p>Scala report count verified: <strong>60,000</strong>.</p>
 <p>The Windows Scala run completed its computations and exited successfully, with a non-fatal Spark temporary-JAR cleanup warning at shutdown.</p>
 <p>Current browser feature audit: <strong>passed</strong>, with <strong>12/12</strong> workflows passed. See docs/FEATURE_AUDIT.md for the full feature matrix and remaining limitations.</p>
@@ -975,4 +984,9 @@ cross-checks; the earlier media-only receipt does not measure this broader layer
 <h2>Interpretation</h2>
 <p>The corpus is synthetic. Scenario groups are separated, but vocabulary and generator conventions are shared. Model and prediction hashes record the release state; repeat evaluation, prediction reuse and any test-informed release rollback are disclosed in the evaluation receipts and above. No human-reference accuracy is claimed for syntax, sentiment, threat heuristics, search or summarization. Standalone Spark master and worker processes; see cluster_execution.json for verified workers and host scope. Docker and multi-host deployment were not exercised. Version benchmarks use different corpora and protocols.</p>
 <p>Resources: <code>artifacts/evaluation.json</code>, <code>ner_evaluation.json</code>, <code>spark_metrics.json</code>, <code>topics.json</code>, split ID CSVs, and <code>logs/</code>.</p>
+<h2>Scala Spark implementation verification</h2>
+<p>The main Spark stage is Scala 2.12.18 / Spark 3.5.5. Comparison status: <strong>passed</strong>, with 3 fresh-process full-corpus runs per backend.</p>
+<p>All cleaned fields, SQL trends, quality reports, held-out MLlib labels and probability vectors matched. Fresh NLP inference reproduced the saved classification and entity scores; retained model hashes were unchanged.</p>
+<p>Local median end-to-end runtime: PySpark <strong>25.722 seconds</strong>, Scala <strong>29.549 seconds</strong> (+14.88% for Scala). Scala compilation on every invocation is included; no accuracy or end-to-end speed improvement is claimed.</p>
+<p>See docs/SPARK_BACKEND_COMPARISON.md and artifacts/spark_backend_comparison.json for complete results. Historical dataset and cluster receipts retain their original run provenance.</p>
 </body></html>

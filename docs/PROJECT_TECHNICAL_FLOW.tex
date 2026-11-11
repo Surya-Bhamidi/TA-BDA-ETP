@@ -295,7 +295,7 @@ The project uses Spark to demonstrate that large-scale cleaning is expressed as 
 
 \section{Spark cleaning sequence}
 
-The implementation is in \path{crime_nlp/spark_pipeline.py}. Its operations are:
+The main implementation is in \path{scala/CrimePipeline.scala}, compiled and submitted by \path{crime_nlp/scala_runner.py}. \path{crime_nlp/spark_pipeline.py} selects the backend and retains the original PySpark implementation for comparison. Its operations are:
 
 \begin{enumerate}
   \item Read raw JSON with an explicit all-string schema.
@@ -710,7 +710,9 @@ The four tabs show entities and summary, syntax and morphology, evidence retriev
 
 \path{scala/CrimeAnalytics.scala} is a supplementary executable example for the Big Data syllabus. It demonstrates immutable values, a case class, a trait and object, pattern matching, closures, list/set/map collections and Dataset transformations. \path{scripts/run_scala.py} uses the Scala compiler distributed with PySpark, creates a JAR and submits it to Spark against the processed report Parquet.
 
-The primary application remains Python; the Scala component demonstrates interoperability and functional concepts rather than reimplementing the dashboard.
+The main data-processing application is \path{scala/CrimePipeline.scala}, using Scala 2.12.18 and Spark 3.5.5. It implements JSON ingestion, cleaning, deterministic deduplication, SQL trends, Parquet output and MLlib fitting/evaluation. Python launches the compiled JAR and handles the NLP models and dashboard. The additional \path{CrimeAnalytics.scala} example demonstrates typed Datasets and functional concepts.
+
+Three fresh-process full-corpus runs per backend reproduced the same 60,000 clean reports and all 6,824 held-out MLlib predictions and probability vectors. Fresh classification and entity inference reproduced the retained benchmark scores. All 281 regression tests passed. Local median end-to-end time was 25.722 seconds for PySpark and 29.549 seconds for the current Scala launcher, including Scala recompilation on each invocation. These are synthetic diagnostics and local timings; see \path{docs/SPARK_BACKEND_COMPARISON.md}.
 
 \section{Standalone Spark launcher}
 
@@ -729,8 +731,8 @@ The Dockerfile uses Python 3.12 slim and installs Java 17. Docker Compose define
 Producer & Artifact/interface & Consumer \\
 \midrule
 \endhead
-\path{generate.py} & Raw JSONL and exact entity spans & \path{spark_pipeline.py} \\
-\path{spark_pipeline.py} & Partitioned clean Parquet & \path{train.py}, \path{enrich.py}, Scala example \\
+\path{generate.py} & Raw JSONL and exact entity spans & \path{scala/CrimePipeline.scala} \\
+\path{scala/CrimePipeline.scala} & Partitioned clean Parquet & \path{train.py}, \path{enrich.py}, Scala example \\
 \path{train.py} & TF--IDF, BoW, Word2Vec, CRF, BERT and topic models & \path{enrich.py}, \path{inference.py}, dashboard evaluation pages \\
 \path{train.py} & Calibration and selected-NER JSON & Enrichment and on-demand inference \\
 \path{enrich.py} & Dashboard Parquet & Overview, filters, results table and topic pages \\
@@ -906,7 +908,9 @@ File or directory & Responsibility \\
 \path{run_pipeline.py} & Stage orchestration, arguments and run status. \\
 \path{crime_nlp/generate.py} & Synthetic corpus and exact spans. \\
 \path{crime_nlp/corpus_patterns.py} & Layout and participant phrase families. \\
-\path{crime_nlp/spark_pipeline.py} & Spark cleaning, SQL, Parquet and MLlib. \\
+\path{scala/CrimePipeline.scala} & Main Scala Spark cleaning, SQL, Parquet and MLlib. \\
+\path{crime_nlp/scala_runner.py} & Scala compilation and Spark submission. \\
+\path{crime_nlp/spark_pipeline.py} & Backend selection and optional PySpark comparison. \\
 \path{crime_nlp/train.py} & Classical models, Word2Vec, topics and evaluation protocol. \\
 \path{crime_nlp/bert_model.py} & BERT document classifier. \\
 \path{crime_nlp/ner_model.py} & BERT token classifier and long-text windows. \\

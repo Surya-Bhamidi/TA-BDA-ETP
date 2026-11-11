@@ -1,5 +1,7 @@
 # Application feature audit — 11 November 2026
 
+The final Scala Spark verification passed **281 automated tests, with zero failures, errors or skips**. Three full-corpus runs per backend produced identical cleaned reports, SQL trends, MLlib predictions and probabilities; fresh classification and entity inference reproduced the saved scores. The Pipeline & syllabus page also passed a focused rendering check. See [the comparison report](SPARK_BACKEND_COMPARISON.md), `artifacts/spark_backend_comparison.json` and `artifacts/spark_backend_regressions.json`. The 280-test and live-browser results below document the earlier application audit.
+
 The audit and its [incident/sentiment follow-up](INCIDENT_SENTIMENT_UPDATE.md) passed **280 automated tests with no skips** and **12 live Edge browser workflows**. The console demonstration, model-integrity checks, isolated Spark pipeline and Scala corpus checks are also recorded below. This verifies the tested functionality; it does not establish perfect predictions for arbitrary narratives.
 
 The server at `http://localhost:8502` was restarted so that it loads the current evidence-search and upload code. Its health endpoint returned `ok` after testing.

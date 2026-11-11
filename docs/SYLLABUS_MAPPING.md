@@ -20,9 +20,11 @@ The project requirements select particular examples from the syllabus. Machine t
 | Unit | Syllabus requirement | Implemented / documented in | Scope |
 |---|---|---|---|
 | 1 | Big Data properties, architectures, Hadoop / map / reduce | `docs/REPORT.md`, Spark pipeline | Actual partitioned Spark execution; Hadoop ecosystem and MapReduce architecture explained |
-| 2 | Scala functional programming, immutable data, collections, traits, patterns | `scala/CrimeAnalytics.scala`, `scripts/run_scala.py` | Executable Scala case classes, trait/object, pattern matching, map/flatMap/filter, closure, list/set/map |
-| 3 | Spark architecture, RDD/DataFrame operations, transformations/actions, relational data | `crime_nlp/spark_pipeline.py`, Scala example | Explicit schema, repartition, filter, SHA hash, window deduplication, SQL, count, Parquet writes |
+| 2 | Scala functional programming, immutable data, collections, traits, patterns | `scala/CrimePipeline.scala`, `scala/CrimeAnalytics.scala`, `scripts/run_scala.py` | Main Spark ETL/MLlib application in Scala; additional case classes, trait/object, pattern matching, map/flatMap/filter, closure, list/set/map |
+| 3 | Spark architecture, RDD/DataFrame operations, transformations/actions, relational data | `scala/CrimePipeline.scala`; `crime_nlp/scala_runner.py` launches the JVM | Explicit schema, repartition, filter, SHA hash, window deduplication, SQL, count, Parquet writes |
 | 3 | Distributed filesystem concepts | `docs/REPORT.md`, `compose.yaml` | HDFS/GFS concepts and shared-path cluster configuration; verified storage is local Parquet |
-| 4 | MLlib, classification, pipelines and evaluation | `crime_nlp/spark_pipeline.py` | Actual Spark MLlib HashingTF/IDF/LogisticRegression pipeline with held-out metrics |
+| 4 | MLlib, classification, pipelines and evaluation | `scala/CrimePipeline.scala` | Actual Scala Spark MLlib HashingTF/IDF/LogisticRegression pipeline with held-out metrics |
+
+Scala is the default for new Spark runs. `scripts/verify_scala_pipeline.py --full` compares isolated Scala outputs with PySpark fixtures and the saved full corpus; see `artifacts/scala_migration_verification.json` and [the Scala guide](SCALA_SPARK.md). The earlier dataset/cluster receipts retain their recorded provenance.
 
 HDFS, YARN, GFS and MongoDB are not installed or claimed as running services. Version 2 was executed on a standalone Spark master and two worker processes on one Windows host. See `artifacts/cluster_execution.json` and `spark_metrics.json`. Multi-host performance has not been benchmarked.

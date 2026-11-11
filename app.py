@@ -550,10 +550,11 @@ elif page == "Pipeline & syllabus":
     c.metric("DUPLICATES REMOVED", f"{spark_metrics['duplicates_removed']:,}")
     d.metric("CLEAN REPORTS", f"{spark_metrics['clean_rows']:,}")
     st.caption(spark_metrics["deployment_note"])
+    st.caption(f"Saved data run language: {spark_metrics.get('language', 'Python (PySpark)')}. New Spark runs default to Scala.")
     mapping = pd.DataFrame([
         ["Big Data 1", "Architecture, Hadoop/MapReduce context", "docs/REPORT.md; Spark execution and partitioned Parquet"],
-        ["Big Data 2", "Scala, collections and functional programming", "scala/CrimeAnalytics.scala: case classes, map/filter, traits, matching, Spark SQL"],
-        ["Big Data 3", "Spark, relational/distributed data, transformations/actions", "crime_nlp/spark_pipeline.py: repartition, filter, window, SQL groupBy, count, Parquet"],
+        ["Big Data 2", "Scala, collections and functional programming", "scala/CrimePipeline.scala: main Spark application; CrimeAnalytics.scala: typed Dataset, traits, matching"],
+        ["Big Data 3", "Spark, relational/distributed data, transformations/actions", "scala/CrimePipeline.scala: repartition, filter, window, SQL groupBy, count, Parquet"],
         ["Big Data 4", "Spark MLlib pipelines, classification and evaluation", "RegexTokenizer → StopWords → HashingTF → IDF → LogisticRegression"],
         ["NLP 1", "Syntax, morphology and linguistic preprocessing", "spaCy tokens, lemmas, morphology, POS, dependencies"],
         ["NLP 2", "BoW, TF-IDF, neural word representations", "CountVectorizer, TfidfVectorizer, Gensim skip-gram Word2Vec"],
@@ -563,6 +564,9 @@ elif page == "Pipeline & syllabus":
     st.dataframe(mapping, hide_index=True, width="stretch")
     with st.expander("Spark execution details", expanded=True):
         st.json(spark_metrics)
+        if (ARTIFACTS / "scala_migration_verification.json").exists():
+            st.caption("Scala migration verification; isolated outputs are compared with the saved corpus.")
+            st.json(read_artifact("scala_migration_verification.json"))
         if (ARTIFACTS / "cluster_execution.json").exists():
             st.caption("Saved standalone demonstration run; the current data run uses the master recorded above.")
             st.json(read_artifact("cluster_execution.json"))

@@ -37,6 +37,9 @@ def stage_signature(stage, arguments):
     source = hashlib.sha256()
     for file in sorted((ROOT / "crime_nlp").glob("*.py")) + [ROOT / "settings.toml", ROOT / "run_pipeline.py"]:
         source.update(file.read_bytes())
+    for file in sorted((ROOT / "scala").glob("*.scala")):
+        source.update(file.name.encode())
+        source.update(file.read_bytes())
     prior = {"generate": [], "spark": [RAW], "train": [PROCESSED / "reports"], "enrich": [PROCESSED / "reports", MODELS]}[stage]
     parameters = {k: v for k, v in arguments.items() if k not in {"stage", "resume"}}
     source.update(json.dumps(parameters, sort_keys=True).encode())

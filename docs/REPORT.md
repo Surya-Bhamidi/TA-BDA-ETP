@@ -105,6 +105,12 @@ It does **not** automatically mix external data into the benchmark or train on i
 
 ## 4. Big Data processing with Apache Spark
 
+The main Spark stage is now implemented in Scala in `scala/CrimePipeline.scala`.
+Python orchestrates compilation/submission and retains the NLP models and UI.
+The original PySpark implementation remains available with `--spark-engine pyspark`.
+See [Scala execution and verification](SCALA_SPARK.md); historical cluster and model
+receipts describe the runs that originally produced them.
+
 ### Why Spark?
 
 A normal Python script often processes a dataset in one process. Spark divides a DataFrame into **partitions** and schedules work on executors. A DataFrame resembles a table with named columns and known types.
@@ -416,7 +422,8 @@ Stop the dashboard before rebuilding. Upstream changes require downstream rebuil
 | settings.toml | Seeds, training sizes, thresholds and Spark defaults |
 | run_pipeline.py | Stage ordering, arguments, hashes and run receipts |
 | crime_nlp/generate.py, corpus_patterns.py | Fictional corpus and reference spans |
-| crime_nlp/spark_pipeline.py | Distributed cleaning, quality reports and MLlib |
+| scala/CrimePipeline.scala | Main Scala Spark cleaning, SQL, quality reports and MLlib |
+| crime_nlp/spark_pipeline.py / scala_runner.py | Engine selection, original PySpark implementation and Scala compilation/submission |
 | crime_nlp/train.py | Shared splits, classical models, topics and final scoring |
 | crime_nlp/bert_model.py, ner_model.py | BERT document and token classification |
 | crime_nlp/evaluation.py | Metrics, calibration and BIO repair |

@@ -1,5 +1,7 @@
 # BERT, CRF, pattern discovery, evaluation and local deployment
 
+The completed implementation uses Scala 2.12.18 / Spark 3.5.5 for the main data-processing and MLlib stage, with Python for the NLP models and dashboard. The [backend comparison](SPARK_BACKEND_COMPARISON.md) verifies unchanged full-corpus data and predictions, fresh NLP scores and 281 passing regression tests. [SCALA_SPARK.md](SCALA_SPARK.md) documents execution and output contracts.
+
 This implementation retains eight crime categories and the legacy eight-label
 core, with a separately trained ORGANIZATION/WITNESS specialist bringing the
 supported annotation schema to ten entity types. See [UPGRADE_STATUS.md](UPGRADE_STATUS.md).

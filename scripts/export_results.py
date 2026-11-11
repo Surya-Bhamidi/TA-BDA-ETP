@@ -45,7 +45,12 @@ def main():
               f"LDA held-out perplexity: **{topics['held_out_perplexity']:.2f}**; top-term diversity: **{topics['topic_diversity']:.3f}**.", "", "## Verification", ""]
     test_log = ROOT / "logs" / "tests.log"
     test_receipts = [ARTIFACTS / name for name in ("incident_sentiment_pytest.xml", "feature_audit_pytest.xml") if (ARTIFACTS / name).exists()]
-    if test_receipts:
+    if (ARTIFACTS / "spark_backend_regressions.json").exists():
+        regression = read("spark_backend_regressions.json")
+        totals = regression["tests"]
+        passed = totals["tests"] - totals["failures"] - totals["errors"] - totals["skipped"]
+        lines.append(f"Pytest: **{passed} passed, {totals['failures']} failed, {totals['errors']} errors, {totals['skipped']} skipped**. Source: artifacts/spark_backend_regressions.json.")
+    elif test_receipts:
         receipt = max(test_receipts, key=lambda path: path.stat().st_mtime_ns)
         tree = ET.parse(receipt).getroot()
         suites = [tree] if tree.tag == "testsuite" else tree.findall("testsuite")
@@ -162,6 +167,14 @@ def main():
                   "The annotation contract supports ten labels. Agreement, adjudication and source-separated preparation tools are provided. Thirty-six human quality-review forms remain unreviewed; real-source accuracy and human summary/search/topic quality are not measured. See UPGRADE_STATUS.md, ANNOTATION_GUIDELINES_V4.md and REAL_DATA_WORKFLOW.md."]
     lines += ["", "## Interpretation", "", "The corpus is synthetic. Scenario groups are separated, but vocabulary and generator conventions are shared. Model and prediction hashes record the release state; repeat evaluation, prediction reuse and any test-informed release rollback are disclosed in the evaluation receipts and above. No human-reference accuracy is claimed for syntax, sentiment, threat heuristics, search or summarization. " + spark["deployment_note"] + " Docker and multi-host deployment were not exercised. Version benchmarks use different corpora and protocols.", "",
               "Resources: `artifacts/evaluation.json`, `ner_evaluation.json`, `spark_metrics.json`, `topics.json`, split ID CSVs, and `logs/`."]
+    if (ARTIFACTS / "spark_backend_comparison.json").exists():
+        comparison = read("spark_backend_comparison.json")
+        timing = comparison["timing"]
+        lines += ["", "## Scala Spark implementation verification", "",
+                  f"The main Spark stage is Scala 2.12.18 / Spark 3.5.5. Comparison status: **{comparison['status']}**, with {comparison['repeats']} fresh-process full-corpus runs per backend.", "",
+                  "All cleaned fields, SQL trends, quality reports, held-out MLlib labels and probability vectors matched. Fresh NLP inference reproduced the saved classification and entity scores; retained model hashes were unchanged.", "",
+                  f"Local median end-to-end runtime: PySpark **{timing['pyspark']['median_seconds']:.3f} seconds**, Scala **{timing['scala']['median_seconds']:.3f} seconds** ({timing['scala_wall_time_change_percent']:+.2f}% for Scala). Scala compilation on every invocation is included; no accuracy or end-to-end speed improvement is claimed.", "",
+                  "See docs/SPARK_BACKEND_COMPARISON.md and artifacts/spark_backend_comparison.json for complete results. Historical dataset and cluster receipts retain their original run provenance."]
     markdown = "\n".join(lines) + "\n"
     (ROOT / "docs" / "RESULTS.md").write_text(markdown, encoding="utf-8")
     parser = MarkdownIt("commonmark", {"html": False}).enable("table")

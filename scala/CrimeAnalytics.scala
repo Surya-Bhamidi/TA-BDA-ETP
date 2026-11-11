@@ -1,5 +1,5 @@
 // Scala 2.12 / Spark 3.5. Supplements the functional-programming syllabus.
-// Compile and run with scripts/run_scala.py; Python remains the main NLP pipeline.
+// Compile and run with scripts/run_scala.py. CrimePipeline.scala is the main Spark ETL.
 import org.apache.spark.sql.{Dataset, SparkSession}
 import org.apache.spark.sql.functions._
 

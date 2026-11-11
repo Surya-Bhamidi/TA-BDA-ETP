@@ -182,8 +182,14 @@ classifier/retrieval data. For category, topic or corpus changes use full enrich
 ## 8. Spark and Scala execution
 
 ```powershell
-# Spark default: local[2], two execution threads on this computer.
+# Scala Spark default: local[2], two execution threads on this computer.
 & $projectPython run_pipeline.py --stage spark --master "local[2]"
+
+# Verify Scala/PySpark parity and the full corpus in isolated output directories.
+& $projectPython scripts\verify_scala_pipeline.py --full
+
+# Original PySpark implementation, available for comparison.
+& $projectPython run_pipeline.py --stage spark --spark-engine pyspark
 
 # Alternative to that Spark stage: standalone master and two worker processes.
 & $projectPython scripts\run_cluster.py
@@ -196,7 +202,10 @@ classifier/retrieval data. For category, topic or corpus changes use full enrich
 runs Spark cleaning/MLlib, saves worker registration evidence and stops its own
 process trees. During execution its web UIs use 18080, 18081 and 18082; after
 completion use the saved `cluster_execution.json`. This is not a multi-host
-scalability benchmark. The Scala example compiles using PySpark's bundled Scala
+scalability benchmark. The main Spark implementation is now `scala/CrimePipeline.scala`;
+Python compiles it with Spark's bundled Scala compiler and launches its JAR using
+`spark-submit`. NLP training and the dashboard remain Python. See [SCALA_SPARK.md](SCALA_SPARK.md)
+for safe verification, output contracts and rebuild guidance. The additional Scala example uses the same
 compiler, demonstrates case classes, traits, pattern matching, immutable
 collections and map/filter/flatMap, and checks the processed report count.
 

@@ -17,6 +17,7 @@ max_characters = 30000
 semantic_weight = 0.65
 
 [spark]
+engine = "scala"
 partitions = 8
 driver_memory = "2g"
 

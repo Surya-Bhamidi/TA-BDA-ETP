@@ -1,8 +1,10 @@
 # Decoding Crime Narratives using NLP and Big Data Analytics
 
-**Current project — audited 11 November 2026.** This is the maintained project in this repository. It includes 60,000 fictional reports, Apache Spark, four document classifiers, CRF and BERT entity extraction, trained organization/witness recognition, LDA/NMF topics, keyword and semantic evidence retrieval, spaCy syntax, VADER polarity, TextRank summaries and a seven-page Streamlit dashboard.
+**Completed project — verified 11 November 2026.** This repository contains the Scala Spark and Python NLP implementation: 60,000 fictional reports, Apache Spark 3.5.5 with Scala 2.12.18, four document classifiers, CRF and BERT entity extraction, trained organization/witness recognition, LDA/NMF topics, keyword and semantic evidence retrieval, spaCy syntax, VADER polarity, TextRank summaries and a seven-page Streamlit dashboard.
 
-The latest update adds source-based descriptions for killing intent, attempted killing and failed attempts, while retaining raw eight-class model suggestions in Analysis details. Sentiment now shows polarity labels, the original VADER score, sentence scores and explanatory context. See the [incident and sentiment update](docs/INCIDENT_SENTIMENT_UPDATE.md). It also retains the keyword evidence-search, upload and review-validation fixes. **280 automated tests and 12 live Edge browser workflows passed**; the [feature audit](docs/FEATURE_AUDIT.md) also records Spark, Scala and saved-model verification and remaining limitations. Passing these checks does not imply perfect predictions on arbitrary narratives.
+Scala implements the main Spark ingestion, cleaning, deduplication, SQL, Parquet and MLlib stage. Python handles NLP training/inference, enrichment, retrieval and the dashboard. **All 281 automated regression tests passed with no skips.** Three full-dataset runs per Spark backend and fresh NLP inference found identical data and predictions with unchanged accuracy; see the [executed comparison](docs/SPARK_BACKEND_COMPARISON.md). The [feature audit](docs/FEATURE_AUDIT.md) retains the earlier 12 live Edge browser workflows and the current verification results.
+
+The application includes source-based descriptions for killing intent, attempted killing and failed attempts, while retaining raw eight-class model suggestions in Analysis details. Sentiment shows polarity labels, the original VADER score, sentence scores and explanatory context. See the [incident and sentiment notes](docs/INCIDENT_SENTIMENT_UPDATE.md). Passing the checks does not imply perfect predictions on arbitrary narratives.
 
 The current application includes full-document search and BERT windows, qualified action/reference notes, entity corrections and an opt-in annotation queue. Run **RUN_UPGRADE_DEMO.cmd** for the expanded example; use the [annotation contract](docs/ANNOTATION_GUIDELINES_V4.md) and [real-data workflow](docs/REAL_DATA_WORKFLOW.md) for future reviewed datasets. The [implementation notes](docs/UPGRADE_STATUS.md) and [entity/text-fidelity notes](docs/ENTITY_CONTEXT_V3_1.md) explain the retained model contracts. Historical benchmark artifacts are retained for comparison; the application uses `artifacts/models/v3_1`.
 
@@ -62,8 +64,12 @@ scripts/setup.ps1 automates Windows setup. The build computer uses project-local
 
 ## Pipeline and reproducibility
 
+The main Spark stage runs in **Scala 2.12.18 on Spark 3.5.5**. `scala/CrimePipeline.scala` performs ingestion, cleaning, SQL, Parquet output and MLlib classification. Python launches the Scala JAR and retains the NLP models and dashboard. See [Scala execution](docs/SCALA_SPARK.md) for commands and verification. Historical saved datasets and benchmarks retain their original run provenance.
+
+The [Scala/PySpark comparison](docs/SPARK_BACKEND_COMPARISON.md) found identical full-corpus outputs and predictions, with unchanged MLlib and NLP accuracy. Three local runs per backend measured a 14.88% longer median end-to-end time for the Scala launcher, including recompilation on every launch.
+
 ```text
-Generate JSONL -> Spark clean/deduplicate -> partitioned Parquet
+Generate JSONL -> Scala Spark clean/deduplicate -> partitioned Parquet
  -> train/validation/development/final-test protocol
  -> model fitting and validation selection -> freeze hashes -> final evaluation
  -> full-corpus enrichment -> SQLite + keyword/semantic indexes -> dashboard
@@ -86,7 +92,10 @@ Version 3 was verified using a standalone master and **two worker processes on o
 # Skip only stages whose source/input/output hashes still match
 .\.venv312\Scripts\python.exe run_pipeline.py --resume
 
-# Scala functional-programming and Spark Dataset example
+# Verify the Scala migration without replacing dashboard data or models
+.\.venv312\Scripts\python.exe scripts\verify_scala_pipeline.py --full
+
+# Additional Scala functional-programming and Spark Dataset example
 .\.venv312\Scripts\python.exe scripts\run_scala.py
 ```
 

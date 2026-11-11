@@ -1,0 +1,380 @@
+{
+  "status": "passed",
+  "started_at": "2026-11-11T16:13:11.628226+00:00",
+  "directory": ".runtime/spark-comparison/20261111T161311627226",
+  "spark_version": "3.5.5",
+  "master": "local[2]",
+  "partitions": 8,
+  "driver_memory": "2g",
+  "repeats": 3,
+  "runs": [
+    {
+      "round": 1,
+      "backend": "pyspark",
+      "wall_seconds": 26.131,
+      "pipeline_metrics": {
+        "engine": "Apache Spark",
+        "language": "Python (PySpark)",
+        "spark_version": "3.5.5",
+        "master": "local[2]",
+        "input_partitions": 8,
+        "shuffle_partitions": 8,
+        "raw_rows": 62700,
+        "invalid_rows_removed": 1200,
+        "duplicates_removed": 1500,
+        "clean_rows": 60000,
+        "storage": "Spark-written Parquet partitioned by split",
+        "runtime_seconds": 23.36,
+        "mllib": {
+          "model": "HashingTF + IDF + multinomial logistic regression",
+          "train_rows": 39528,
+          "test_rows": 6824,
+          "accuracy": 0.7970398593200468,
+          "weighted_f1": 0.7894997806207134
+        },
+        "deployment_note": "Spark local task execution on one machine."
+      },
+      "directory": ".runtime/spark-comparison/20261111T161311627226/round-1-pyspark"
+    },
+    {
+      "round": 1,
+      "backend": "scala",
+      "wall_seconds": 29.783,
+      "pipeline_metrics": {
+        "input_partitions": 8,
+        "mllib": {
+          "train_rows": 39528,
+          "model": "HashingTF + IDF + multinomial logistic regression",
+          "weighted_f1": 0.7894997806207134,
+          "accuracy": 0.7970398593200468,
+          "test_rows": 6824
+        },
+        "master": "local[2]",
+        "spark_version": "3.5.5",
+        "shuffle_partitions": 8,
+        "deployment_note": "Scala Spark local task execution on one machine.",
+        "clean_rows": 60000,
+        "runtime_seconds": 21.66,
+        "scala_version": "2.12.18",
+        "duplicates_removed": 1500,
+        "language": "Scala",
+        "invalid_rows_removed": 1200,
+        "storage": "Spark-written Parquet partitioned by split",
+        "raw_rows": 62700,
+        "engine": "Apache Spark"
+      },
+      "directory": ".runtime/spark-comparison/20261111T161311627226/round-1-scala"
+    },
+    {
+      "round": 2,
+      "backend": "scala",
+      "wall_seconds": 29.529,
+      "pipeline_metrics": {
+        "input_partitions": 8,
+        "mllib": {
+          "train_rows": 39528,
+          "model": "HashingTF + IDF + multinomial logistic regression",
+          "weighted_f1": 0.7894997806207134,
+          "accuracy": 0.7970398593200468,
+          "test_rows": 6824
+        },
+        "master": "local[2]",
+        "spark_version": "3.5.5",
+        "shuffle_partitions": 8,
+        "deployment_note": "Scala Spark local task execution on one machine.",
+        "clean_rows": 60000,
+        "runtime_seconds": 21.77,
+        "scala_version": "2.12.18",
+        "duplicates_removed": 1500,
+        "language": "Scala",
+        "invalid_rows_removed": 1200,
+        "storage": "Spark-written Parquet partitioned by split",
+        "raw_rows": 62700,
+        "engine": "Apache Spark"
+      },
+      "directory": ".runtime/spark-comparison/20261111T161311627226/round-2-scala"
+    },
+    {
+      "round": 2,
+      "backend": "pyspark",
+      "wall_seconds": 25.722,
+      "pipeline_metrics": {
+        "engine": "Apache Spark",
+        "language": "Python (PySpark)",
+        "spark_version": "3.5.5",
+        "master": "local[2]",
+        "input_partitions": 8,
+        "shuffle_partitions": 8,
+        "raw_rows": 62700,
+        "invalid_rows_removed": 1200,
+        "duplicates_removed": 1500,
+        "clean_rows": 60000,
+        "storage": "Spark-written Parquet partitioned by split",
+        "runtime_seconds": 23.26,
+        "mllib": {
+          "model": "HashingTF + IDF + multinomial logistic regression",
+          "train_rows": 39528,
+          "test_rows": 6824,
+          "accuracy": 0.7970398593200468,
+          "weighted_f1": 0.7894997806207134
+        },
+        "deployment_note": "Spark local task execution on one machine."
+      },
+      "directory": ".runtime/spark-comparison/20261111T161311627226/round-2-pyspark"
+    },
+    {
+      "round": 3,
+      "backend": "pyspark",
+      "wall_seconds": 25.434,
+      "pipeline_metrics": {
+        "engine": "Apache Spark",
+        "language": "Python (PySpark)",
+        "spark_version": "3.5.5",
+        "master": "local[2]",
+        "input_partitions": 8,
+        "shuffle_partitions": 8,
+        "raw_rows": 62700,
+        "invalid_rows_removed": 1200,
+        "duplicates_removed": 1500,
+        "clean_rows": 60000,
+        "storage": "Spark-written Parquet partitioned by split",
+        "runtime_seconds": 23.21,
+        "mllib": {
+          "model": "HashingTF + IDF + multinomial logistic regression",
+          "train_rows": 39528,
+          "test_rows": 6824,
+          "accuracy": 0.7970398593200468,
+          "weighted_f1": 0.7894997806207134
+        },
+        "deployment_note": "Spark local task execution on one machine."
+      },
+      "directory": ".runtime/spark-comparison/20261111T161311627226/round-3-pyspark"
+    },
+    {
+      "round": 3,
+      "backend": "scala",
+      "wall_seconds": 29.549,
+      "pipeline_metrics": {
+        "input_partitions": 8,
+        "mllib": {
+          "train_rows": 39528,
+          "model": "HashingTF + IDF + multinomial logistic regression",
+          "weighted_f1": 0.7894997806207134,
+          "accuracy": 0.7970398593200468,
+          "test_rows": 6824
+        },
+        "master": "local[2]",
+        "spark_version": "3.5.5",
+        "shuffle_partitions": 8,
+        "deployment_note": "Scala Spark local task execution on one machine.",
+        "clean_rows": 60000,
+        "runtime_seconds": 21.55,
+        "scala_version": "2.12.18",
+        "duplicates_removed": 1500,
+        "language": "Scala",
+        "invalid_rows_removed": 1200,
+        "storage": "Spark-written Parquet partitioned by split",
+        "raw_rows": 62700,
+        "engine": "Apache Spark"
+      },
+      "directory": ".runtime/spark-comparison/20261111T161311627226/round-3-scala"
+    }
+  ],
+  "checks": [
+    "all cleaned columns match between both backends and deployed corpus in every round",
+    "SQL trends and data quality match",
+    "full-corpus MLlib accuracy and weighted F1 parity",
+    "all held-out MLlib labels and probability vectors compared in every round"
+  ],
+  "spark_predictions": [
+    {
+      "test_rows": 6824,
+      "prediction_disagreements": 0,
+      "max_absolute_probability_difference": 0.0
+    },
+    {
+      "test_rows": 6824,
+      "prediction_disagreements": 0,
+      "max_absolute_probability_difference": 0.0
+    },
+    {
+      "test_rows": 6824,
+      "prediction_disagreements": 0,
+      "max_absolute_probability_difference": 0.0
+    }
+  ],
+  "nlp": {
+    "documents": {
+      "Bag of Words": {
+        "rows": 1200,
+        "baseline": {
+          "accuracy": 0.835,
+          "macro_f1": 0.8361366379164841,
+          "weighted_f1": 0.836136637916484
+        },
+        "scala": {
+          "accuracy": 0.835,
+          "macro_f1": 0.8361366379164841,
+          "weighted_f1": 0.836136637916484
+        },
+        "pyspark": {
+          "accuracy": 0.835,
+          "macro_f1": 0.8361366379164841,
+          "weighted_f1": 0.836136637916484
+        },
+        "change_from_baseline": {
+          "accuracy": 0.0,
+          "macro_f1": 0.0,
+          "weighted_f1": 0.0
+        },
+        "backend_prediction_disagreements": 0,
+        "disagreements_with_saved_predictions": 0
+      },
+      "TF-IDF": {
+        "rows": 1200,
+        "baseline": {
+          "accuracy": 0.9241666666666667,
+          "macro_f1": 0.9225174601186519,
+          "weighted_f1": 0.922517460118652
+        },
+        "scala": {
+          "accuracy": 0.9241666666666667,
+          "macro_f1": 0.9225174601186519,
+          "weighted_f1": 0.922517460118652
+        },
+        "pyspark": {
+          "accuracy": 0.9241666666666667,
+          "macro_f1": 0.9225174601186519,
+          "weighted_f1": 0.922517460118652
+        },
+        "change_from_baseline": {
+          "accuracy": 0.0,
+          "macro_f1": 0.0,
+          "weighted_f1": 0.0
+        },
+        "backend_prediction_disagreements": 0,
+        "disagreements_with_saved_predictions": 0
+      },
+      "Word2Vec": {
+        "rows": 1200,
+        "baseline": {
+          "accuracy": 0.8216666666666667,
+          "macro_f1": 0.8187755444949286,
+          "weighted_f1": 0.8187755444949285
+        },
+        "scala": {
+          "accuracy": 0.8216666666666667,
+          "macro_f1": 0.8187755444949286,
+          "weighted_f1": 0.8187755444949285
+        },
+        "pyspark": {
+          "accuracy": 0.8216666666666667,
+          "macro_f1": 0.8187755444949286,
+          "weighted_f1": 0.8187755444949285
+        },
+        "change_from_baseline": {
+          "accuracy": 0.0,
+          "macro_f1": 0.0,
+          "weighted_f1": 0.0
+        },
+        "backend_prediction_disagreements": 0,
+        "disagreements_with_saved_predictions": 0
+      },
+      "BERT (benchmark)": {
+        "rows": 1200,
+        "baseline": {
+          "accuracy": 0.8166666666666667,
+          "macro_f1": 0.8138525335739131,
+          "weighted_f1": 0.813852533573913
+        },
+        "scala": {
+          "accuracy": 0.8166666666666667,
+          "macro_f1": 0.8138525335739131,
+          "weighted_f1": 0.813852533573913
+        },
+        "pyspark": {
+          "accuracy": 0.8166666666666667,
+          "macro_f1": 0.8138525335739131,
+          "weighted_f1": 0.813852533573913
+        },
+        "change_from_baseline": {
+          "accuracy": 0.0,
+          "macro_f1": 0.0,
+          "weighted_f1": 0.0
+        },
+        "backend_prediction_disagreements": 0,
+        "disagreements_with_saved_predictions": 0
+      },
+      "BERT (full document)": {
+        "rows": 1200,
+        "baseline": {
+          "accuracy": 0.8166666666666667,
+          "macro_f1": 0.8138525335739131,
+          "weighted_f1": 0.813852533573913
+        },
+        "scala": {
+          "accuracy": 0.8166666666666667,
+          "macro_f1": 0.8138525335739131,
+          "weighted_f1": 0.813852533573913
+        },
+        "pyspark": {
+          "accuracy": 0.8166666666666667,
+          "macro_f1": 0.8138525335739131,
+          "weighted_f1": 0.813852533573913
+        },
+        "change_from_baseline": {
+          "accuracy": 0.0,
+          "macro_f1": 0.0,
+          "weighted_f1": 0.0
+        },
+        "backend_prediction_disagreements": 0
+      }
+    },
+    "entities": {
+      "CRF": {
+        "rows": 600,
+        "strict_entity_f1": 0.9222779989613987,
+        "baseline_strict_entity_f1": 0.9222779989613987,
+        "change_from_baseline": 0.0,
+        "sequences_different_from_saved": 0,
+        "scope": "Fresh inference on unchanged saved entity cases, including augmented synthetic cases; not two separate NER training runs."
+      },
+      "BERT": {
+        "rows": 600,
+        "strict_entity_f1": 0.7911874291268427,
+        "baseline_strict_entity_f1": 0.7911874291268427,
+        "change_from_baseline": 0.0,
+        "sequences_different_from_saved": 0,
+        "scope": "Fresh inference on unchanged saved entity cases, including augmented synthetic cases; not two separate NER training runs."
+      }
+    },
+    "frozen_model_files_verified": 24,
+    "scope": "Fresh inference with retained weights, not NLP retraining. Previously viewed synthetic diagnostic test sets."
+  },
+  "timing": {
+    "pyspark": {
+      "wall_seconds": [
+        26.131,
+        25.722,
+        25.434
+      ],
+      "median_seconds": 25.722,
+      "minimum_seconds": 25.434,
+      "maximum_seconds": 26.131
+    },
+    "scala": {
+      "wall_seconds": [
+        29.783,
+        29.529,
+        29.549
+      ],
+      "median_seconds": 29.549,
+      "minimum_seconds": 29.529,
+      "maximum_seconds": 29.783
+    },
+    "scala_wall_time_change_percent": 14.878314283492733,
+    "scope": "Sequential fresh-process local runs with alternating order; end-to-end time includes JVM startup, Scala compilation on each Scala run, ETL, MLlib fit/evaluation, writing outputs and process exit. OS caches are uncontrolled; this is not a multi-host or statistically powered performance benchmark."
+  },
+  "accuracy_regression_detected": false,
+  "finished_at": "2026-11-11T16:17:19.821586+00:00"
+}

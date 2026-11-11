@@ -14,6 +14,8 @@ def main():
     parser.add_argument("--stage", choices=["all", "generate", "spark", "train", "enrich"], default="all")
     parser.add_argument("--records", type=int, default=60000)
     parser.add_argument("--master", default="local[2]", help="Spark master URL; default two local Spark execution cores")
+    parser.add_argument("--spark-engine", choices=["scala", "pyspark"], default=SETTINGS["spark"].get("engine", "scala"),
+                        help="Spark application language (default: scala)")
     parser.add_argument("--train-limit", type=int, default=SETTINGS["training"]["train_limit"])
     parser.add_argument("--test-limit", type=int, default=1200)
     parser.add_argument("--validation-limit", type=int, default=800)
@@ -31,7 +33,7 @@ def main():
     stages = {"generate": lambda: generate(args.records)}
     def spark():
         from crime_nlp.spark_pipeline import run_spark
-        run_spark(args.master)
+        run_spark(args.master, engine=args.spark_engine)
     def train():
         from crime_nlp.train import train_models
         train_models(args.train_limit, args.test_limit, args.validation_limit, args.bert_epochs)

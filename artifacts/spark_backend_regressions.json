@@ -1,0 +1,57 @@
+{
+  "verified_at": "2026-11-11T16:18:07.357311+00:00",
+  "status": "passed",
+  "saved_evaluation_exit_code": 0,
+  "saved_evaluation": {
+    "status": "passed",
+    "verified_at": "2026-11-11T16:18:09.157682+00:00",
+    "frozen_at": "2026-11-07T10:24:44.083942+00:00",
+    "document_rows": 1200,
+    "entity_rows": 600,
+    "document_metrics": {
+      "Bag of Words": {
+        "accuracy": 0.835,
+        "macro_f1": 0.8361366379164841,
+        "weighted_f1": 0.836136637916484
+      },
+      "TF-IDF": {
+        "accuracy": 0.9241666666666667,
+        "macro_f1": 0.9225174601186519,
+        "weighted_f1": 0.922517460118652
+      },
+      "Word2Vec": {
+        "accuracy": 0.8216666666666667,
+        "macro_f1": 0.8187755444949286,
+        "weighted_f1": 0.8187755444949285
+      },
+      "BERT": {
+        "accuracy": 0.8166666666666667,
+        "macro_f1": 0.8138525335739131,
+        "weighted_f1": 0.813852533573913
+      }
+    },
+    "strict_entity_f1": {
+      "CRF": 0.9222779989613987,
+      "BERT": 0.7911874291268427
+    },
+    "checks": [
+      "frozen model hashes",
+      "prediction hashes",
+      "freeze/evaluation order",
+      "test IDs and source categories",
+      "recomputed accuracy and macro/weighted F1",
+      "reference spans and BIO alignment",
+      "recomputed strict span F1"
+    ],
+    "scope": "Repeat evaluation on previously viewed synthetic cases. BoW, TF-IDF, BERT and CRF candidates were selected on validation. Word2Vec deployment retained its baseline after observing a diagnostic test regression. This release choice used test results; it is not an untouched final benchmark. No further training or tuning was performed."
+  },
+  "pytest_exit_code": 0,
+  "tests": {
+    "tests": 281,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "test_seconds": 45.143,
+  "failures": []
+}

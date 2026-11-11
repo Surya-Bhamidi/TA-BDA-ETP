@@ -1,4 +1,4 @@
-"""Actual Spark SQL cleaning, SQL aggregates, Parquet, and MLlib classification."""
+"""Spark entry point: Scala by default, with the original PySpark implementation available."""
 import time
 import os
 import socket
@@ -48,7 +48,17 @@ def clean_frame(raw):
     return valid, clean
 
 
-def run_spark(master="local[2]", raw_path=RAW):
+def run_spark(master="local[2]", raw_path=RAW, engine=None):
+    engine = engine or SETTINGS["spark"].get("engine", "scala")
+    if engine == "scala":
+        from .scala_runner import run_scala_pipeline
+        return run_scala_pipeline(master, raw_path, PROCESSED, ARTIFACTS)
+    if engine == "pyspark":
+        return run_pyspark(master, raw_path)
+    raise ValueError(f"Unknown Spark engine: {engine}")
+
+
+def run_pyspark(master="local[2]", raw_path=RAW):
     from pyspark.sql import functions as F
     from pyspark.sql.types import StructType, StructField, StringType
     from pyspark.ml import Pipeline
@@ -80,7 +90,7 @@ def run_spark(master="local[2]", raw_path=RAW):
         predictions = model.transform(clean.filter("split = 'test'")).cache()
         metrics = {name: MulticlassClassificationEvaluator(labelCol="label", predictionCol="prediction", metricName=name).evaluate(predictions) for name in ["accuracy", "f1"]}
         model.write().overwrite().save(str(ARTIFACTS / "spark_mllib_model"))
-        report = {"engine": "Apache Spark", "spark_version": spark.version, "master": spark.sparkContext.master,
+        report = {"engine": "Apache Spark", "language": "Python (PySpark)", "spark_version": spark.version, "master": spark.sparkContext.master,
                   "input_partitions": raw.rdd.getNumPartitions(), "shuffle_partitions": 8,
                   "raw_rows": raw_count, "invalid_rows_removed": raw_count - valid_count,
                   "duplicates_removed": valid_count - clean_count, "clean_rows": clean_count,

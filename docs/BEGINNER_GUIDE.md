@@ -8,7 +8,7 @@ Version 3.1 accepts informal English, short fragments and spelling mistakes usin
 
 “Alex reported a stolen phone near Cedar Market. No knife was reported.”
 
-1. **Spark cleans the data.** It rejects empty reports and bad dates and removes duplicates. It keeps the original sentence so highlighted positions remain correct.
+1. **Scala Spark cleans the data.** `scala/CrimePipeline.scala` rejects empty reports and bad dates and removes duplicates, then writes Parquet data and SQL trends and fits the MLlib baseline. It keeps the original sentence so highlighted positions remain correct. Python handles the following NLP and dashboard stages.
 2. **Words become numbers.** Bag of Words counts words. TF-IDF emphasizes distinctive words. Word2Vec learns word vectors. BERT considers surrounding context.
 3. **A classifier suggests a category.** It learned from labeled training reports. Its suggestion can be wrong.
 4. **NER finds mentions.** A sequence tagger can label a victim, property and location. “No knife” is a negated mention, not proof of weapon use.

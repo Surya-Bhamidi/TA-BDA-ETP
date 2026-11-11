@@ -1,0 +1,61 @@
+{
+  "status": "passed",
+  "verified_at": "2026-11-11T16:04:27.980907+00:00",
+  "directory": ".runtime/scala-verification/20261111T160427979907",
+  "checks": [
+    "exact Scala/PySpark cleaned-row equivalence",
+    "seven invalid-row cases",
+    "deterministic duplicate survivor",
+    "original Unicode narratives and entity JSON preserved",
+    "identical SQL trends and quality reports",
+    "MLlib held-out metric parity",
+    "Scala-saved MLlib model loaded and scored through PySpark",
+    "every full-corpus row and SQL trend matches deployed data"
+  ],
+  "fixture": {
+    "input_partitions": 8,
+    "mllib": {
+      "train_rows": 81,
+      "model": "HashingTF + IDF + multinomial logistic regression",
+      "weighted_f1": 0.8083333333333333,
+      "accuracy": 0.8125,
+      "test_rows": 16
+    },
+    "master": "local[2]",
+    "spark_version": "3.5.5",
+    "shuffle_partitions": 8,
+    "deployment_note": "Scala Spark local task execution on one machine.",
+    "clean_rows": 129,
+    "runtime_seconds": 15.87,
+    "scala_version": "2.12.18",
+    "duplicates_removed": 1,
+    "language": "Scala",
+    "invalid_rows_removed": 7,
+    "storage": "Spark-written Parquet partitioned by split",
+    "raw_rows": 137,
+    "engine": "Apache Spark"
+  },
+  "full_corpus": {
+    "input_partitions": 8,
+    "mllib": {
+      "train_rows": 39528,
+      "model": "HashingTF + IDF + multinomial logistic regression",
+      "weighted_f1": 0.7894997806207134,
+      "accuracy": 0.7970398593200468,
+      "test_rows": 6824
+    },
+    "master": "local[2]",
+    "spark_version": "3.5.5",
+    "shuffle_partitions": 8,
+    "deployment_note": "Scala Spark local task execution on one machine.",
+    "clean_rows": 60000,
+    "runtime_seconds": 21.45,
+    "scala_version": "2.12.18",
+    "duplicates_removed": 1500,
+    "language": "Scala",
+    "invalid_rows_removed": 1200,
+    "storage": "Spark-written Parquet partitioned by split",
+    "raw_rows": 62700,
+    "engine": "Apache Spark"
+  }
+}
