@@ -19,6 +19,7 @@ sys.path.insert(0, str(ROOT / ".runtime" / "feature-audit-tools"))
 from playwright.sync_api import sync_playwright, expect
 
 NARRATIVE = "Vivek killed Barkha with a gun near Faridabad on 20-10-2026"
+ATTEMPT_NARRATIVE = "Mayank had ill intentions towards Barkha, and he went to her cabin to kill her, but the attempt failed"
 OUTPUT = ROOT / ".runtime" / "feature-audit"
 TITLES = {
     "Overview": "From narratives to insight",
@@ -48,6 +49,9 @@ def navigate(page, name):
 
 def select(page, label, name):
     control = page.get_by_test_id("stSelectbox").filter(has=page.get_by_text(label, exact=True))
+    if control.get_by_role("combobox").input_value() == name:
+        settled(page)
+        return
     control.get_by_role("combobox").press("ArrowDown")
     page.get_by_role("option", name=name, exact=True).click()
     settled(page)
@@ -144,7 +148,9 @@ def check_case_search(page):
 def check_narrative_models(page):
     navigate(page, "Narrative lab")
     analyze(page)
-    expect(page.get_by_text("BERT sequence classification:", exact=False)).to_be_visible()
+    page.get_by_role("tab", name="Analysis details", exact=True).click()
+    expect(page.get_by_text("Raw BERT eight-category suggestion:", exact=False)).to_be_visible()
+    page.get_by_role("tab", name="Entities & summary", exact=True).click()
     for model in ["Automatic", "CRF", "BERT"]:
         select(page, "Entity extraction model", model)
         analyze(page)
@@ -152,7 +158,7 @@ def check_narrative_models(page):
         assert any("gun" in mention for mention in page.locator("mark").all_text_contents())
     page.get_by_text("Include BERT sequence classification", exact=True).click()
     analyze(page)
-    expect(page.get_by_text("BERT sequence classification:", exact=False)).to_have_count(0)
+    expect(page.get_by_text("Raw BERT eight-category suggestion:", exact=False)).to_have_count(0)
     # Inspect every tab, source citations and download payloads.
     page.get_by_role("tab", name="Syntax & morphology", exact=True).click()
     expect(page.get_by_role("tabpanel", name="Syntax & morphology", exact=True).get_by_test_id("stDataFrame")).to_be_visible()
@@ -185,6 +191,27 @@ def check_evidence(page):
     field.press("Enter")
     settled(page)
     expect(page.get_by_text("Insufficient evidence in this narrative.", exact=True)).to_be_visible()
+
+
+def check_attempted_killing_sentiment(page):
+    navigate(page, "Narrative lab")
+    analyze(page, ATTEMPT_NARRATIVE)
+    expect(page.get_by_test_id("stMetricValue").nth(0)).to_have_text("Attempted killing")
+    expect(page.get_by_test_id("stMetricValue").nth(1)).to_have_text("Negative")
+    expect(page.get_by_text("VADER compound: -0.8481", exact=True)).to_be_visible()
+    assert page.get_by_test_id("stMetricValue").nth(0).evaluate("element => element.scrollWidth <= element.clientWidth + 1")
+    expect(page.get_by_text("Outcome: Attempt failed.", exact=False).first).to_be_visible()
+    expect(page.get_by_text("BERT sequence classification:", exact=False)).to_have_count(0)
+    page.get_by_test_id("stMetric").first.evaluate("element => { element.style.scrollMarginTop = '90px'; element.scrollIntoView({block: 'start'}); }")
+    page.screenshot(path=str(ROOT / "docs" / "screenshots" / "attempted-killing-sentiment.png"), full_page=True)
+    page.get_by_role("tab", name="Analysis details", exact=True).click()
+    expect(page.get_by_text("Raw TF-IDF eight-category suggestion: Robbery", exact=False)).to_be_visible()
+    expect(page.get_by_text("Raw BERT eight-category suggestion: Robbery", exact=False)).to_be_visible()
+    payload = json.loads(download(page, "Download analysis JSON"))
+    assert payload["display_category"] == "Attempted killing"
+    assert payload["incident_context"]["outcome"] == "Attempt failed"
+    assert payload["sentiment"]["label"] == "Negative" and payload["sentiment"]["compound"] == -.8481
+    assert {cue["text"] for cue in payload["sentiment"]["lexicon_cues"]} >= {"ill", "kill", "failed"}
 
 
 def check_text_upload(page):
@@ -269,7 +296,7 @@ def main():
     parser.add_argument("--only", nargs="*")
     args = parser.parse_args()
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    checks = [check_navigation, check_overview, check_case_search, check_narrative_models, check_evidence,
+    checks = [check_navigation, check_overview, check_case_search, check_narrative_models, check_evidence, check_attempted_killing_sentiment,
               check_text_upload, check_upload_limits, check_invalid_input, check_evaluation, check_quality_upload, check_topics]
     results = []
     with sync_playwright() as p:

@@ -1,62 +1,72 @@
 {
-  "verified_at": "2026-11-11T10:01:35.282670+00:00",
+  "verified_at": "2026-11-11T10:42:53.827071+00:00",
   "url": "http://127.0.0.1:8502",
   "checks": [
     {
       "feature": "check_navigation",
       "status": "passed",
-      "seconds": 6.87
+      "seconds": 6.83
     },
     {
       "feature": "check_overview",
       "status": "passed",
-      "seconds": 4.58
+      "seconds": 6.32
     },
     {
       "feature": "check_case_search",
       "status": "passed",
-      "seconds": 8.25
+      "seconds": 8.46
     },
     {
       "feature": "check_narrative_models",
       "status": "passed",
-      "seconds": 7.56
+      "seconds": 7.69
     },
     {
       "feature": "check_evidence",
       "status": "passed",
-      "seconds": 6.53
+      "seconds": 6.18
+    },
+    {
+      "feature": "check_attempted_killing_sentiment",
+      "status": "passed",
+      "seconds": 5.65
     },
     {
       "feature": "check_text_upload",
       "status": "passed",
-      "seconds": 6.77
+      "seconds": 6.04
     },
     {
       "feature": "check_upload_limits",
       "status": "passed",
-      "seconds": 5.72
+      "seconds": 4.92
     },
     {
       "feature": "check_invalid_input",
       "status": "passed",
-      "seconds": 6.51
+      "seconds": 5.15
     },
     {
       "feature": "check_evaluation",
       "status": "passed",
-      "seconds": 6.22
+      "seconds": 5.7
     },
     {
       "feature": "check_quality_upload",
       "status": "passed",
-      "seconds": 7.16
+      "seconds": 6.96
     },
     {
       "feature": "check_topics",
       "status": "passed",
-      "seconds": 7.09
+      "seconds": 6.95
     }
   ],
-  "status": "passed"
+  "status": "passed",
+  "verification_mode": "Full feature run plus focused metric-layout rechecks; inference unchanged between runs",
+  "rechecked_features": [
+    "check_overview",
+    "check_attempted_killing_sentiment"
+  ]
 }

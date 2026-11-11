@@ -1,6 +1,7 @@
 """Create an auditable results sheet and standalone printable project report."""
 import json
 import re
+import xml.etree.ElementTree as ET
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -43,7 +44,15 @@ def main():
               f"MLlib accuracy: **{spark['mllib']['accuracy']:.4f}**; weighted F1: **{spark['mllib']['weighted_f1']:.4f}**. It uses {spark['mllib']['train_rows']:,} training and {spark['mllib']['test_rows']:,} test rows, so sample sizes differ from the four-model comparison.", "",
               f"LDA held-out perplexity: **{topics['held_out_perplexity']:.2f}**; top-term diversity: **{topics['topic_diversity']:.3f}**.", "", "## Verification", ""]
     test_log = ROOT / "logs" / "tests.log"
-    if test_log.exists():
+    test_receipts = [ARTIFACTS / name for name in ("incident_sentiment_pytest.xml", "feature_audit_pytest.xml") if (ARTIFACTS / name).exists()]
+    if test_receipts:
+        receipt = max(test_receipts, key=lambda path: path.stat().st_mtime_ns)
+        tree = ET.parse(receipt).getroot()
+        suites = [tree] if tree.tag == "testsuite" else tree.findall("testsuite")
+        totals = {key: sum(int(suite.get(key, "0")) for suite in suites) for key in ("tests", "failures", "errors", "skipped")}
+        passed = totals["tests"] - totals["failures"] - totals["errors"] - totals["skipped"]
+        lines.append(f"Pytest: **{passed} passed, {totals['failures']} failed, {totals['errors']} errors, {totals['skipped']} skipped**. Source: artifacts/{receipt.name}.")
+    elif test_log.exists():
         content = test_log.read_text(encoding="utf-16" if test_log.read_bytes().startswith(b"\xff\xfe") else "utf-8", errors="replace")
         summary = [s.strip() for s in content.splitlines() if re.search(r"\d+ passed", s)]
         lines.append("Pytest: **" + (summary[-1].strip("= ") if summary else "See logs/tests.log for the run outcome") + "**.")

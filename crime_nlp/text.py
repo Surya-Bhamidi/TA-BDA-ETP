@@ -165,15 +165,24 @@ def summarize(text, count=1):
 THREAT_CUES = {"knife": 3, "handgun": 4, "weapon": 2, "threatened": 3, "threats": 3, "injured": 3,
                "injuries": 3, "assailant": 2, "violent": 2, "attack": 2, "attacked": 2, "fire": 2,
                "blaze": 2, "ransomware": 1, "malware": 1, "punched": 2, "kicked": 2}
+THREAT_CUES.update({word: 4 for word in ["gun", "pistol", "rifle", "kill", "killed", "killing", "murder", "murdered", "shoot", "shot"]})
 
 
-def threat_language(text):
+def threat_language(text, doc=None):
     """Demonstration heuristic about language, not a validated safety assessment."""
     found = {}
+    nonliteral_terms = set()
+    if doc is not None:
+        from .incident_context import _human_target
+        candidates = [token for token in doc if token.lemma_.lower() in {"kill", "murder"} and token.pos_ == "VERB"]
+        for value in {token.lower_ for token in candidates}:
+            matching = [token for token in candidates if token.lower_ == value]
+            if all(any(child.dep_ in {"dobj", "obj"} for child in token.children) and not _human_target(token) for token in matching):
+                nonliteral_terms.add(value)
     for clause in re.split(r"[.!?;,]|\bbut\b", text.lower()):
         words = word_tokens(clause)
         for i, word in enumerate(words):
-            if word in THREAT_CUES:
+            if word in THREAT_CUES and word not in nonliteral_terms:
                 context = words[max(0, i - 4):i]
                 if not set(context) & {"no", "not", "without", "never", "denied", "nobody"}:
                     found[word] = THREAT_CUES[word]

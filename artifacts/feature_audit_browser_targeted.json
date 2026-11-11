@@ -1,16 +1,16 @@
 {
-  "verified_at": "2026-11-11T10:04:02.427838+00:00",
+  "verified_at": "2026-11-11T10:42:53.827071+00:00",
   "url": "http://127.0.0.1:8502",
   "checks": [
     {
       "feature": "check_overview",
       "status": "passed",
-      "seconds": 5.31
+      "seconds": 6.32
     },
     {
-      "feature": "check_narrative_models",
+      "feature": "check_attempted_killing_sentiment",
       "status": "passed",
-      "seconds": 7.52
+      "seconds": 5.65
     }
   ],
   "status": "passed"

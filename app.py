@@ -31,6 +31,8 @@ h1,h2,h3 {font-family:'Manrope',sans-serif;letter-spacing:-.035em}
 [data-testid="stMetric"] {background:white;border:1px solid #e2e8ef;border-radius:12px;padding:18px 22px}
 [data-testid="stMetricLabel"] {color:#6a7888;font-size:.8rem}
 [data-testid="stMetricValue"] {font-family:'Manrope',sans-serif;font-weight:800;font-size:1.85rem}
+[data-testid="stMetricValue"],[data-testid="stMetricValue"]>div {white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:break-word;line-height:1.2}
+.stApp [data-testid="stMetricValue"] p {white-space:normal;overflow-wrap:break-word;font-size:inherit;font-weight:inherit;margin:0}
 div.stButton>button[kind="primary"] {border-radius:8px;font-weight:600}
 .eyebrow {font-size:11px;letter-spacing:.18em;font-weight:700;color:#078578;text-transform:uppercase;margin-bottom:8px}
 .subtitle {color:#6d7b8b;font-size:15px;margin-top:-10px;margin-bottom:24px}
@@ -141,16 +143,31 @@ def filters(frame, key):
 def show_analysis(result, key):
     from crime_nlp.inference import highlight_entities, language_model
     from spacy import displacy
-    top = st.columns(4)
-    top[0].metric("Suggested category" if result["review_required"] else "TF-IDF prediction", result["crime_type"])
-    top[1].metric("VADER polarity", f"{result['sentiment']['compound']:+.2f}")
+    incident = result.get("incident_context")
+    contextual_category = incident and not incident.get("cooccurring_incident")
+    sentiment = result["sentiment"]
+    from crime_nlp.sentiment import polarity_label
+    top = st.columns([1.5, 1, 1, 1])
+    top[0].metric("Described incident" if contextual_category else "Suggested category" if result["review_required"] else "TF-IDF prediction",
+                  result.get("display_category", result["crime_type"]))
+    top[1].metric("Text sentiment", sentiment.get("label", polarity_label(sentiment["compound"])))
+    top[1].caption(f"VADER compound: {sentiment['compound']:+.4f}")
     top[2].metric("Threat-language cues", result["threat"]["level"])
     display_entities = sorted(result["entities"] + result.get("contextual_roles", []), key=lambda entity: entity["start"])
     top[3].metric("Extracted mentions", len(display_entities))
-    st.caption(f"Calibrated category score: {result['model_score']:.1%}. Entity model: {result['ner_model']}. Release {result.get('model_version', 'earlier')}. Scores are model estimates, not proof.")
+    if contextual_category:
+        st.caption(f"Outcome: {incident['outcome']}. Description follows the source wording and has no model probability. The eight trained categories do not include killing or attempted killing.")
+        st.caption(f"Entity model: {result['ner_model']}. Release {result.get('model_version', 'earlier')}.")
+    else:
+        st.caption(f"Calibrated category score: {result['model_score']:.1%}. Entity model: {result['ner_model']}. Release {result.get('model_version', 'earlier')}. Scores are model estimates, not proof.")
+    st.caption("Text sentiment measures positive/negative wording on −1 to +1; it does not measure severity, guilt, or whether an attempt succeeded.")
+    if incident:
+        st.caption(sentiment.get("context_note", ""))
+        if not contextual_category:
+            st.caption(f"Also described: {incident['label']}. Outcome: {incident['outcome']}.")
     if result["review_required"]:
         st.warning("Needs review: " + " ".join(result.get("review_reasons", ["Limited classification confidence."])))
-    if "bert_prediction" in result:
+    if "bert_prediction" in result and not contextual_category:
         st.info(f"BERT sequence classification: {result['bert_prediction']}")
     tabs = st.tabs(["Entities & summary", "Syntax & morphology", "Evidence search", "Analysis details"])
     with tabs[0]:
@@ -182,7 +199,8 @@ def show_analysis(result, key):
             st.dataframe(pd.DataFrame([{"Action": event["predicate"], "Actor": ", ".join(entity["text"] for entity in event["actors"]),
                                         "Affected person/property": ", ".join(entity["text"] for entity in event["affected"]),
                                         "Instrument": ", ".join(entity["text"] for entity in event["instruments"]),
-                                        "Assertion": event["assertion"]} for event in result["relations"]["events"]]), hide_index=True)
+                                        "Assertion": event["assertion"], "Stage": event.get("stage", "Not distinguished"),
+                                        "Outcome": event.get("outcome", "Not stated")} for event in result["relations"]["events"]]), hide_index=True)
             st.caption("Action links follow bounded syntax and entity roles. Check the original source; complex references can remain unresolved.")
         unresolved = [reference for reference in result.get("references", []) if reference["status"] != "resolved"]
         if unresolved:
@@ -213,6 +231,28 @@ def show_analysis(result, key):
             for citation in answer["citations"]:
                 st.caption(f"Source: {citation['report_id']}, sentence {citation['sentence']}")
     with tabs[3]:
+        if incident:
+            st.markdown("#### Incident wording and classifier limits")
+            st.write(f"**Source-based description:** {incident['label']}. **Outcome:** {incident['outcome']}.")
+            st.caption("This is a syntax/context description, not a newly trained category or a legal determination. Raw model suggestions below are restricted to the original eight classes.")
+            st.write(f"Raw TF-IDF eight-category suggestion: {result['crime_type']} (calibrated score {result['model_score']:.1%}).")
+            if "bert_prediction" in result:
+                st.write(f"Raw BERT eight-category suggestion: {result['bert_prediction']}.")
+            st.json(incident)
+        st.markdown("#### Sentiment breakdown")
+        st.write(f"**Text polarity:** {sentiment.get('label', polarity_label(sentiment['compound']))} · **VADER compound:** {sentiment['compound']:+.4f}")
+        st.caption("Negative ≤ −0.05; neutral between −0.05 and +0.05; positive ≥ +0.05. Compound ranges from −1 to +1 and is not a confidence percentage.")
+        st.dataframe(pd.DataFrame([{"Component": name.title(), "VADER share": sentiment[field]}
+                                   for name, field in [("negative", "neg"), ("neutral", "neu"), ("positive", "pos")]]), hide_index=True)
+        st.caption("The three component shares approximately sum to 1. They are text-polarity components, not probabilities of crime or a person's emotions.")
+        st.caption(sentiment.get("context_note", ""))
+        if sentiment.get("sentences"):
+            st.dataframe(pd.DataFrame([{"Source sentence": item["text"], "Polarity": item["label"], "Compound": item["compound"]}
+                                       for item in sentiment["sentences"]]), hide_index=True)
+        if sentiment.get("lexicon_cues"):
+            with st.expander("Words in VADER's sentiment lexicon"):
+                st.dataframe(pd.DataFrame(sentiment["lexicon_cues"]), hide_index=True)
+                st.caption("These are base lexicon values before VADER applies negation, intensifiers and contrast weighting; they are not final word contributions.")
         st.write("**Threat-language heuristic:**", ", ".join(result["threat"]["cues"]) or "No unnegated cues found")
         st.caption("This cue score is a demonstration heuristic. VADER sentiment measures polarity separately; neither score estimates real-world danger.")
         st.write("**Generic spaCy entities:**")
@@ -376,7 +416,7 @@ elif page == "Narrative lab":
         if st.session_state["lab_result"].get("model_revision") == model_revision_id():
             show_analysis(st.session_state["lab_result"], "lab")
         else:
-            st.info("The models have been updated. Select Analyze narrative to use the latest version.")
+            st.info("The analysis has been updated. Select Analyze narrative to use the latest version.")
     elif "lab_result" in st.session_state:
         st.info("The text has changed. Select Analyze narrative to update the results.")
 

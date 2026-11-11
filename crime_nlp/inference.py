@@ -29,7 +29,8 @@ def model_revision():
     paths = [MODELS / name for name in names] + [Path(__file__).with_name(name) for name in ["evidence_context.py", "narrative_context.py", "material_context.py"]]
     from .trained_roles import revision_paths
     paths.extend(revision_paths())
-    paths.extend(Path(__file__).with_name(name) for name in ["trained_roles.py", "assertions.py", "relations.py", "references.py", "confidence.py"] if Path(__file__).with_name(name).exists())
+    paths.extend(Path(__file__).with_name(name) for name in ["trained_roles.py", "assertions.py", "relations.py", "references.py", "confidence.py",
+                                                           "incident_context.py", "sentiment.py", "text.py", "inference.py"] if Path(__file__).with_name(name).exists())
     calibration = ARTIFACTS / "core_entity_calibration.json"
     if calibration.exists():
         paths.append(calibration)
@@ -147,30 +148,39 @@ def analyze(text, use_bert=False, ner_choice="Automatic"):
     contextual_roles = qualify_entities(text, contextual_roles, doc)
     from .confidence import calibrate_core
     entities = calibrate_core(entities, selected_ner)
+    from .incident_context import describe_incident
+    from .sentiment import analyze_sentiment
+    incident = describe_incident(text, doc)
     result = {"text": text, "entities": entities, "summary": " ".join(summarize(text, count=1).split()), "ner_model": selected_ner,
               "contextual_roles": contextual_roles, "raw_entities": raw_entities, "raw_role_entities": learned_roles,
               "crime_type": str(classifier.classes_[probabilities.argmax()]), "model_score": float(probabilities.max()),
-              "sentiment": resources["sentiment"].polarity_scores(text), "threat": threat_language(text),
+              "sentiment": analyze_sentiment(text, resources["sentiment"], doc, incident), "threat": threat_language(text, doc),
               "topic_id": int(topic_distribution.argmax()), "topic_distribution": topic_distribution.tolist(),
               "tokens": [{"token": t.text, "lemma": t.lemma_, "POS": t.pos_, "tag": t.tag_, "morphology": str(t.morph), "dependency": t.dep_, "head": t.head.text} for t in doc],
               "generic_entities": [{"text": e.text, "label": e.label_} for e in doc.ents]}
+    result["incident_context"] = incident
+    result["display_category"] = incident["label"] if incident and not incident["cooccurring_incident"] else result["crime_type"]
     from .features import prediction_review
     result.update(prediction_review(classifier, text, probabilities, resources["calibration"]["threshold"], raw_probabilities[0]))
     result["entity_context_corrections"] = [entity for entity in entities + contextual_roles if entity.get("extraction_method")]
-    import re
-    if re.search(r"\b(kill(?:ed|ing)?|murder(?:ed)?|homicide)\b", text, re.I):
+    if incident:
         result["review_required"] = True
-        result["review_reasons"].append("The eight-category project has no separate homicide category; the suggested category needs review.")
+        result["review_reasons"].append("The eight trained categories do not cover killing or attempted killing. The source-based incident description requires review.")
     result["model_version"] = SETTINGS["project"]["version"]
     result["model_revision"] = model_revision_id()
     result["explanation"] = explain_prediction(classifier, text)
     result["structured_summary"] = structured_summary(text, entities, result["summary"])
     result["structured_summary"]["contextual_roles"] = contextual_roles
+    result["structured_summary"]["incident_context"] = incident
     from .relations import action_notes
     from .references import reference_notes
     result["references"] = reference_notes(text, entities + contextual_roles, doc)
     result["relations"] = action_notes(text, entities, doc, result["references"])
     events = result["relations"]["events"]
+    if incident and incident.get("trigger_start") is not None:
+        for event in events:
+            if event["action_start"] == incident["trigger_start"]:
+                event.update(stage=incident["stage"], outcome=incident["outcome"])
     if events and all(event["assertion"] in {"negated", "disputed", "uncertain"} for event in events):
         result["review_required"] = True
         result["review_reasons"].append("Identified incident actions are only negated, disputed or uncertain; review the suggested category.")

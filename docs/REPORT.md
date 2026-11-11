@@ -253,6 +253,10 @@ Lower perplexity indicates better fit under a fixed vocabulary and protocol; it 
 
 NLTK VADER produces a compound polarity score between -1 and +1. Negative language is not equivalent to high danger. A neutral report can describe a serious event, and frightened wording can appear in a low-severity event.
 
+The dashboard labels the unchanged VADER score as Negative (at or below -0.05), Neutral (between -0.05 and +0.05), or Positive (at or above +0.05). Analysis details show the three polarity components, scores for original source sentences, and base sentiment-lexicon entries. The component shares are not confidence probabilities. The word-level entries precede VADER's negation, intensifier and contrast rules and must not be read as final contributions. A failed attack can still have negative wording; negating a harmful word can also yield a positive lexical score without establishing happiness, safety or a positive event.
+
+For killing-related wording outside the eight trained classes, a separate source-based syntax description distinguishes intent, threat, attempt, prevention, negation and completed wording. For example, “Mayank had ill intentions towards Barkha, and he went to her cabin to kill her, but the attempt failed” is displayed as **Attempted killing**, with **Attempt failed** as its outcome, and **Negative (-0.8481)** as its text polarity. The raw TF-IDF and BERT suggestions remain available in Analysis details. This is an explicitly disclosed context heuristic, not a newly trained homicide model or a legal classification. See [the incident and sentiment update](INCIDENT_SENTIMENT_UPDATE.md) for its contract and limitations.
+
 A separate transparent heuristic counts selected unnegated threat-language cues. It is shown as a demonstration cue level, not a probability of future violence or an operational risk assessment. There is no labeled danger dataset in this project.
 
 ### TextRank summarization

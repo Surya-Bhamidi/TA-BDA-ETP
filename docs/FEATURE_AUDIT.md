@@ -1,6 +1,6 @@
 # Application feature audit — 11 November 2026
 
-The local dashboard passed **240 automated tests with no skips**, **11 live Edge browser workflows**, the console demonstration, model-integrity checks, an isolated Spark pipeline, and the Scala corpus check. This verifies the tested functionality; it does not establish perfect predictions for arbitrary narratives.
+The audit and its [incident/sentiment follow-up](INCIDENT_SENTIMENT_UPDATE.md) passed **280 automated tests with no skips** and **12 live Edge browser workflows**. The console demonstration, model-integrity checks, isolated Spark pipeline and Scala corpus checks are also recorded below. This verifies the tested functionality; it does not establish perfect predictions for arbitrary narratives.
 
 The server at `http://localhost:8502` was restarted so that it loads the current evidence-search and upload code. Its health endpoint returned `ok` after testing.
 
@@ -13,6 +13,8 @@ The server at `http://localhost:8502` was restarted so that it loads the current
 | Narrative entry | Blank and numeric-only input; changed-text detection; Unicode and original-text preservation | Passed |
 | Text uploads | UTF-8 with BOM; replacement using the same filename; invalid encoding; size limit; character limit; null-byte rejection | Passed after fixing same-filename replacement |
 | Classifiers | Live BoW, TF-IDF, Word2Vec and BERT console inference; dashboard BERT toggle; category confidence and review flags | Passed |
+| Killing-related wording | Intent, threat, attempt, failed attempt, completed wording, denial, negation and prevention; raw eight-class model suggestions retained in details | Passed on the follow-up fixtures and exact user example |
+| Sentiment presentation | Unchanged VADER scores; polarity labels and thresholds; sentence scores; lexical cue offsets; outcome/negation explanations | Passed |
 | Entity extraction | Automatic, CRF and BERT selection; participant and ownership roles; weapons, property, places, dates, evidence, organizations and witnesses; negation and assertion qualifiers | Passed on the included regression fixtures |
 | Entities and summaries | Highlighted text; escaped HTML; extractive one-line summaries; source citations; structured notes; exact character offsets | Passed |
 | Syntax and morphology | Dependency diagram rendered inside its iframe; syntax/POS/morphology table; sentence windows and long-document handling | Passed |
@@ -42,17 +44,17 @@ The earlier optional `match_type` compatibility fix is covered both with and wit
 
 ## Limits and remaining observations
 
-- **Prediction quality is not perfect.** Existing categories contain no separate Homicide class. The supplied killing example is suggested as Assault and is flagged for review. The recorded synthetic classifier accuracies are approximately 83.5% BoW, 92.4% TF-IDF, 82.2% Word2Vec and 81.7% BERT; they are not real-world accuracy estimates.
-- Threat-language scoring remains a limited dictionary heuristic. For example, its current dictionary includes `handgun` but does not score `gun` or `killed`. Sentiment, topic quality and summary quality do not gain an independent accuracy benchmark from this audit. Review-upload tests used explicitly named synthetic fixtures.
+- **Prediction quality is not perfect.** The trained classifiers contain no separate Homicide or Attempted Killing class. The primary UI can now show a source-based incident description, including a failed attempt; raw eight-class suggestions and their scores remain in Analysis details. This context heuristic is not a new trained classifier. The recorded synthetic classifier accuracies are approximately 83.5% BoW, 92.4% TF-IDF, 82.2% Word2Vec and 81.7% BERT; they are not real-world accuracy estimates.
+- Threat-language scoring remains a limited dictionary heuristic. Its vocabulary now includes `gun` and killing words, with a non-human-object filter in live inference; it is separate from polarity and incident outcomes. Sentiment, topic quality and summary quality do not gain an independent accuracy benchmark from this audit. Review-upload tests used explicitly named synthetic fixtures.
 - An **additional Python-RDD worker probe failed** on this installed Windows runtime, including when using the exact project interpreter. This affects the ordinary Python metadata path used by `PipelineModel.load`. The current application pipeline uses JVM-backed Spark operations; its complete isolated run passed, and the saved all-Java MLlib model was verified through its JVM reader. General Python-RDD worker execution remains unresolved. Diagnostic output is in `logs/feature-audit-worker.log`.
 - Logs include a deprecation notice for `streamlit.components.v1.html`, although the syntax diagram still renders. Scala completed successfully but reported its existing temporary-JAR cleanup warning.
 - Full production-corpus retraining, fresh resource downloads, Docker, standalone/multi-host cluster deployment, other browsers/devices, and extended load testing were not rerun. The deployed classifiers were exercised with their saved weights, and the frozen artifacts were checked.
 
 ## Evidence and reproduction
 
-- [Final automated test results](../artifacts/feature_audit_pytest.xml): 240 passed, 0 failed, 0 skipped.
-- [Full browser results](../artifacts/feature_audit_browser.json): all 11 workflows passed with no uncaught page exceptions or JavaScript page errors.
-- [Supplementary browser checks](../artifacts/feature_audit_browser_targeted.json): rendered syntax diagram and manifest-based chart counts.
+- [Final automated test results](../artifacts/incident_sentiment_pytest.xml): 280 passed, 0 failed, 0 skipped.
+- [Full browser results](../artifacts/feature_audit_browser.json): all 12 workflows passed with no uncaught page exceptions or JavaScript page errors.
+- [Supplementary browser checks](../artifacts/feature_audit_browser_targeted.json): final incident-label layout, sentiment display, exported JSON and overview counts. The full receipt records these focused rechecks separately.
 - [Spark fixture and saved-model results](../artifacts/feature_audit_pipeline.json).
 - [Saved-score verification](../artifacts/evaluation_verification.json), [role-model verification](../artifacts/upgrade_model_verification.json), [Scala verification](../artifacts/scala_verification.json).
 - Console demonstration: `logs/feature-audit-demo.log`, with its JSON output at `.runtime/feature-audit/demo.json`.
@@ -61,7 +63,7 @@ The earlier optional `match_type` compatibility fix is covered both with and wit
 From the project directory, with the dashboard running on port 8502:
 
 ```powershell
-.\.venv312\Scripts\python.exe -m pytest -q --junitxml=artifacts/feature_audit_pytest.xml
+.\.venv312\Scripts\python.exe -m pytest -q --junitxml=artifacts/incident_sentiment_pytest.xml
 .\.venv312\Scripts\python.exe scripts/check_features.py
 .\.venv312\Scripts\python.exe scripts/check_pipeline_runtime.py
 .\.venv312\Scripts\python.exe scripts/verify_evaluation.py

@@ -122,3 +122,20 @@ def test_category_feedback_saves_correction_without_source(tmp_path, monkeypatch
         row = connection.execute("SELECT narrative_sha256,predicted,corrected FROM feedback").fetchone()
     assert row[1:] == ("Assault", "Fraud")
     assert len(row[0]) == 64 and text not in str(row)
+
+
+def test_attempted_killing_and_sentiment_are_displayed_separately():
+    from test_incident_sentiment import EXAMPLE
+    app = app_test()
+    app.sidebar.radio[0].set_value("Narrative lab").run()
+    app.text_area[0].set_value(EXAMPLE).run()
+    next(item for item in app.button if item.label == "Analyze narrative").click().run()
+    assert not app.exception
+    assert app.metric[0].label == "Described incident"
+    assert app.metric[0].value == "Attempted killing"
+    assert app.metric[1].value == "Negative"
+    assert any("Outcome: Attempt failed" in item.value for item in app.caption)
+    assert not app.info  # Raw BERT output is in the details, not the primary prediction banner.
+    assert any("Raw TF-IDF eight-category suggestion: Robbery" in item.value for item in app.markdown)
+    assert any("Raw BERT eight-category suggestion: Robbery" in item.value for item in app.markdown)
+    assert any("VADER compound:" in item.value and "-0.8481" in item.value for item in app.markdown)

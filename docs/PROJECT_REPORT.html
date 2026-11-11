@@ -269,6 +269,8 @@ cross-checks; the earlier media-only receipt does not measure this broader layer
 <p>Lower perplexity indicates better fit under a fixed vocabulary and protocol; it does not guarantee more meaningful topics. Coherence measures word co-occurrence; diversity measures how many top words are distinct. Human review is still needed to decide whether themes are useful. NMF is not presented as a fully evaluated replacement selected by human topic judgments.</p>
 <h3>VADER sentiment and threat-language cues</h3>
 <p>NLTK VADER produces a compound polarity score between -1 and +1. Negative language is not equivalent to high danger. A neutral report can describe a serious event, and frightened wording can appear in a low-severity event.</p>
+<p>The dashboard labels the unchanged VADER score as Negative (at or below -0.05), Neutral (between -0.05 and +0.05), or Positive (at or above +0.05). Analysis details show the three polarity components, scores for original source sentences, and base sentiment-lexicon entries. The component shares are not confidence probabilities. The word-level entries precede VADER's negation, intensifier and contrast rules and must not be read as final contributions. A failed attack can still have negative wording; negating a harmful word can also yield a positive lexical score without establishing happiness, safety or a positive event.</p>
+<p>For killing-related wording outside the eight trained classes, a separate source-based syntax description distinguishes intent, threat, attempt, prevention, negation and completed wording. For example, “Mayank had ill intentions towards Barkha, and he went to her cabin to kill her, but the attempt failed” is displayed as <strong>Attempted killing</strong>, with <strong>Attempt failed</strong> as its outcome, and <strong>Negative (-0.8481)</strong> as its text polarity. The raw TF-IDF and BERT suggestions remain available in Analysis details. This is an explicitly disclosed context heuristic, not a newly trained homicide model or a legal classification. See <a href="INCIDENT_SENTIMENT_UPDATE.md">the incident and sentiment update</a> for its contract and limitations.</p>
 <p>A separate transparent heuristic counts selected unnegated threat-language cues. It is shown as a demonstration cue level, not a probability of future violence or an operational risk assessment. There is no labeled danger dataset in this project.</p>
 <h3>TextRank summarization</h3>
 <p>TextRank treats sentences as nodes in a graph, connects similar sentences, and ranks them using PageRank. The implementation also includes a small lead-sentence preference. The application selects one source sentence for each case and normalizes its whitespace to one line. The original narrative is unchanged, and structured notes retain the original sentence citation. These summaries are stored in the enriched dataset, shown in case search, included in CSV exports, and computed on demand for new narratives. A long source sentence can still produce a long summary.</p>
@@ -725,10 +727,10 @@ cross-checks; the earlier media-only receipt does not measure this broader layer
 <p>MLlib accuracy: <strong>0.7970</strong>; weighted F1: <strong>0.7895</strong>. It uses 39,528 training and 6,824 test rows, so sample sizes differ from the four-model comparison.</p>
 <p>LDA held-out perplexity: <strong>476.67</strong>; top-term diversity: <strong>0.900</strong>.</p>
 <h2>Verification</h2>
-<p>Pytest: <strong>240 passed in 35.09s</strong>.</p>
+<p>Pytest: <strong>280 passed, 0 failed, 0 errors, 0 skipped</strong>. Source: artifacts/incident_sentiment_pytest.xml.</p>
 <p>Scala report count verified: <strong>60,000</strong>.</p>
 <p>The Windows Scala run completed its computations and exited successfully, with a non-fatal Spark temporary-JAR cleanup warning at shutdown.</p>
-<p>Current browser feature audit: <strong>passed</strong>, with <strong>11/11</strong> workflows passed. See docs/FEATURE_AUDIT.md for the full feature matrix and remaining limitations.</p>
+<p>Current browser feature audit: <strong>passed</strong>, with <strong>12/12</strong> workflows passed. See docs/FEATURE_AUDIT.md for the full feature matrix and remaining limitations.</p>
 <h2>Classification uncertainty and calibration</h2>
 <table>
 <thead>
