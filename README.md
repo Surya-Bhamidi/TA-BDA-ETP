@@ -1,10 +1,10 @@
 # Decoding Crime Narratives using NLP and Big Data Analytics
 
-**Version 3.1** improves informal English, misspellings, unfamiliar names, ownership roles and FIR-style administrative context using the project's existing algorithms. It includes 60,000 fictional reports, Apache Spark, four document classifiers, CRF and BERT entity extraction, LDA/NMF topics, semantic search, spaCy syntax, VADER polarity, TextRank summaries and a seven-page Streamlit dashboard.
+**Current project — audited 11 November 2026.** This is the maintained project in this repository. It includes 60,000 fictional reports, Apache Spark, four document classifiers, CRF and BERT entity extraction, trained organization/witness recognition, LDA/NMF topics, keyword and semantic evidence retrieval, spaCy syntax, VADER polarity, TextRank summaries and a seven-page Streamlit dashboard.
 
-The [entity and text-fidelity revision](docs/ENTITY_CONTEXT_V3_1.md) addresses the reported short-sentence and long-FIR failures, including relatives/officers versus actual parties, punctuation, dotted dates and property lists. Model weights are in `artifacts/models/v3_1`; prior releases are retained.
+The latest update fixes short keyword evidence searches (including `gun`), handles results without optional match metadata, refreshes replaced uploads even when their filenames are unchanged, and validates malformed quality-review uploads without crashing. **240 automated tests and 11 live Edge browser workflows passed**, together with Spark, Scala and saved-model verification. Read the [feature-by-feature audit](docs/FEATURE_AUDIT.md) for results, reproduction commands and remaining limitations. Passing these checks does not imply perfect predictions on arbitrary narratives.
 
-The [generalization upgrade](docs/UPGRADE_STATUS.md) adds separately trained organization/witness recognition, full-document search and BERT windows, qualified action/reference notes, entity corrections and an opt-in annotation queue. The legacy core and benchmarks remain preserved. Run **RUN_UPGRADE_DEMO.cmd** for the expanded example; use the [annotation contract](docs/ANNOTATION_GUIDELINES_V4.md) and [real-data workflow](docs/REAL_DATA_WORKFLOW.md) for future reviewed datasets. Synthetic diagnostic improvements do not establish real-world accuracy.
+The current application includes full-document search and BERT windows, qualified action/reference notes, entity corrections and an opt-in annotation queue. Run **RUN_UPGRADE_DEMO.cmd** for the expanded example; use the [annotation contract](docs/ANNOTATION_GUIDELINES_V4.md) and [real-data workflow](docs/REAL_DATA_WORKFLOW.md) for future reviewed datasets. The [implementation notes](docs/UPGRADE_STATUS.md) and [entity/text-fidelity notes](docs/ENTITY_CONTEXT_V3_1.md) explain the retained model contracts. Historical benchmark artifacts are retained for comparison; the application uses `artifacts/models/v3_1`.
 
 Open **Narrative lab** and try `sir my moblie stoln from pocket in bus ystrday` or `José García hit Wei Zhang with iron rod near Nairobi`. Original spelling and entity offsets are preserved. See [the robustness update](docs/ROBUSTNESS_V3.md) for the constraints, evidence and remaining limits.
 
@@ -13,6 +13,7 @@ Open **Narrative lab** and try `sir my moblie stoln from pocket in bus ystrday` 
 Read the [beginner guide](docs/BEGINNER_GUIDE.md), then the [complete project report PDF](docs/PROJECT_REPORT.pdf). The report explains the problem, follows a narrative through every stage, teaches each model with examples, explains metrics and includes setup, troubleshooting, a code tour and viva questions.
 
 - [Editable report](docs/REPORT.md) and [standalone HTML report](docs/PROJECT_REPORT.html)
+- [Current feature audit and known limitations](docs/FEATURE_AUDIT.md)
 - [Measured results](docs/RESULTS.md)
 - [BERT, CRF, topics, summaries and local deployment requirements](docs/IMPLEMENTATION_STATUS.md)
 - [Validation-selected accuracy improvements and reproduction](docs/ACCURACY_IMPROVEMENTS.md)

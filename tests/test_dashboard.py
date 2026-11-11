@@ -33,6 +33,34 @@ def test_case_search_empty_results():
     assert any("No matching reports" in item.value for item in app.info)
 
 
+@pytest.mark.parametrize("missing_match_type", [False, True])
+def test_short_keyword_evidence_in_narrative_lab(monkeypatch, missing_match_type):
+    from streamlit.testing.v1 import AppTest
+    if missing_match_type:
+        from crime_nlp import semantic
+        retrieve = semantic.semantic_evidence
+        def legacy_result(*args, **kwargs):
+            result = retrieve(*args, **kwargs)
+            result.pop("match_type", None)
+            return result
+        monkeypatch.setattr(semantic, "semantic_evidence", legacy_result)
+    text = "Vivek killed Barkha with a gun near Faridabad on 20-10-2026"
+    app = AppTest.from_file(str(ROOT / "app.py"), default_timeout=180).run()
+    app.sidebar.radio[0].set_value("Narrative lab").run()
+    app.checkbox[0].uncheck().run()
+    app.text_area[0].set_value(text).run()
+    app.button[0].click().run()
+    next(item for item in app.text_input if item.label == "Find supporting evidence in this case").set_value("gun").run()
+    assert not app.exception
+    assert any(item.value == text for item in app.markdown)
+    assert not any("Insufficient evidence" in item.value for item in app.markdown)
+    if missing_match_type:
+        assert not any("Match:" in item.value for item in app.caption)
+    else:
+        assert any("Match: Keyword" in item.value for item in app.caption)
+    assert any("Source: custom narrative, sentence 1" in item.value for item in app.caption)
+
+
 def test_hybrid_search_and_pagination():
     from streamlit.testing.v1 import AppTest
     app = AppTest.from_file(str(ROOT / "app.py"), default_timeout=180).run()

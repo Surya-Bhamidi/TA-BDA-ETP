@@ -1,7 +1,9 @@
 """Local sentence embeddings, hybrid retrieval, and evidence-grounded answers."""
 from functools import lru_cache
 import json
+import re
 import numpy as np
+from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
 from .config import RUNTIME, ARTIFACTS, SETTINGS
 from .text import sentences
 from .windowing import source_windows
@@ -82,7 +84,7 @@ def rank_scores(lexical, semantic, mode="Hybrid"):
 
 
 def semantic_evidence(question, text, report_id="custom narrative"):
-    """Return verbatim source sentences and a citation; never invent an answer."""
+    """Retrieve cited source windows by full keyword coverage or semantic similarity."""
     source = sentences(text)
     if not source or not question.strip():
         return {"answer": "Insufficient evidence in this narrative.", "citations": [], "score": 0.}
@@ -91,18 +93,31 @@ def semantic_evidence(question, text, report_id="custom narrative"):
     if not chunks:
         return {"answer": "Insufficient evidence in this narrative.", "citations": [], "score": 0.}
     chunk_scores = encode([chunk["text"] for chunk in chunks]) @ encode([question])[0]
+    # Short literal queries can have low embedding similarity to a full sentence.
+    # Require every content token in the same source window; shared stop words
+    # and substrings (e.g. "gun" in "begun") cannot bypass the semantic threshold.
+    query_terms = set(re.findall(r"\w+", question.casefold())) - ENGLISH_STOP_WORDS
+    keyword_matches = [bool(query_terms) and query_terms <= set(re.findall(r"\w+", chunk["text"].casefold()))
+                       for chunk in chunks]
     scores = np.full(len(source), -1., dtype=np.float32)
     best_chunks = {}
     for index, (chunk, score) in enumerate(zip(chunks, chunk_scores)):
-        if score > scores[chunk["source"]]:
-            scores[chunk["source"]] = score
-            best_chunks[chunk["source"]] = index
-    order = np.argsort(-scores)[:2]
-    chosen = [int(i) for i in order if scores[i] >= .30]
+        source_id = chunk["source"]
+        previous = best_chunks.get(source_id)
+        if previous is None or (keyword_matches[index], score) > (keyword_matches[previous], chunk_scores[previous]):
+            scores[source_id] = score
+            best_chunks[source_id] = index
+    order = sorted(best_chunks, key=lambda i: (keyword_matches[best_chunks[i]], scores[i]), reverse=True)
+    chosen = [i for i in order if keyword_matches[best_chunks[i]] or scores[i] >= .30][:2]
     if not chosen:
         return {"answer": "Insufficient evidence in this narrative.", "citations": [], "score": float(scores.max())}
-    selected = [chunks[best_chunks[i]] for i in sorted(chosen)]
-    return {"answer": " ".join(chunk["text"] for chunk in selected), "score": float(scores[order[0]]),
+    selected_indices = [best_chunks[i] for i in sorted(chosen)]
+    selected = [chunks[i] for i in selected_indices]
+    keyword_match = any(keyword_matches[i] for i in selected_indices)
+    semantic_match = any(chunk_scores[i] >= .30 for i in selected_indices)
+    match_type = "Keyword + semantic" if keyword_match and semantic_match else "Keyword" if keyword_match else "Semantic"
+    return {"answer": " ".join(chunk["text"] for chunk in selected), "score": float(max(chunk_scores[i] for i in selected_indices)),
+            "match_type": match_type,
             "citations": [{"report_id": report_id, "sentence": chunk["source"] + 1, "text": chunk["text"],
                            "sentence_start": chunk["start"], "sentence_end": chunk["end"]} for chunk in selected],
-            "method": "Semantic evidence retrieval; threshold heuristic, not an answer-confidence probability"}
+            "method": "Keyword and semantic evidence retrieval; source matches, not an answer-confidence probability"}

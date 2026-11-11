@@ -1,0 +1,37 @@
+{
+  "verified_at": "2026-11-11T10:00:51.200699+00:00",
+  "status": "passed",
+  "fixture_directory": ".runtime/feature-audit/pipeline-20261111T100051200699",
+  "deployed_mllib_live_predictions": 32,
+  "fixture_pipeline": {
+    "engine": "Apache Spark",
+    "spark_version": "3.5.5",
+    "master": "local[2]",
+    "input_partitions": 8,
+    "shuffle_partitions": 8,
+    "raw_rows": 132,
+    "invalid_rows_removed": 3,
+    "duplicates_removed": 1,
+    "clean_rows": 128,
+    "storage": "Spark-written Parquet partitioned by split",
+    "runtime_seconds": 19.56,
+    "mllib": {
+      "model": "HashingTF + IDF + multinomial logistic regression",
+      "train_rows": 80,
+      "test_rows": 16,
+      "accuracy": 0.8125,
+      "weighted_f1": 0.7666666666666667
+    },
+    "deployment_note": "Spark local task execution on one machine."
+  },
+  "checks": [
+    "raw JSONL ingestion",
+    "invalid-row removal",
+    "deterministic deduplication",
+    "exact original-text preservation",
+    "partitioned Parquet read/write",
+    "SQL aggregates",
+    "MLlib pipeline fit and held-out scoring",
+    "deployed MLlib model loading and scoring"
+  ]
+}

@@ -3,6 +3,7 @@ import html
 import json
 import os
 import hmac
+import hashlib
 from datetime import timedelta
 import joblib
 import numpy as np
@@ -206,6 +207,8 @@ def show_analysis(result, key):
             from crime_nlp.semantic import semantic_evidence
             answer = semantic_evidence(question, result["text"], result.get("report_id", "custom narrative"))
             st.write(answer["answer"])
+            if answer.get("match_type"):
+                st.caption(f"Match: {answer['match_type']}")
             st.caption(f"Semantic similarity: {answer['score']:.3f}. The answer contains source sentences; it is not a probability of correctness.")
             for citation in answer["citations"]:
                 st.caption(f"Source: {citation['report_id']}, sentence {citation['sentence']}")
@@ -352,7 +355,8 @@ elif page == "Narrative lab":
     if len(default) > 30000 or "\x00" in default:
         st.error("Use plain text with at most 30,000 characters and no null bytes.")
         st.stop()
-    text = st.text_area("Case narrative", value=default, height=220, max_chars=30000, key="lab_text_" + (upload.name if upload else "sample"))
+    upload_key = upload.name + "_" + hashlib.sha256(upload.getvalue()).hexdigest() if upload else "sample"
+    text = st.text_area("Case narrative", value=default, height=220, max_chars=30000, key="lab_text_" + upload_key)
     use_bert = st.checkbox("Include BERT sequence classification", value=True)
     ner_choice = st.selectbox("Entity extraction model", ["Automatic", "CRF", "BERT"])
     if st.button("Analyze narrative", type="primary"):

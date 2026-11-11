@@ -49,13 +49,13 @@ LDA held-out perplexity: **476.67**; top-term diversity: **0.900**.
 
 ## Verification
 
-Pytest: **207 passed in 25.52s**.
+Pytest: **240 passed in 35.09s**.
 
 Scala report count verified: **60,000**.
 
 The Windows Scala run completed its computations and exited successfully, with a non-fatal Spark temporary-JAR cleanup warning at shutdown.
 
-Browser smoke check: **passed**. Pages visited: Overview, Case explorer, Narrative lab, Model evaluation, Topics, Pipeline & syllabus, Learning guide.
+Current browser feature audit: **passed**, with **11/11** workflows passed. See docs/FEATURE_AUDIT.md for the full feature matrix and remaining limitations.
 
 ## Classification uncertainty and calibration
 

@@ -278,7 +278,7 @@ cross-checks; the earlier media-only receipt does not measure this broader layer
 <p>Keyword search uses TF-IDF cosine similarity. It works well when query and report share terms. Semantic search uses the pretrained all-MiniLM-L6-v2 encoder, attention-mask mean pooling and normalized 384-dimensional embeddings.</p>
 <p>The legacy case embedding used only the first 128 subword tokens. Live retrieval now indexes every source window with 128-subword limits and 32-subword overlap: 61,300 windows cover the 60,000 reports. Ranking takes the best window match per report. Source offsets, report order and text fingerprints are checked. The float16 index uses memory maps and block scoring. Evidence retrieval also scans later windows of long sentences; relevance quality still needs human judgments.</p>
 <p>Hybrid search combines keyword and semantic <strong>ranks</strong>, using reciprocal-rank fusion. It does not pretend that the two raw similarity scales are identical. Entity filters use predicted mentions stored in SQLite; missed entities can therefore cause missed filtered results.</p>
-<p>For a question within a case, the app retrieves up to two matching source sentences, displays the report ID and sentence numbers, and returns “Insufficient evidence” below its threshold. This is evidence retrieval, not a general conversational assistant or verified question-answering model. A retrieved sentence may be relevant without answering the question.</p>
+<p>For a question within a case, the app retrieves up to two matching source windows and displays the report ID and sentence numbers. A window qualifies when it contains every non-stopword query token as a whole word (case-insensitive), or its semantic similarity is at least 0.30. Keyword matches take priority, so a short query such as “gun” is retained even when its embedding similarity to a longer sentence is low. If neither route matches, the app returns “Insufficient evidence”. The UI identifies keyword and semantic matches and preserves the source wording, including negation. This is evidence retrieval, not a general conversational assistant or verified question-answering model. A retrieved sentence may be relevant without answering the question.</p>
 <p>TF-IDF prediction explanations show positively contributing words, phrases and character fragments, with their feature type. They describe correlations in a linear classifier, not causal reasons why a crime occurred.</p>
 <h2>10. Evaluation: how to judge the results honestly</h2>
 <h3>Four data roles</h3>
@@ -725,10 +725,10 @@ cross-checks; the earlier media-only receipt does not measure this broader layer
 <p>MLlib accuracy: <strong>0.7970</strong>; weighted F1: <strong>0.7895</strong>. It uses 39,528 training and 6,824 test rows, so sample sizes differ from the four-model comparison.</p>
 <p>LDA held-out perplexity: <strong>476.67</strong>; top-term diversity: <strong>0.900</strong>.</p>
 <h2>Verification</h2>
-<p>Pytest: <strong>207 passed in 25.52s</strong>.</p>
+<p>Pytest: <strong>240 passed in 35.09s</strong>.</p>
 <p>Scala report count verified: <strong>60,000</strong>.</p>
 <p>The Windows Scala run completed its computations and exited successfully, with a non-fatal Spark temporary-JAR cleanup warning at shutdown.</p>
-<p>Browser smoke check: <strong>passed</strong>. Pages visited: Overview, Case explorer, Narrative lab, Model evaluation, Topics, Pipeline &amp; syllabus, Learning guide.</p>
+<p>Current browser feature audit: <strong>passed</strong>, with <strong>11/11</strong> workflows passed. See docs/FEATURE_AUDIT.md for the full feature matrix and remaining limitations.</p>
 <h2>Classification uncertainty and calibration</h2>
 <table>
 <thead>

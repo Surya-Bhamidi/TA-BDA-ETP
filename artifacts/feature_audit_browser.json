@@ -1,0 +1,62 @@
+{
+  "verified_at": "2026-11-11T10:01:35.282670+00:00",
+  "url": "http://127.0.0.1:8502",
+  "checks": [
+    {
+      "feature": "check_navigation",
+      "status": "passed",
+      "seconds": 6.87
+    },
+    {
+      "feature": "check_overview",
+      "status": "passed",
+      "seconds": 4.58
+    },
+    {
+      "feature": "check_case_search",
+      "status": "passed",
+      "seconds": 8.25
+    },
+    {
+      "feature": "check_narrative_models",
+      "status": "passed",
+      "seconds": 7.56
+    },
+    {
+      "feature": "check_evidence",
+      "status": "passed",
+      "seconds": 6.53
+    },
+    {
+      "feature": "check_text_upload",
+      "status": "passed",
+      "seconds": 6.77
+    },
+    {
+      "feature": "check_upload_limits",
+      "status": "passed",
+      "seconds": 5.72
+    },
+    {
+      "feature": "check_invalid_input",
+      "status": "passed",
+      "seconds": 6.51
+    },
+    {
+      "feature": "check_evaluation",
+      "status": "passed",
+      "seconds": 6.22
+    },
+    {
+      "feature": "check_quality_upload",
+      "status": "passed",
+      "seconds": 7.16
+    },
+    {
+      "feature": "check_topics",
+      "status": "passed",
+      "seconds": 7.09
+    }
+  ],
+  "status": "passed"
+}

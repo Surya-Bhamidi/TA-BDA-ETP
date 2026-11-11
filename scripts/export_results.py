@@ -53,8 +53,13 @@ def main():
         lines.append("\nScala report count verified: **60,000**." if "SCALA_VALID_REPORTS=60000" in content else "\nScala execution: inspect logs/scala.log.")
         if "Exception while deleting Spark temp dir" in content:
             lines.append("\nThe Windows Scala run completed its computations and exited successfully, with a non-fatal Spark temporary-JAR cleanup warning at shutdown.")
+    browser_audit = ARTIFACTS / "feature_audit_browser.json"
     browser = ARTIFACTS / "browser_check.json"
-    if browser.exists():
+    if browser_audit.exists():
+        result = read("feature_audit_browser.json")
+        passed = sum(check["status"] == "passed" for check in result["checks"])
+        lines.append(f"\nCurrent browser feature audit: **{result['status']}**, with **{passed}/{len(result['checks'])}** workflows passed. See docs/FEATURE_AUDIT.md for the full feature matrix and remaining limitations.")
+    elif browser.exists():
         result = read("browser_check.json")
         lines.append(f"\nBrowser smoke check: **{result['status']}**. Pages visited: {', '.join(result['pages'])}.")
     lines += ["", "## Classification uncertainty and calibration", "", "| Model | 95% accuracy interval |", "|---|---|"]

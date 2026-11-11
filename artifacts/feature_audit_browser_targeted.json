@@ -1,0 +1,17 @@
+{
+  "verified_at": "2026-11-11T10:04:02.427838+00:00",
+  "url": "http://127.0.0.1:8502",
+  "checks": [
+    {
+      "feature": "check_overview",
+      "status": "passed",
+      "seconds": 5.31
+    },
+    {
+      "feature": "check_narrative_models",
+      "status": "passed",
+      "seconds": 7.52
+    }
+  ],
+  "status": "passed"
+}

@@ -271,7 +271,7 @@ The legacy case embedding used only the first 128 subword tokens. Live retrieval
 
 Hybrid search combines keyword and semantic **ranks**, using reciprocal-rank fusion. It does not pretend that the two raw similarity scales are identical. Entity filters use predicted mentions stored in SQLite; missed entities can therefore cause missed filtered results.
 
-For a question within a case, the app retrieves up to two matching source sentences, displays the report ID and sentence numbers, and returns “Insufficient evidence” below its threshold. This is evidence retrieval, not a general conversational assistant or verified question-answering model. A retrieved sentence may be relevant without answering the question.
+For a question within a case, the app retrieves up to two matching source windows and displays the report ID and sentence numbers. A window qualifies when it contains every non-stopword query token as a whole word (case-insensitive), or its semantic similarity is at least 0.30. Keyword matches take priority, so a short query such as “gun” is retained even when its embedding similarity to a longer sentence is low. If neither route matches, the app returns “Insufficient evidence”. The UI identifies keyword and semantic matches and preserves the source wording, including negation. This is evidence retrieval, not a general conversational assistant or verified question-answering model. A retrieved sentence may be relevant without answering the question.
 
 TF-IDF prediction explanations show positively contributing words, phrases and character fragments, with their feature type. They describe correlations in a linear classifier, not causal reasons why a crime occurred.
 

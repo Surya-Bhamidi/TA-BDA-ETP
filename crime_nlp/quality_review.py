@@ -3,6 +3,8 @@ import math
 
 
 def evaluate(judgments):
+    if not isinstance(judgments, list) or any(not isinstance(row, dict) for row in judgments):
+        raise ValueError("Each review line must contain a JSON object")
     if not judgments or any(row.get("review_status") != "reviewed" or not row.get("reviewer") for row in judgments):
         raise ValueError("Quality evaluation requires reviewed judgments and reviewer identifiers")
     retrieval, summaries, topics = [], [], []
